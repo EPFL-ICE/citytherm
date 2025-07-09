@@ -16,6 +16,7 @@ export interface MapLayerConfig {
   info: string
   source: SourceSpecification
   layer: LayerSpecification
+  hasDatePicker?: boolean
 }
 
 export const baseUrlOptions = {
