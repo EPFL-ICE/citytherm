@@ -1,7 +1,6 @@
 import { baseUrlOptions, baseUrl, type MapLayerConfig } from '@/config/layerTypes'
 import type { LayerSpecification, VectorSourceSpecification } from 'maplibre-gl'
 
-
 /* ---------------------------------
  *  Atomic layer arrays
  * ---------------------------------*/
@@ -27,12 +26,18 @@ export const urbanMorphologyLayers: MapLayerConfig[] = [
           'interpolate',
           ['linear'],
           ['to-number', ['get', 'building_height']],
-          0, '#f7f7f7',
-          10, '#d1e5f0',
-          20, '#92c5de',
-          30, '#4393c3',
-          40, '#2166ac',
-          50, '#053061'
+          0,
+          '#f7f7f7',
+          10,
+          '#d1e5f0',
+          20,
+          '#92c5de',
+          30,
+          '#4393c3',
+          40,
+          '#2166ac',
+          50,
+          '#053061'
         ],
         'fill-opacity': 0.8
       }
@@ -59,12 +64,18 @@ export const urbanMorphologyLayers: MapLayerConfig[] = [
           'interpolate',
           ['linear'],
           ['to-number', ['get', 'sky_view_factor']],
-          0, '#053061',
-          0.2, '#2166ac',
-          0.4, '#4393c3',
-          0.6, '#92c5de',
-          0.8, '#d1e5f0',
-          1, '#f7f7f7'
+          0,
+          '#053061',
+          0.2,
+          '#2166ac',
+          0.4,
+          '#4393c3',
+          0.6,
+          '#92c5de',
+          0.8,
+          '#d1e5f0',
+          1,
+          '#f7f7f7'
         ],
         'fill-opacity': 0.8
       }
@@ -91,12 +102,18 @@ export const urbanMorphologyLayers: MapLayerConfig[] = [
           'interpolate',
           ['linear'],
           ['to-number', ['get', 'frontal_area']],
-          0, '#f7f7f7',
-          500, '#d1e5f0',
-          1000, '#92c5de',
-          1500, '#4393c3',
-          2000, '#2166ac',
-          2500, '#053061'
+          0,
+          '#f7f7f7',
+          500,
+          '#d1e5f0',
+          1000,
+          '#92c5de',
+          1500,
+          '#4393c3',
+          2000,
+          '#2166ac',
+          2500,
+          '#053061'
         ],
         'fill-opacity': 0.8
       }
@@ -123,18 +140,24 @@ export const urbanMorphologyLayers: MapLayerConfig[] = [
           'interpolate',
           ['linear'],
           ['to-number', ['get', 'aspect_ratio']],
-          0, '#f7f7f7',
-          0.5, '#d1e5f0',
-          1, '#92c5de',
-          1.5, '#4393c3',
-          2, '#2166ac',
-          3, '#053061'
+          0,
+          '#f7f7f7',
+          0.5,
+          '#d1e5f0',
+          1,
+          '#92c5de',
+          1.5,
+          '#4393c3',
+          2,
+          '#2166ac',
+          3,
+          '#053061'
         ],
         'fill-opacity': 0.8
       }
     } as LayerSpecification
   }
-];
+]
 
 export const landCoverFractionLayers: MapLayerConfig[] = [
   {
@@ -158,12 +181,18 @@ export const landCoverFractionLayers: MapLayerConfig[] = [
           'interpolate',
           ['linear'],
           ['to-number', ['get', 'water_fraction']],
-          0, '#f7f7f7',
-          0.2, '#c6dbef',
-          0.4, '#6baed6',
-          0.6, '#2171b5',
-          0.8, '#08519c',
-          1, '#08306b'
+          0,
+          '#f7f7f7',
+          0.2,
+          '#c6dbef',
+          0.4,
+          '#6baed6',
+          0.6,
+          '#2171b5',
+          0.8,
+          '#08519c',
+          1,
+          '#08306b'
         ],
         'fill-opacity': 0.8
       }
@@ -190,12 +219,18 @@ export const landCoverFractionLayers: MapLayerConfig[] = [
           'interpolate',
           ['linear'],
           ['to-number', ['get', 'impervious_fraction']],
-          0, '#f7f7f7',
-          0.2, '#d9d9d9',
-          0.4, '#969696',
-          0.6, '#636363',
-          0.8, '#252525',
-          1, '#000000'
+          0,
+          '#f7f7f7',
+          0.2,
+          '#d9d9d9',
+          0.4,
+          '#969696',
+          0.6,
+          '#636363',
+          0.8,
+          '#252525',
+          1,
+          '#000000'
         ],
         'fill-opacity': 0.8
       }
@@ -222,12 +257,18 @@ export const landCoverFractionLayers: MapLayerConfig[] = [
           'interpolate',
           ['linear'],
           ['to-number', ['get', 'building_fraction']],
-          0, '#f7f7f7',
-          0.2, '#fcae91',
-          0.4, '#fb6a4a',
-          0.6, '#de2d26',
-          0.8, '#a50f15',
-          1, '#67000d'
+          0,
+          '#f7f7f7',
+          0.2,
+          '#fcae91',
+          0.4,
+          '#fb6a4a',
+          0.6,
+          '#de2d26',
+          0.8,
+          '#a50f15',
+          1,
+          '#67000d'
         ],
         'fill-opacity': 0.8
       }
@@ -254,18 +295,24 @@ export const landCoverFractionLayers: MapLayerConfig[] = [
           'interpolate',
           ['linear'],
           ['to-number', ['get', 'pervious_fraction']],
-          0, '#f7f7f7',
-          0.2, '#c7e9b4',
-          0.4, '#7fcdbb',
-          0.6, '#41b6c4',
-          0.8, '#2c7fb8',
-          1, '#253494'
+          0,
+          '#f7f7f7',
+          0.2,
+          '#c7e9b4',
+          0.4,
+          '#7fcdbb',
+          0.6,
+          '#41b6c4',
+          0.8,
+          '#2c7fb8',
+          1,
+          '#253494'
         ],
         'fill-opacity': 0.8
       }
     } as LayerSpecification
   }
-];
+]
 
 export const canyonIntersectionLayers: MapLayerConfig[] = [
   {
@@ -289,18 +336,24 @@ export const canyonIntersectionLayers: MapLayerConfig[] = [
           'interpolate',
           ['linear'],
           ['to-number', ['get', 'intersections']],
-          0, '#f7f7f7',
-          2, '#d1e5f0',
-          4, '#92c5de',
-          6, '#4393c3',
-          8, '#2166ac',
-          10, '#053061'
+          0,
+          '#f7f7f7',
+          2,
+          '#d1e5f0',
+          4,
+          '#92c5de',
+          6,
+          '#4393c3',
+          8,
+          '#2166ac',
+          10,
+          '#053061'
         ],
         'fill-opacity': 0.8
       }
     } as LayerSpecification
   }
-];
+]
 
 export const canyonLengthLayers: MapLayerConfig[] = [
   {
@@ -324,12 +377,18 @@ export const canyonLengthLayers: MapLayerConfig[] = [
           'interpolate',
           ['linear'],
           ['to-number', ['get', 'length_ns']],
-          0, '#f7f7f7',
-          100, '#d1e5f0',
-          200, '#92c5de',
-          300, '#4393c3',
-          400, '#2166ac',
-          500, '#053061'
+          0,
+          '#f7f7f7',
+          100,
+          '#d1e5f0',
+          200,
+          '#92c5de',
+          300,
+          '#4393c3',
+          400,
+          '#2166ac',
+          500,
+          '#053061'
         ],
         'fill-opacity': 0.8
       }
@@ -356,12 +415,18 @@ export const canyonLengthLayers: MapLayerConfig[] = [
           'interpolate',
           ['linear'],
           ['to-number', ['get', 'length_ne_sw']],
-          0, '#f7f7f7',
-          100, '#d1e5f0',
-          200, '#92c5de',
-          300, '#4393c3',
-          400, '#2166ac',
-          500, '#053061'
+          0,
+          '#f7f7f7',
+          100,
+          '#d1e5f0',
+          200,
+          '#92c5de',
+          300,
+          '#4393c3',
+          400,
+          '#2166ac',
+          500,
+          '#053061'
         ],
         'fill-opacity': 0.8
       }
@@ -388,12 +453,18 @@ export const canyonLengthLayers: MapLayerConfig[] = [
           'interpolate',
           ['linear'],
           ['to-number', ['get', 'length_se_nw']],
-          0, '#f7f7f7',
-          100, '#d1e5f0',
-          200, '#92c5de',
-          300, '#4393c3',
-          400, '#2166ac',
-          500, '#053061'
+          0,
+          '#f7f7f7',
+          100,
+          '#d1e5f0',
+          200,
+          '#92c5de',
+          300,
+          '#4393c3',
+          400,
+          '#2166ac',
+          500,
+          '#053061'
         ],
         'fill-opacity': 0.8
       }
@@ -420,12 +491,18 @@ export const canyonLengthLayers: MapLayerConfig[] = [
           'interpolate',
           ['linear'],
           ['to-number', ['get', 'length_e_w']],
-          0, '#f7f7f7',
-          100, '#d1e5f0',
-          200, '#92c5de',
-          300, '#4393c3',
-          400, '#2166ac',
-          500, '#053061'
+          0,
+          '#f7f7f7',
+          100,
+          '#d1e5f0',
+          200,
+          '#92c5de',
+          300,
+          '#4393c3',
+          400,
+          '#2166ac',
+          500,
+          '#053061'
         ],
         'fill-opacity': 0.8
       }
@@ -452,12 +529,18 @@ export const canyonLengthLayers: MapLayerConfig[] = [
           'interpolate',
           ['linear'],
           ['to-number', ['get', 'primary_road_len']],
-          0, '#f7f7f7',
-          100, '#d1e5f0',
-          200, '#92c5de',
-          300, '#4393c3',
-          400, '#2166ac',
-          500, '#053061'
+          0,
+          '#f7f7f7',
+          100,
+          '#d1e5f0',
+          200,
+          '#92c5de',
+          300,
+          '#4393c3',
+          400,
+          '#2166ac',
+          500,
+          '#053061'
         ],
         'fill-opacity': 0.8
       }
@@ -484,12 +567,18 @@ export const canyonLengthLayers: MapLayerConfig[] = [
           'interpolate',
           ['linear'],
           ['to-number', ['get', 'secondary_road_len']],
-          0, '#f7f7f7',
-          100, '#d1e5f0',
-          200, '#92c5de',
-          300, '#4393c3',
-          400, '#2166ac',
-          500, '#053061'
+          0,
+          '#f7f7f7',
+          100,
+          '#d1e5f0',
+          200,
+          '#92c5de',
+          300,
+          '#4393c3',
+          400,
+          '#2166ac',
+          500,
+          '#053061'
         ],
         'fill-opacity': 0.8
       }
@@ -516,18 +605,24 @@ export const canyonLengthLayers: MapLayerConfig[] = [
           'interpolate',
           ['linear'],
           ['to-number', ['get', 'highway_len']],
-          0, '#f7f7f7',
-          100, '#d1e5f0',
-          200, '#92c5de',
-          300, '#4393c3',
-          400, '#2166ac',
-          500, '#053061'
+          0,
+          '#f7f7f7',
+          100,
+          '#d1e5f0',
+          200,
+          '#92c5de',
+          300,
+          '#4393c3',
+          400,
+          '#2166ac',
+          500,
+          '#053061'
         ],
         'fill-opacity': 0.8
       }
     } as LayerSpecification
   }
-];
+]
 
 export const localClimateZoneLayers: MapLayerConfig[] = [
   {
@@ -550,30 +645,47 @@ export const localClimateZoneLayers: MapLayerConfig[] = [
         'fill-color': [
           'match',
           ['get', 'lcz_typology'],
-          'LCZ1', '#8b0000', // Compact high-rise
-          'LCZ2', '#cd5c5c', // Compact midrise
-          'LCZ3', '#f4a460', // Compact low-rise
-          'LCZ4', '#daa520', // Open high-rise
-          'LCZ5', '#ffd700', // Open midrise
-          'LCZ6', '#ffff00', // Open low-rise
-          'LCZ7', '#c0c0c0', // Lightweight low-rise
-          'LCZ8', '#696969', // Large low-rise
-          'LCZ9', '#778899', // Sparsely built
-          'LCZ10', '#2f4f4f', // Heavy industry
-          'LCZA', '#228b22', // Dense trees
-          'LCZB', '#90ee90', // Scattered trees
-          'LCZC', '#adff2f', // Bush, scrub
-          'LCZD', '#7cfc00', // Low plants
-          'LCZE', '#000080', // Bare rock or paved
-          'LCZF', '#4169e1', // Bare soil or sand
-          'LCZG', '#0000ff', // Water
+          'LCZ1',
+          '#8b0000', // Compact high-rise
+          'LCZ2',
+          '#cd5c5c', // Compact midrise
+          'LCZ3',
+          '#f4a460', // Compact low-rise
+          'LCZ4',
+          '#daa520', // Open high-rise
+          'LCZ5',
+          '#ffd700', // Open midrise
+          'LCZ6',
+          '#ffff00', // Open low-rise
+          'LCZ7',
+          '#c0c0c0', // Lightweight low-rise
+          'LCZ8',
+          '#696969', // Large low-rise
+          'LCZ9',
+          '#778899', // Sparsely built
+          'LCZ10',
+          '#2f4f4f', // Heavy industry
+          'LCZA',
+          '#228b22', // Dense trees
+          'LCZB',
+          '#90ee90', // Scattered trees
+          'LCZC',
+          '#adff2f', // Bush, scrub
+          'LCZD',
+          '#7cfc00', // Low plants
+          'LCZE',
+          '#000080', // Bare rock or paved
+          'LCZF',
+          '#4169e1', // Bare soil or sand
+          'LCZG',
+          '#0000ff', // Water
           '#cccccc' // Default
         ],
         'fill-opacity': 0.8
       }
     } as LayerSpecification
   }
-];
+]
 
 export const irradianceLayers: MapLayerConfig[] = [
   {
@@ -597,15 +709,24 @@ export const irradianceLayers: MapLayerConfig[] = [
           'interpolate',
           ['linear'],
           ['to-number', ['get', 'irr_summer']],
-          0, '#ffffcc',
-          200, '#ffeda0',
-          400, '#fed976',
-          600, '#feb24c',
-          800, '#fd8d3c',
-          1000, '#fc4e2a',
-          1200, '#e31a1c',
-          1400, '#bd0026',
-          1600, '#800026'
+          0,
+          '#ffffcc',
+          200,
+          '#ffeda0',
+          400,
+          '#fed976',
+          600,
+          '#feb24c',
+          800,
+          '#fd8d3c',
+          1000,
+          '#fc4e2a',
+          1200,
+          '#e31a1c',
+          1400,
+          '#bd0026',
+          1600,
+          '#800026'
         ],
         'fill-opacity': 0.8
       }
@@ -632,21 +753,30 @@ export const irradianceLayers: MapLayerConfig[] = [
           'interpolate',
           ['linear'],
           ['to-number', ['get', 'irr_winter']],
-          0, '#f7fbff',
-          50, '#deebf7',
-          100, '#c6dbef',
-          150, '#9ecae1',
-          200, '#6baed6',
-          250, '#4292c6',
-          300, '#2171b5',
-          350, '#08519c',
-          400, '#08306b'
+          0,
+          '#f7fbff',
+          50,
+          '#deebf7',
+          100,
+          '#c6dbef',
+          150,
+          '#9ecae1',
+          200,
+          '#6baed6',
+          250,
+          '#4292c6',
+          300,
+          '#2171b5',
+          350,
+          '#08519c',
+          400,
+          '#08306b'
         ],
         'fill-opacity': 0.8
       }
     } as LayerSpecification
   }
-];
+]
 
 export const landSurfaceTemperatureLayers: MapLayerConfig[] = [
   {
@@ -671,23 +801,34 @@ export const landSurfaceTemperatureLayers: MapLayerConfig[] = [
           'interpolate',
           ['linear'],
           ['to-number', ['get', 'lst_measurement']],
-          10, '#313695',
-          15, '#4575b4',
-          20, '#74add1',
-          25, '#abd9e9',
-          30, '#e0f3f8',
-          35, '#ffffbf',
-          40, '#fee090',
-          45, '#fdae61',
-          50, '#f46d43',
-          55, '#d73027',
-          60, '#a50026'
+          10,
+          '#313695',
+          15,
+          '#4575b4',
+          20,
+          '#74add1',
+          25,
+          '#abd9e9',
+          30,
+          '#e0f3f8',
+          35,
+          '#ffffbf',
+          40,
+          '#fee090',
+          45,
+          '#fdae61',
+          50,
+          '#f46d43',
+          55,
+          '#d73027',
+          60,
+          '#a50026'
         ],
         'fill-opacity': 0.8
       }
     } as LayerSpecification
   }
-];
+]
 
 /* ---------------------------------
  *  Layer-group configuration
@@ -696,8 +837,8 @@ export const layerGroups = [
   {
     id: 'urban_morphology',
     label: 'Urban morphology',
-    expanded: true,          // open by default (matches mock-up)
-    multiple: false,         // radio-button style
+    expanded: true, // open by default (matches mock-up)
+    multiple: false, // radio-button style
     layers: urbanMorphologyLayers
   },
   {
@@ -711,11 +852,8 @@ export const layerGroups = [
     id: 'canyon_network',
     label: 'Canyon network',
     expanded: false,
-    multiple: true,          // check-box style (lengths + intersections)
-    layers: [
-      ...canyonIntersectionLayers,
-      ...canyonLengthLayers
-    ]
+    multiple: true, // check-box style (lengths + intersections)
+    layers: [...canyonIntersectionLayers, ...canyonLengthLayers]
   },
   {
     id: 'local_climate_zones',
@@ -738,9 +876,7 @@ export const layerGroups = [
     multiple: false,
     layers: landSurfaceTemperatureLayers
   }
-];
-
-
+]
 
 export const mapConfig = {
   baseUrl: baseUrlOptions,
@@ -751,11 +887,9 @@ export const mapConfig = {
     ...canyonLengthLayers,
     ...localClimateZoneLayers,
     ...irradianceLayers,
-    ...landSurfaceTemperatureLayers,
+    ...landSurfaceTemperatureLayers
   ] as MapLayerConfig[]
 }
-
-
 
 // export const layerGroups = [
 //   {
