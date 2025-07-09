@@ -17,6 +17,6 @@ jobs:
       token: ${{ secrets.CD_TOKEN }}
     with:
       # Optional inputs can be passed here
-      ORG: ICE #.e.g epfl-cryos
-      REPO: citytherm # ex. lgb-trsc
-      build_context: '[ "./"]'
+      ORG: epfl-ice
+      REPO: citytherm
+      build_context: '["./frontend"]'

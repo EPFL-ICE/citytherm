@@ -1,6 +1,6 @@
 # citytherm
 
-0194 CityTherm  - Urban Climate Education (DRIL)
+0194 CityTherm - Urban Climate Education (DRIL)
 
 **Access the platform here:**
 
@@ -46,6 +46,27 @@ _Note: Update this section with your actual tech stack_
 - Docker
 
 ### Setup & Usage
+
+#### Node.js Version Management
+
+This project uses Node.js version 22 (LTS). To ensure you're using the correct version:
+
+**With nvm:**
+
+```bash
+nvm use
+```
+
+**With fnm:**
+
+```bash
+fnm use
+```
+
+**With nodenv:**
+The correct version will be automatically selected when you enter the project directory.
+
+#### Build Commands
 
 You can use Make with the following commands:
 
@@ -110,6 +131,7 @@ The following items from the original setup checklist have been automatically co
 ## Remaining Manual Tasks
 
 Please complete these tasks manually:
+
 - [ ] Check if you need all the labels: https://github.com/EPFL-ENAC/citytherm/labels
 - [ ] Create your first milestone: https://github.com/EPFL-ENAC/citytherm/milestones
 - [ ] Protect your branch if you're a pro user: https://github.com/EPFL-ENAC/citytherm/settings/branches

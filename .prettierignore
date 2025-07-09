@@ -9,13 +9,22 @@ npm-shrinkwrap.json
 # Makefiles
 Makefile
 *.mk
-
+# 
+*.github*
 # Shell scripts
 *.sh
+npm-shrinkwrap.json
 
 # Git files
 .git/
 .gitignore
+*.nvmrc
+*.node-version
+*.env
+*.vscode/
+*Dockerfile
+*LICENSE
+*nginx.conf
 
 # Prettier config files
 .prettierignore

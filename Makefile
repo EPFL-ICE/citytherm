@@ -16,7 +16,10 @@ install:
 	npm install
 	@echo "Installing git hooks with lefthook..."
 	npx lefthook install
+	@echo "Installing frontend dependencies..."
+	npm install --prefix frontend
 	@echo "Setup complete!"
+	
 
 # Clean dependencies
 clean:
