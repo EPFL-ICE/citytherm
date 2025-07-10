@@ -13,19 +13,20 @@ export const urbanMorphologyLayers: MapLayerConfig[] = [
     source: {
       type: 'vector',
       attribution: 'CityTherm Urban Morphology Data',
-      url: `pmtiles://${baseUrl}/urban_morphology.pmtiles`,
+      // url: `pmtiles://${baseUrl}/urban_morphology.pmtiles`,
+      url: `pmtiles://${baseUrl}/geneva_grid_data.pmtiles`,
       minzoom: 5
     } as VectorSourceSpecification,
     layer: {
       id: 'building_height-layer',
       type: 'fill',
       source: 'building_height',
-      'source-layer': 'urban_morphology',
+      'source-layer': 'geneva_grid_data_reprojected',
       paint: {
         'fill-color': [
           'interpolate',
           ['linear'],
-          ['to-number', ['get', 'building_height']],
+          ['to-number', ['get', 'Building height']],
           0,
           '#f7f7f7',
           10,
@@ -51,26 +52,26 @@ export const urbanMorphologyLayers: MapLayerConfig[] = [
     source: {
       type: 'vector',
       attribution: 'CityTherm Urban Morphology Data',
-      url: `pmtiles://${baseUrl}/urban_morphology.pmtiles`,
+      url: `pmtiles://${baseUrl}/geneva_grid_data.pmtiles`,
       minzoom: 5
     } as VectorSourceSpecification,
     layer: {
       id: 'sky_view_factor-layer',
       type: 'fill',
       source: 'sky_view_factor',
-      'source-layer': 'urban_morphology',
+      'source-layer': 'geneva_grid_data_reprojected',
       paint: {
         'fill-color': [
           'interpolate',
           ['linear'],
-          ['to-number', ['get', 'sky_view_factor']],
-          0,
-          '#053061',
-          0.2,
-          '#2166ac',
+          ['to-number', ['get', 'Sky view factor']],
           0.4,
-          '#4393c3',
+          '#053061',
+          0.5,
+          '#2166ac',
           0.6,
+          '#4393c3',
+          0.7,
           '#92c5de',
           0.8,
           '#d1e5f0',
@@ -83,36 +84,36 @@ export const urbanMorphologyLayers: MapLayerConfig[] = [
   },
   {
     id: 'frontal_area',
-    label: 'Frontal area [m²]',
-    unit: 'm²',
-    info: 'Total frontal area of buildings facing the wind',
+    label: 'Frontal area index',
+    unit: 'ratio',
+    info: 'Frontal area index of buildings facing the wind',
     source: {
       type: 'vector',
       attribution: 'CityTherm Urban Morphology Data',
-      url: `pmtiles://${baseUrl}/urban_morphology.pmtiles`,
+      url: `pmtiles://${baseUrl}/geneva_grid_data.pmtiles`,
       minzoom: 5
     } as VectorSourceSpecification,
     layer: {
       id: 'frontal_area-layer',
       type: 'fill',
       source: 'frontal_area',
-      'source-layer': 'urban_morphology',
+      'source-layer': 'geneva_grid_data_reprojected',
       paint: {
         'fill-color': [
           'interpolate',
           ['linear'],
-          ['to-number', ['get', 'frontal_area']],
+          ['to-number', ['get', 'Frontal area index']],
           0,
           '#f7f7f7',
-          500,
+          0.1,
           '#d1e5f0',
-          1000,
+          0.2,
           '#92c5de',
-          1500,
+          0.3,
           '#4393c3',
-          2000,
+          0.4,
           '#2166ac',
-          2500,
+          0.6,
           '#053061'
         ],
         'fill-opacity': 0.8
@@ -127,30 +128,30 @@ export const urbanMorphologyLayers: MapLayerConfig[] = [
     source: {
       type: 'vector',
       attribution: 'CityTherm Urban Morphology Data',
-      url: `pmtiles://${baseUrl}/urban_morphology.pmtiles`,
+      url: `pmtiles://${baseUrl}/geneva_grid_data.pmtiles`,
       minzoom: 5
     } as VectorSourceSpecification,
     layer: {
       id: 'aspect_ratio-layer',
       type: 'fill',
       source: 'aspect_ratio',
-      'source-layer': 'urban_morphology',
+      'source-layer': 'geneva_grid_data_reprojected',
       paint: {
         'fill-color': [
           'interpolate',
           ['linear'],
-          ['to-number', ['get', 'aspect_ratio']],
+          ['to-number', ['get', 'Aspect ratio']],
           0,
           '#f7f7f7',
-          0.5,
+          0.2,
           '#d1e5f0',
-          1,
+          0.4,
           '#92c5de',
-          1.5,
+          0.6,
           '#4393c3',
-          2,
+          0.8,
           '#2166ac',
-          3,
+          1.356,
           '#053061'
         ],
         'fill-opacity': 0.8
@@ -168,19 +169,19 @@ export const landCoverFractionLayers: MapLayerConfig[] = [
     source: {
       type: 'vector',
       attribution: 'CityTherm Land Cover Data',
-      url: `pmtiles://${baseUrl}/land_cover.pmtiles`,
+      url: `pmtiles://${baseUrl}/geneva_grid_data.pmtiles`,
       minzoom: 5
     } as VectorSourceSpecification,
     layer: {
       id: 'water_fraction-layer',
       type: 'fill',
       source: 'water_fraction',
-      'source-layer': 'land_cover',
+      'source-layer': 'geneva_grid_data_reprojected',
       paint: {
         'fill-color': [
           'interpolate',
           ['linear'],
-          ['to-number', ['get', 'water_fraction']],
+          ['to-number', ['get', 'Water cover fraction']],
           0,
           '#f7f7f7',
           0.2,
@@ -206,19 +207,19 @@ export const landCoverFractionLayers: MapLayerConfig[] = [
     source: {
       type: 'vector',
       attribution: 'CityTherm Land Cover Data',
-      url: `pmtiles://${baseUrl}/land_cover.pmtiles`,
+      url: `pmtiles://${baseUrl}/geneva_grid_data.pmtiles`,
       minzoom: 5
     } as VectorSourceSpecification,
     layer: {
       id: 'impervious_fraction-layer',
       type: 'fill',
       source: 'impervious_fraction',
-      'source-layer': 'land_cover',
+      'source-layer': 'geneva_grid_data_reprojected',
       paint: {
         'fill-color': [
           'interpolate',
           ['linear'],
-          ['to-number', ['get', 'impervious_fraction']],
+          ['to-number', ['get', 'Impervious surface cover fraction']],
           0,
           '#f7f7f7',
           0.2,
@@ -229,7 +230,7 @@ export const landCoverFractionLayers: MapLayerConfig[] = [
           '#636363',
           0.8,
           '#252525',
-          1,
+          0.796,
           '#000000'
         ],
         'fill-opacity': 0.8
@@ -244,30 +245,30 @@ export const landCoverFractionLayers: MapLayerConfig[] = [
     source: {
       type: 'vector',
       attribution: 'CityTherm Land Cover Data',
-      url: `pmtiles://${baseUrl}/land_cover.pmtiles`,
+      url: `pmtiles://${baseUrl}/geneva_grid_data.pmtiles`,
       minzoom: 5
     } as VectorSourceSpecification,
     layer: {
       id: 'building_fraction-layer',
       type: 'fill',
       source: 'building_fraction',
-      'source-layer': 'land_cover',
+      'source-layer': 'geneva_grid_data_reprojected',
       paint: {
         'fill-color': [
           'interpolate',
           ['linear'],
-          ['to-number', ['get', 'building_fraction']],
+          ['to-number', ['get', 'Building cover fraction']],
           0,
           '#f7f7f7',
-          0.2,
+          0.1,
           '#fcae91',
-          0.4,
+          0.2,
           '#fb6a4a',
-          0.6,
+          0.3,
           '#de2d26',
-          0.8,
+          0.4,
           '#a50f15',
-          1,
+          0.62,
           '#67000d'
         ],
         'fill-opacity': 0.8
@@ -282,19 +283,19 @@ export const landCoverFractionLayers: MapLayerConfig[] = [
     source: {
       type: 'vector',
       attribution: 'CityTherm Land Cover Data',
-      url: `pmtiles://${baseUrl}/land_cover.pmtiles`,
+      url: `pmtiles://${baseUrl}/geneva_grid_data.pmtiles`,
       minzoom: 5
     } as VectorSourceSpecification,
     layer: {
       id: 'pervious_fraction-layer',
       type: 'fill',
       source: 'pervious_fraction',
-      'source-layer': 'land_cover',
+      'source-layer': 'geneva_grid_data_reprojected',
       paint: {
         'fill-color': [
           'interpolate',
           ['linear'],
-          ['to-number', ['get', 'pervious_fraction']],
+          ['to-number', ['get', 'Pervious surface cover fraction']],
           0,
           '#f7f7f7',
           0.2,
@@ -305,7 +306,7 @@ export const landCoverFractionLayers: MapLayerConfig[] = [
           '#41b6c4',
           0.8,
           '#2c7fb8',
-          1,
+          0.933,
           '#253494'
         ],
         'fill-opacity': 0.8
@@ -323,30 +324,30 @@ export const canyonIntersectionLayers: MapLayerConfig[] = [
     source: {
       type: 'vector',
       attribution: 'CityTherm Canyon Network Data',
-      url: `pmtiles://${baseUrl}/canyon_network.pmtiles`,
+      url: `pmtiles://${baseUrl}/geneva_grid_data.pmtiles`,
       minzoom: 5
     } as VectorSourceSpecification,
     layer: {
       id: 'intersections-layer',
       type: 'fill',
       source: 'intersections',
-      'source-layer': 'canyon_network',
+      'source-layer': 'geneva_grid_data_reprojected',
       paint: {
         'fill-color': [
           'interpolate',
           ['linear'],
-          ['to-number', ['get', 'intersections']],
+          ['to-number', ['get', 'Intersections']],
           0,
           '#f7f7f7',
-          2,
+          5,
           '#d1e5f0',
-          4,
-          '#92c5de',
-          6,
-          '#4393c3',
-          8,
-          '#2166ac',
           10,
+          '#92c5de',
+          15,
+          '#4393c3',
+          25,
+          '#2166ac',
+          35,
           '#053061'
         ],
         'fill-opacity': 0.8
@@ -364,30 +365,30 @@ export const canyonLengthLayers: MapLayerConfig[] = [
     source: {
       type: 'vector',
       attribution: 'CityTherm Canyon Network Data',
-      url: `pmtiles://${baseUrl}/canyon_network.pmtiles`,
+      url: `pmtiles://${baseUrl}/geneva_grid_data.pmtiles`,
       minzoom: 5
     } as VectorSourceSpecification,
     layer: {
       id: 'length_ns-layer',
       type: 'fill',
       source: 'length_ns',
-      'source-layer': 'canyon_network',
+      'source-layer': 'geneva_grid_data_reprojected',
       paint: {
         'fill-color': [
           'interpolate',
           ['linear'],
-          ['to-number', ['get', 'length_ns']],
+          ['to-number', ['get', 'Length N-S']],
           0,
           '#f7f7f7',
-          100,
-          '#d1e5f0',
           200,
-          '#92c5de',
-          300,
-          '#4393c3',
+          '#d1e5f0',
           400,
+          '#92c5de',
+          600,
+          '#4393c3',
+          700,
           '#2166ac',
-          500,
+          852.78,
           '#053061'
         ],
         'fill-opacity': 0.8
@@ -402,30 +403,30 @@ export const canyonLengthLayers: MapLayerConfig[] = [
     source: {
       type: 'vector',
       attribution: 'CityTherm Canyon Network Data',
-      url: `pmtiles://${baseUrl}/canyon_network.pmtiles`,
+      url: `pmtiles://${baseUrl}/geneva_grid_data.pmtiles`,
       minzoom: 5
     } as VectorSourceSpecification,
     layer: {
       id: 'length_ne_sw-layer',
       type: 'fill',
       source: 'length_ne_sw',
-      'source-layer': 'canyon_network',
+      'source-layer': 'geneva_grid_data_reprojected',
       paint: {
         'fill-color': [
           'interpolate',
           ['linear'],
-          ['to-number', ['get', 'length_ne_sw']],
+          ['to-number', ['get', 'Length NE-SW']],
           0,
           '#f7f7f7',
-          100,
-          '#d1e5f0',
           200,
-          '#92c5de',
-          300,
-          '#4393c3',
+          '#d1e5f0',
           400,
+          '#92c5de',
+          600,
+          '#4393c3',
+          800,
           '#2166ac',
-          500,
+          1195.65,
           '#053061'
         ],
         'fill-opacity': 0.8
@@ -440,30 +441,30 @@ export const canyonLengthLayers: MapLayerConfig[] = [
     source: {
       type: 'vector',
       attribution: 'CityTherm Canyon Network Data',
-      url: `pmtiles://${baseUrl}/canyon_network.pmtiles`,
+      url: `pmtiles://${baseUrl}/geneva_grid_data.pmtiles`,
       minzoom: 5
     } as VectorSourceSpecification,
     layer: {
       id: 'length_se_nw-layer',
       type: 'fill',
       source: 'length_se_nw',
-      'source-layer': 'canyon_network',
+      'source-layer': 'geneva_grid_data_reprojected',
       paint: {
         'fill-color': [
           'interpolate',
           ['linear'],
-          ['to-number', ['get', 'length_se_nw']],
+          ['to-number', ['get', 'Length SE-NW']],
           0,
           '#f7f7f7',
-          100,
-          '#d1e5f0',
           200,
-          '#92c5de',
-          300,
-          '#4393c3',
+          '#d1e5f0',
           400,
+          '#92c5de',
+          600,
+          '#4393c3',
+          800,
           '#2166ac',
-          500,
+          978.55,
           '#053061'
         ],
         'fill-opacity': 0.8
@@ -478,30 +479,30 @@ export const canyonLengthLayers: MapLayerConfig[] = [
     source: {
       type: 'vector',
       attribution: 'CityTherm Canyon Network Data',
-      url: `pmtiles://${baseUrl}/canyon_network.pmtiles`,
+      url: `pmtiles://${baseUrl}/geneva_grid_data.pmtiles`,
       minzoom: 5
     } as VectorSourceSpecification,
     layer: {
       id: 'length_e_w-layer',
       type: 'fill',
       source: 'length_e_w',
-      'source-layer': 'canyon_network',
+      'source-layer': 'geneva_grid_data_reprojected',
       paint: {
         'fill-color': [
           'interpolate',
           ['linear'],
-          ['to-number', ['get', 'length_e_w']],
+          ['to-number', ['get', 'Length E-W']],
           0,
           '#f7f7f7',
-          100,
-          '#d1e5f0',
           200,
-          '#92c5de',
-          300,
-          '#4393c3',
+          '#d1e5f0',
           400,
+          '#92c5de',
+          600,
+          '#4393c3',
+          800,
           '#2166ac',
-          500,
+          1068.08,
           '#053061'
         ],
         'fill-opacity': 0.8
@@ -516,30 +517,30 @@ export const canyonLengthLayers: MapLayerConfig[] = [
     source: {
       type: 'vector',
       attribution: 'CityTherm Canyon Network Data',
-      url: `pmtiles://${baseUrl}/canyon_network.pmtiles`,
+      url: `pmtiles://${baseUrl}/geneva_grid_data.pmtiles`,
       minzoom: 5
     } as VectorSourceSpecification,
     layer: {
       id: 'primary_road_len-layer',
       type: 'fill',
       source: 'primary_road_len',
-      'source-layer': 'canyon_network',
+      'source-layer': 'geneva_grid_data_reprojected',
       paint: {
         'fill-color': [
           'interpolate',
           ['linear'],
-          ['to-number', ['get', 'primary_road_len']],
+          ['to-number', ['get', 'Length primary road']],
           0,
           '#f7f7f7',
-          100,
-          '#d1e5f0',
-          200,
-          '#92c5de',
-          300,
-          '#4393c3',
           400,
+          '#d1e5f0',
+          800,
+          '#92c5de',
+          1200,
+          '#4393c3',
+          1600,
           '#2166ac',
-          500,
+          2005.83,
           '#053061'
         ],
         'fill-opacity': 0.8
@@ -554,30 +555,30 @@ export const canyonLengthLayers: MapLayerConfig[] = [
     source: {
       type: 'vector',
       attribution: 'CityTherm Canyon Network Data',
-      url: `pmtiles://${baseUrl}/canyon_network.pmtiles`,
+      url: `pmtiles://${baseUrl}/geneva_grid_data.pmtiles`,
       minzoom: 5
     } as VectorSourceSpecification,
     layer: {
       id: 'secondary_road_len-layer',
       type: 'fill',
       source: 'secondary_road_len',
-      'source-layer': 'canyon_network',
+      'source-layer': 'geneva_grid_data_reprojected',
       paint: {
         'fill-color': [
           'interpolate',
           ['linear'],
-          ['to-number', ['get', 'secondary_road_len']],
+          ['to-number', ['get', 'Length secondary road']],
           0,
           '#f7f7f7',
-          100,
-          '#d1e5f0',
-          200,
-          '#92c5de',
-          300,
-          '#4393c3',
           400,
+          '#d1e5f0',
+          800,
+          '#92c5de',
+          1200,
+          '#4393c3',
+          1600,
           '#2166ac',
-          500,
+          2139.23,
           '#053061'
         ],
         'fill-opacity': 0.8
@@ -592,30 +593,22 @@ export const canyonLengthLayers: MapLayerConfig[] = [
     source: {
       type: 'vector',
       attribution: 'CityTherm Canyon Network Data',
-      url: `pmtiles://${baseUrl}/canyon_network.pmtiles`,
+      url: `pmtiles://${baseUrl}/geneva_grid_data.pmtiles`,
       minzoom: 5
     } as VectorSourceSpecification,
     layer: {
       id: 'highway_len-layer',
       type: 'fill',
       source: 'highway_len',
-      'source-layer': 'canyon_network',
+      'source-layer': 'geneva_grid_data_reprojected',
       paint: {
         'fill-color': [
           'interpolate',
           ['linear'],
-          ['to-number', ['get', 'highway_len']],
+          ['to-number', ['get', 'Length highway']],
           0,
           '#f7f7f7',
-          100,
-          '#d1e5f0',
-          200,
-          '#92c5de',
-          300,
-          '#4393c3',
-          400,
-          '#2166ac',
-          500,
+          0,
           '#053061'
         ],
         'fill-opacity': 0.8
@@ -696,36 +689,36 @@ export const irradianceLayers: MapLayerConfig[] = [
     source: {
       type: 'vector',
       attribution: 'CityTherm Irradiance Data',
-      url: `pmtiles://${baseUrl}/irradiance.pmtiles`,
+      url: `pmtiles://${baseUrl}/geneva_grid_data.pmtiles`,
       minzoom: 5
     } as VectorSourceSpecification,
     layer: {
       id: 'irr_summer-layer',
       type: 'fill',
       source: 'irr_summer',
-      'source-layer': 'irradiance',
+      'source-layer': 'geneva_grid_data_reprojected',
       paint: {
         'fill-color': [
           'interpolate',
           ['linear'],
-          ['to-number', ['get', 'irr_summer']],
-          0,
+          ['to-number', ['get', 'solar_summer']],
+          700,
           '#ffffcc',
-          200,
+          750,
           '#ffeda0',
-          400,
-          '#fed976',
-          600,
-          '#feb24c',
           800,
+          '#fed976',
+          850,
+          '#feb24c',
+          900,
           '#fd8d3c',
-          1000,
+          950,
           '#fc4e2a',
-          1200,
+          1000,
           '#e31a1c',
-          1400,
+          1050,
           '#bd0026',
-          1600,
+          1075,
           '#800026'
         ],
         'fill-opacity': 0.8
@@ -740,36 +733,36 @@ export const irradianceLayers: MapLayerConfig[] = [
     source: {
       type: 'vector',
       attribution: 'CityTherm Irradiance Data',
-      url: `pmtiles://${baseUrl}/irradiance.pmtiles`,
+      url: `pmtiles://${baseUrl}/geneva_grid_data.pmtiles`,
       minzoom: 5
     } as VectorSourceSpecification,
     layer: {
       id: 'irr_winter-layer',
       type: 'fill',
       source: 'irr_winter',
-      'source-layer': 'irradiance',
+      'source-layer': 'geneva_grid_data_reprojected',
       paint: {
         'fill-color': [
           'interpolate',
           ['linear'],
-          ['to-number', ['get', 'irr_winter']],
-          0,
+          ['to-number', ['get', 'solar_winter_2']],
+          160,
           '#f7fbff',
-          50,
+          180,
           '#deebf7',
-          100,
-          '#c6dbef',
-          150,
-          '#9ecae1',
           200,
+          '#c6dbef',
+          220,
+          '#9ecae1',
+          240,
           '#6baed6',
-          250,
+          260,
           '#4292c6',
-          300,
+          280,
           '#2171b5',
-          350,
+          320,
           '#08519c',
-          400,
+          345,
           '#08306b'
         ],
         'fill-opacity': 0.8
@@ -890,38 +883,3 @@ export const mapConfig = {
     ...landSurfaceTemperatureLayers
   ] as MapLayerConfig[]
 }
-
-// export const layerGroups = [
-//   {
-//     id: 'sp0_migration',
-//     label: 'SP0 Migration',
-//     expanded: false,
-//     multiple: false,
-//     layers: sp0MigrationLayers
-//   },
-//   {
-//     id: 'sp2_mobility',
-//     label: 'SP2 Mobility',
-//     expanded: false,
-//     multiple: false,
-//     layers: sp2MobilityLayers
-//   },
-//   {
-//     id: 'sp3_nature',
-//     label: 'SP3 Nature',
-//     expanded: false,
-//     multiple: false,
-//     layers: sp3NatureLayers
-//   },
-//   { id: 'sp4_waste', label: 'SP4 Waste', expanded: false, multiple: true, layers: sp4WasteLayers },
-//   {
-//     id: 'sp6_materials',
-//     label: 'SP6 Materials',
-//     expanded: false,
-//     multiple: false,
-//     layers: sp6MaterialsLayers
-//   },
-//   { id: 'sp7', label: 'SP7 Goods', expanded: false, multiple: false, layers: sp7VehicleLayers },
-//   ...correlationLayerGroups
-//   // Add other groups as needed
-// ]
