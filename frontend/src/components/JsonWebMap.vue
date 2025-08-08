@@ -104,7 +104,7 @@ watch(
             density="comfortable"
             hide-details
             variant="outlined"
-            style="max-width:140px"
+            style="max-width: 140px"
           />
           <v-select
             v-model="cityStore.city"
@@ -115,7 +115,7 @@ watch(
             density="comfortable"
             hide-details
             variant="outlined"
-            style="max-width:140px"
+            style="max-width: 140px"
           />
         </div>
       </v-col>
