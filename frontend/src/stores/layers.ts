@@ -5,7 +5,7 @@ import { useCityStore } from '@/stores/city'
 
 export const useLayersStore = defineStore('layers', () => {
   const cityStore = useCityStore()
-  
+
   // Store the layer groups from config, reactively based on current city
   const layerGroups = computed(() => getLayerGroups(cityStore.city))
 
@@ -23,11 +23,17 @@ export const useLayersStore = defineStore('layers', () => {
 
   // Expanded state for each group - use a watch to update when city changes
   const expandedGroups = ref<Record<string, boolean>>({})
-  
+
   // Initialize expanded groups when layerGroups changes
-  watch(layerGroups, (newGroups) => {
-    expandedGroups.value = Object.fromEntries(newGroups.map((group) => [group.id, !!group.expanded]))
-  }, { immediate: true })
+  watch(
+    layerGroups,
+    (newGroups) => {
+      expandedGroups.value = Object.fromEntries(
+        newGroups.map((group) => [group.id, !!group.expanded])
+      )
+    },
+    { immediate: true }
+  )
 
   // Flatten all layers for internal use
   const possibleLayers = computed(() => {

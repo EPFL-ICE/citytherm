@@ -287,10 +287,10 @@ watch(
   () => cityStore.city,
   () => {
     if (!map.value || !hasLoaded.value) return
-    
+
     // Get the new configuration for the selected city
     const mapConfig = getMapConfig(cityStore.city)
-    
+
     // Update sources for all grid-based layers
     mapConfig.layers.forEach((layerConfig) => {
       const src = layerConfig.source as any
