@@ -2,24 +2,22 @@
 import MapLibreMap from '@/components/MapLibreMap.vue'
 import { useTheme } from 'vuetify'
 
-import type { Parameters } from '@/utils/jsonWebMap'
-import { ref, shallowRef, watch } from 'vue'
+import { ref, shallowRef, watch, computed } from 'vue'
 import LegendMap from '@/components/LegendMap.vue'
 import LayerGroups from '@/components/LayerGroups.vue'
 import { useLayersStore } from '@/stores/layers'
+import { useCityStore } from '@/stores/city'
 
 const map = ref<InstanceType<typeof MapLibreMap>>()
 
-const parameters = shallowRef<Parameters>({})
-
-const center = {
-  lat: 46.52,
-  lng: 6.63
-}
-
-const zoom = 11
+const parameters = shallowRef({})
 
 const layersStore = useLayersStore()
+const cityStore = useCityStore()
+
+// derive center/zoom from city store
+const mapCenter = computed(() => cityStore.current.center)
+const mapZoom = computed(() => cityStore.current.zoom)
 
 // Sync layer visibility with the map when the selected layers change
 const syncAllLayersVisibility = (layersSelected: string[]) => {
@@ -50,6 +48,21 @@ watch(
   },
   { immediate: true }
 )
+
+// When city changes, swap pmtiles sources for grid-based layers
+watch(
+  () => cityStore.city,
+  () => {
+    const gridFile = cityStore.current.gridFile
+    layersStore.visibleLayers.forEach((layer) => {
+      const src = layer.source as any
+      if (src?.url && /pmtiles:\/\/.*\/(geneva|zurich)_grid_data\.pmtiles$/.test(src.url)) {
+        const newUrl = src.url.replace(/(geneva|zurich)_grid_data\.pmtiles$/, gridFile)
+        map.value?.changeSourceTilesUrl(layer.id, newUrl)
+      }
+    })
+  }
+)
 </script>
 
 <template>
@@ -66,12 +79,12 @@ watch(
       </v-col>
       <v-col id="map-time-input-container" xl="10" cols="9" class="py-0 pl-0 d-flex flex-column">
         <MapLibreMap
-          :key="theme"
+          :key="theme + cityStore.city"
           ref="map"
-          :center="center"
+          :center="mapCenter"
           :style-spec="theme"
           :popup-layer-ids="parameters.popupLayerIds"
-          :zoom="zoom"
+          :zoom="mapZoom"
           :max-zoom="20"
           :min-zoom="6"
           :callback-loaded="() => syncAllLayersVisibility(layersStore.selectedLayers)"
@@ -81,16 +94,28 @@ watch(
             <legend-map :layers="layersStore.visibleLayers"></legend-map>
           </template>
         </MapLibreMap>
-        <div class="theme-selector">
+        <div class="theme-selector d-flex gap-2">
           <v-select
             v-model="theme"
             :items="themes"
             item-value="value"
             item-title="label"
             label="Theme"
-            dense
+            density="comfortable"
             hide-details
-            outlined
+            variant="outlined"
+            style="max-width:140px"
+          />
+          <v-select
+            v-model="cityStore.city"
+            :items="cityStore.cities"
+            item-value="value"
+            item-title="label"
+            label="City"
+            density="comfortable"
+            hide-details
+            variant="outlined"
+            style="max-width:140px"
           />
         </div>
       </v-col>

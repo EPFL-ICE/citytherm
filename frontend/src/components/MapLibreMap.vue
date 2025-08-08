@@ -20,10 +20,10 @@ import type { LegendColor } from '@/utils/legendColor'
 import { onMounted, ref, watch, type Ref } from 'vue'
 
 import { Protocol } from 'pmtiles'
-import { useApiKeyStore } from '@/stores/apiKey'
+// import { useApiKeyStore } from '@/stores/apiKey'
 import { useLayersStore } from '@/stores/layers'
 
-const apiKeyStore = useApiKeyStore()
+// const apiKeyStore = useApiKeyStore()
 const layersStore = useLayersStore()
 
 const props = withDefaults(
@@ -138,27 +138,30 @@ function initMap() {
 
 onMounted(() => {
   addProtocol('pmtiles', protocol.tile)
-  if (apiKeyStore.apiKey) {
-    initMap()
-  }
+  initMap()
+  // if (apiKeyStore.apiKey) {
+  // }
 })
 
-watch(
-  () => apiKeyStore.apiKey,
-  () => {
-    initMap()
-  }
-)
+// watch(
+//   () => apiKeyStore.apiKey,
+//   () => {
+//     initMap()
+//   }
+// )
 
 const setFilter = (
   layerId: string,
   filter?: FilterSpecification | null | undefined,
   options?: StyleSetterOptions | undefined
 ) => {
+  // Guard: layer may not yet be added when watchers fire (immediate watch before map load)
+  if (!map.value || !map.value.getLayer(layerId)) return
   map.value?.setFilter(layerId, filter, options)
 }
 
 const getFilter = (layerId: string) => {
+  if (!map.value || !map.value.getLayer(layerId)) return undefined
   return map.value?.getFilter(layerId)
 }
 
@@ -168,6 +171,7 @@ const setPaintProperty = (
   value: any,
   options?: StyleSetterOptions | undefined
 ) => {
+  if (!map.value || !map.value.getLayer(layerId)) return
   map.value?.setPaintProperty(layerId, name, value, options)
 }
 
@@ -198,6 +202,7 @@ const getSourceTilesUrl = (sourceId: string) => {
   else return ''
 }
 const setLayerVisibility = (layerId: string, visibility: boolean) => {
+  if (!map.value || !map.value.getLayer(layerId)) return // Avoid errors if layer not yet present
   const layerLabel = mapConfig.layers.find((layer) => layer.layer.id === layerId)?.label
   if (visibility) mapEventManager.attachPopupListeners(layerId, layerLabel ?? '')
   else mapEventManager.detachPopupListeners(layerId)
@@ -205,7 +210,8 @@ const setLayerVisibility = (layerId: string, visibility: boolean) => {
 }
 
 const getPaintProperty = (layerId: string, name: string) => {
-  if (hasLoaded.value) return map.value?.getPaintProperty(layerId, name)
+  if (!hasLoaded.value || !map.value || !map.value.getLayer(layerId)) return undefined
+  return map.value?.getPaintProperty(layerId, name)
 }
 
 // Filter categorical layers by categories
