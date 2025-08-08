@@ -7,10 +7,11 @@ import LegendMap from '@/components/LegendMap.vue'
 import LayerGroups from '@/components/LayerGroups.vue'
 import { useLayersStore } from '@/stores/layers'
 import { useCityStore } from '@/stores/city'
+import type { Parameters } from '@/utils/jsonWebMap'
 
 const map = ref<InstanceType<typeof MapLibreMap>>()
 
-const parameters = shallowRef({})
+const parameters = shallowRef<Parameters>({})
 
 const layersStore = useLayersStore()
 const cityStore = useCityStore()
