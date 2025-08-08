@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import 'maplibre-gl/dist/maplibre-gl.css'
 import LoadingCircle from '@/components/LoadingCircle.vue'
-import { mapConfig } from '@/config/mapConfig'
+import { getMapConfig } from '@/config/mapConfig'
 import { useMapEvents } from '@/composables/useMapEvents'
 
 import {
@@ -22,9 +22,11 @@ import { onMounted, ref, watch, type Ref } from 'vue'
 import { Protocol } from 'pmtiles'
 // import { useApiKeyStore } from '@/stores/apiKey'
 import { useLayersStore } from '@/stores/layers'
+import { useCityStore } from '@/stores/city'
 
 // const apiKeyStore = useApiKeyStore()
 const layersStore = useLayersStore()
+const cityStore = useCityStore()
 
 const props = withDefaults(
   defineProps<{
@@ -100,6 +102,7 @@ function initMap() {
     map.value.resize()
 
     // Add all sources dynamically
+    const mapConfig = getMapConfig(cityStore.city)
     Object.entries(mapConfig.layers).forEach(([, { id, source, layer }]) => {
       map.value?.addSource(id, source)
       map.value?.addLayer(layer)
@@ -203,6 +206,7 @@ const getSourceTilesUrl = (sourceId: string) => {
 }
 const setLayerVisibility = (layerId: string, visibility: boolean) => {
   if (!map.value || !map.value.getLayer(layerId)) return // Avoid errors if layer not yet present
+  const mapConfig = getMapConfig(cityStore.city)
   const layerLabel = mapConfig.layers.find((layer) => layer.layer.id === layerId)?.label
   if (visibility) mapEventManager.attachPopupListeners(layerId, layerLabel ?? '')
   else mapEventManager.detachPopupListeners(layerId)
@@ -275,6 +279,25 @@ watch(
     } else if (had3DLayer && !has3DLayer) {
       map.value?.easeTo({ pitch: 0, center: map.value?.getCenter() })
     }
+  }
+)
+
+// Watch for city changes and reload map sources
+watch(
+  () => cityStore.city,
+  () => {
+    if (!map.value || !hasLoaded.value) return
+    
+    // Get the new configuration for the selected city
+    const mapConfig = getMapConfig(cityStore.city)
+    
+    // Update sources for all grid-based layers
+    mapConfig.layers.forEach((layerConfig) => {
+      const src = layerConfig.source as any
+      if (src?.url && /pmtiles:\/\/.*\/(geneva|zurich)_grid_data\.pmtiles$/.test(src.url)) {
+        map.value?.getSource(layerConfig.id)?.setUrl(src.url)
+      }
+    })
   }
 )
 

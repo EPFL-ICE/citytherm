@@ -49,21 +49,6 @@ watch(
   },
   { immediate: true }
 )
-
-// When city changes, swap pmtiles sources for grid-based layers
-watch(
-  () => cityStore.city,
-  () => {
-    const gridFile = cityStore.current.gridFile
-    layersStore.visibleLayers.forEach((layer) => {
-      const src = layer.source as any
-      if (src?.url && /pmtiles:\/\/.*\/(geneva|zurich)_grid_data\.pmtiles$/.test(src.url)) {
-        const newUrl = src.url.replace(/(geneva|zurich)_grid_data\.pmtiles$/, gridFile)
-        map.value?.changeSourceTilesUrl(layer.id, newUrl)
-      }
-    })
-  }
-)
 </script>
 
 <template>

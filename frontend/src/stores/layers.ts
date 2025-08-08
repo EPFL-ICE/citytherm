@@ -1,18 +1,13 @@
-import { layerGroups as configLayerGroups, mapConfig } from '@/config/mapConfig'
+import { getLayerGroups, getMapConfig } from '@/config/mapConfig'
 import { defineStore } from 'pinia'
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
+import { useCityStore } from '@/stores/city'
 
 export const useLayersStore = defineStore('layers', () => {
-  // Store the layer groups from config
-  const layerGroups = ref<
-    {
-      id: string
-      label: string
-      expanded: boolean
-      multiple: boolean
-      layers: any[]
-    }[]
-  >(configLayerGroups)
+  const cityStore = useCityStore()
+  
+  // Store the layer groups from config, reactively based on current city
+  const layerGroups = computed(() => getLayerGroups(cityStore.city))
 
   const sp0Period = ref<string>('2020-2023')
 
@@ -26,10 +21,13 @@ export const useLayersStore = defineStore('layers', () => {
     filteredCategories.value[layerId][variable] = categories
   }
 
-  // Expanded state for each group
-  const expandedGroups = ref<Record<string, boolean>>(
-    Object.fromEntries(layerGroups.value.map((group) => [group.id, !!group.expanded]))
-  )
+  // Expanded state for each group - use a watch to update when city changes
+  const expandedGroups = ref<Record<string, boolean>>({})
+  
+  // Initialize expanded groups when layerGroups changes
+  watch(layerGroups, (newGroups) => {
+    expandedGroups.value = Object.fromEntries(newGroups.map((group) => [group.id, !!group.expanded]))
+  }, { immediate: true })
 
   // Flatten all layers for internal use
   const possibleLayers = computed(() => {
@@ -38,7 +36,7 @@ export const useLayersStore = defineStore('layers', () => {
         id: layer.layer.id, // Extract the layer ID correctly
         label: layer.label,
         info: layer.info,
-        attribution: layer.source.attribution,
+        attribution: (layer.source as any).attribution,
         groupId: group.id
       }))
     )
@@ -46,6 +44,7 @@ export const useLayersStore = defineStore('layers', () => {
 
   // Get visible layer configurations
   const visibleLayers = computed(() => {
+    const mapConfig = getMapConfig(cityStore.city)
     return mapConfig.layers.filter((layer) => selectedLayers.value.includes(layer.layer.id))
   })
 
