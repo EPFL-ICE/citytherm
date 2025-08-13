@@ -9,15 +9,5 @@ export default createVuetify({
     sets: {
       mdi
     }
-  },
-  theme: {
-    defaultTheme: 'dark',
-    themes: {
-      dark: {
-        colors: {
-          surface: '#121212'
-        }
-      }
-    }
   }
 })

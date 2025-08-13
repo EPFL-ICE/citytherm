@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import MapLibreMap from '@/components/MapLibreMap.vue'
-import { useTheme } from 'vuetify'
 
 import { ref, shallowRef, watch, computed } from 'vue'
 import LegendMap from '@/components/LegendMap.vue'
@@ -33,22 +32,7 @@ const syncAllLayersVisibility = (layersSelected: string[]) => {
 
 watch(() => layersStore.selectedLayers, syncAllLayersVisibility, { immediate: true, deep: true })
 
-const vuetifyTheme = useTheme()
-
-const theme = ref('style/light.json') // Default theme
-const themes = [
-  { value: 'style/light.json', label: 'Light' },
-  { value: 'style/dark.json', label: 'Dark' },
-  { value: 'style/none.json', label: 'None' }
-]
-
-watch(
-  () => theme.value,
-  (newTheme) => {
-    vuetifyTheme.global.name.value = newTheme === 'style/light.json' ? 'light' : 'dark'
-  },
-  { immediate: true }
-)
+const style = ref('style/style.json') // Default style
 </script>
 
 <template>
@@ -65,10 +49,10 @@ watch(
       </v-col>
       <v-col id="map-time-input-container" xl="10" cols="9" class="py-0 pl-0 d-flex flex-column">
         <MapLibreMap
-          :key="theme + cityStore.city"
+          :key="style + cityStore.city"
           ref="map"
           :center="mapCenter"
-          :style-spec="theme"
+          :style-spec="style"
           :popup-layer-ids="parameters.popupLayerIds"
           :zoom="mapZoom"
           :max-zoom="20"
