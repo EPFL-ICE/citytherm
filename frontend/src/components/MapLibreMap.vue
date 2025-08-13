@@ -142,7 +142,6 @@ onMounted(() => {
   initMap()
 })
 
-
 const setFilter = (
   layerId: string,
   filter?: FilterSpecification | null | undefined,
