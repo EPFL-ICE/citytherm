@@ -14,13 +14,10 @@
       "tileSize": 256,
       "minzoom": 0,
       "maxzoom": 20,
-      "tiles": ["https://wmts.geo.admin.ch/1.0.0/ch.swisstopo.swissimage-product/default/current/3857/{z}/{x}/{y}.jpeg"]
+      "tiles": [
+        "https://wmts.geo.admin.ch/1.0.0/ch.swisstopo.swissimage-product/default/current/3857/{z}/{x}/{y}.jpeg"
+      ]
     }
   },
-  "layers": [
-    { "id": "swissimage",
-      "type": "raster",
-      "source": "swissimage"
-    }
-  ]
+  "layers": [{ "id": "default", "type": "raster", "source": "swissimage" }]
 }

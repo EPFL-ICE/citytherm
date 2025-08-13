@@ -64,18 +64,7 @@ const style = ref('style/style.json') // Default style
             <legend-map :layers="layersStore.visibleLayers"></legend-map>
           </template>
         </MapLibreMap>
-        <div class="theme-selector d-flex gap-2">
-          <v-select
-            v-model="theme"
-            :items="themes"
-            item-value="value"
-            item-title="label"
-            label="Theme"
-            density="comfortable"
-            hide-details
-            variant="outlined"
-            style="max-width: 140px"
-          />
+        <div class="map-controls d-flex gap-2">
           <v-select
             v-model="cityStore.city"
             :items="cityStore.cities"
@@ -106,7 +95,7 @@ const style = ref('style/style.json') // Default style
   height: 32px;
 }
 
-.theme-selector {
+.map-controls {
   position: absolute;
   top: 12px;
   right: 56px;
