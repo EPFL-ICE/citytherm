@@ -106,28 +106,22 @@ function initMap() {
       map.value?.addLayer(layer)
     })
 
-    function testTilesLoaded() {
-      if (map.value?.areTilesLoaded()) {
-        loading.value = false
-      } else {
-        loading.value = true
-        setTimeout(testTilesLoaded, 1000)
-      }
-    }
+function handleDataEvent() {
+  if (map.value?.areTilesLoaded()) {
+    loading.value = false
+  } else {
+    loading.value = true
+  }
+}
 
-    function handleDataEvent() {
-      if (map.value?.areTilesLoaded()) {
-        loading.value = false
-      } else {
-        testTilesLoaded()
-      }
-    }
+// Attach popup listeners to each layer using our composable
+// mapConfig.layers.forEach((layer) => attachPopupListeners(layer.layer.id, layer.label))
 
-    // Attach popup listeners to each layer using our composable
-    // mapConfig.layers.forEach((layer) => attachPopupListeners(layer.layer.id, layer.label))
-
-    mapInstance.on('sourcedata', handleDataEvent)
-    mapInstance.on('sourcedataloading', handleDataEvent)
+mapInstance.on('sourcedata', handleDataEvent)
+mapInstance.on('sourcedataloading', handleDataEvent)
+mapInstance.on('idle', () => {
+  loading.value = false
+})
 
     filterSP0Period(layersStore.sp0Period)
 
@@ -280,11 +274,18 @@ watch(
     // Get the new configuration for the selected city
     const mapConfig = getMapConfig(cityStore.city)
 
-    // Update sources for all grid-based layers
+    // Update sources for grid-based layers only if URLs actually changed
     mapConfig.layers.forEach((layerConfig) => {
       const src = layerConfig.source as any
       if (src?.url && /pmtiles:\/\/.*\/(geneva|zurich)_grid_data\.pmtiles$/.test(src.url)) {
-        map.value?.getSource(layerConfig.id)?.setUrl(src.url)
+        // Get the current source URL
+        const currentSource = map.value?.getSource(layerConfig.id) as VectorTileSource
+        const currentUrl = currentSource?.url
+        
+        // Only update if the URL has actually changed
+        if (currentUrl !== src.url) {
+          map.value?.getSource(layerConfig.id)?.setUrl(src.url)
+        }
       }
     })
   }
