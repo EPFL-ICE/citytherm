@@ -106,22 +106,22 @@ function initMap() {
       map.value?.addLayer(layer)
     })
 
-function handleDataEvent() {
-  if (map.value?.areTilesLoaded()) {
-    loading.value = false
-  } else {
-    loading.value = true
-  }
-}
+    function handleDataEvent() {
+      if (map.value?.areTilesLoaded()) {
+        loading.value = false
+      } else {
+        loading.value = true
+      }
+    }
 
-// Attach popup listeners to each layer using our composable
-// mapConfig.layers.forEach((layer) => attachPopupListeners(layer.layer.id, layer.label))
+    // Attach popup listeners to each layer using our composable
+    // mapConfig.layers.forEach((layer) => attachPopupListeners(layer.layer.id, layer.label))
 
-mapInstance.on('sourcedata', handleDataEvent)
-mapInstance.on('sourcedataloading', handleDataEvent)
-mapInstance.on('idle', () => {
-  loading.value = false
-})
+    mapInstance.on('sourcedata', handleDataEvent)
+    mapInstance.on('sourcedataloading', handleDataEvent)
+    mapInstance.on('idle', () => {
+      loading.value = false
+    })
 
     filterSP0Period(layersStore.sp0Period)
 
@@ -281,7 +281,7 @@ watch(
         // Get the current source URL
         const currentSource = map.value?.getSource(layerConfig.id) as VectorTileSource
         const currentUrl = currentSource?.url
-        
+
         // Only update if the URL has actually changed
         if (currentUrl !== src.url) {
           map.value?.getSource(layerConfig.id)?.setUrl(src.url)

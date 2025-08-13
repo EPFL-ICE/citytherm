@@ -71,11 +71,12 @@ export const useLayersStore = defineStore('layers', () => {
 
   // Toggle visibility of all layers in a group
   function toggleGroupVisibility(groupId: string) {
-    const groupLayers = possibleLayers.value.filter((layer) => layer.groupId === groupId)
-    const groupLayerIds = groupLayers.map((layer) => layer.id)
-
     // Check if any layer from this group is currently selected
     const isVisible = isGroupVisible(groupId)
+
+    // Create arrays needed for both branches
+    const groupLayers = possibleLayers.value.filter((layer) => layer.groupId === groupId)
+    const groupLayerIds = groupLayers.map((layer) => layer.id)
 
     if (isVisible) {
       // If visible, remove all layers from this group
