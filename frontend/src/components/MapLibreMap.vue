@@ -20,11 +20,9 @@ import type { LegendColor } from '@/utils/legendColor'
 import { onMounted, ref, watch, type Ref } from 'vue'
 
 import { Protocol } from 'pmtiles'
-// import { useApiKeyStore } from '@/stores/apiKey'
 import { useLayersStore } from '@/stores/layers'
 import { useCityStore } from '@/stores/city'
 
-// const apiKeyStore = useApiKeyStore()
 const layersStore = useLayersStore()
 const cityStore = useCityStore()
 
@@ -142,16 +140,8 @@ function initMap() {
 onMounted(() => {
   addProtocol('pmtiles', protocol.tile)
   initMap()
-  // if (apiKeyStore.apiKey) {
-  // }
 })
 
-// watch(
-//   () => apiKeyStore.apiKey,
-//   () => {
-//     initMap()
-//   }
-// )
 
 const setFilter = (
   layerId: string,
