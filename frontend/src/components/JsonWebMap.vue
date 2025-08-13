@@ -40,6 +40,18 @@ const style = ref('style/style.json') // Default style
     <v-row class="fill-height overflow-y-hidden">
       <v-col xl="2" cols="3" class="params-col border-e-md overflow-y-auto overflow-x-hidden">
         <v-card flat>
+          <v-card-text class="pa-2">
+            <v-select
+              v-model="cityStore.city"
+              :items="cityStore.cities"
+              item-value="value"
+              item-title="label"
+              label="City"
+              density="comfortable"
+              hide-details
+              variant="outlined"
+            />
+          </v-card-text>
           <v-card-title class="ml-2"> <h4 class="text-center mb-12 mt-6">LAYERS</h4> </v-card-title>
           <v-card-text class="d-flex flex-column">
             <!-- Use the new LayerGroups component -->
@@ -64,19 +76,6 @@ const style = ref('style/style.json') // Default style
             <legend-map :layers="layersStore.visibleLayers"></legend-map>
           </template>
         </MapLibreMap>
-        <div class="map-controls d-flex gap-2">
-          <v-select
-            v-model="cityStore.city"
-            :items="cityStore.cities"
-            item-value="value"
-            item-title="label"
-            label="City"
-            density="comfortable"
-            hide-details
-            variant="outlined"
-            style="max-width: 140px"
-          />
-        </div>
       </v-col>
     </v-row>
   </v-container>
@@ -93,12 +92,5 @@ const style = ref('style/style.json') // Default style
 
 .no-min-height {
   height: 32px;
-}
-
-.map-controls {
-  position: absolute;
-  top: 12px;
-  right: 56px;
-  z-index: 1000;
 }
 </style>
