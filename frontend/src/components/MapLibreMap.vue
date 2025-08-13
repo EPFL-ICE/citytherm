@@ -67,9 +67,18 @@ const protocol = new Protocol()
 // Use the map events composable
 const mapEventManager = useMapEvents(map as Ref<Map | undefined>)
 
-addProtocol('pmtiles', protocol.tile)
+// Add PMTiles protocol only once
+let protocolAdded = false
+function addPMTilesProtocol() {
+  if (!protocolAdded) {
+    addProtocol('pmtiles', protocol.tile)
+    protocolAdded = true
+  }
+}
 
 function initMap() {
+  // Add PMTiles protocol
+  addPMTilesProtocol()
   const newMap = new Map({
     container: container.value as HTMLDivElement,
     style: props.styleSpec,
@@ -102,8 +111,13 @@ function initMap() {
     // Add all sources dynamically
     const mapConfig = getMapConfig(cityStore.city)
     Object.entries(mapConfig.layers).forEach(([, { id, source, layer }]) => {
-      map.value?.addSource(id, source)
-      map.value?.addLayer(layer)
+      try {
+        map.value?.addSource(id, source)
+        map.value?.addLayer(layer)
+      } catch (e) {
+        // Ignore errors when adding sources/layers
+        console.warn(`Failed to add source/layer ${id}:`, e)
+      }
     })
 
     function handleDataEvent() {
@@ -132,7 +146,6 @@ function initMap() {
 }
 
 onMounted(() => {
-  addProtocol('pmtiles', protocol.tile)
   initMap()
 })
 
