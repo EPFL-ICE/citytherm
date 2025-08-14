@@ -9,8 +9,6 @@ export const useLayersStore = defineStore('layers', () => {
   // Store the layer groups from config, reactively based on current city
   const layerGroups = computed(() => getLayerGroups(cityStore.city))
 
-  const sp0Period = ref<string>('2020-2023')
-
   // Selected layer IDs
   const selectedLayers = ref<string[]>([])
 
@@ -71,11 +69,12 @@ export const useLayersStore = defineStore('layers', () => {
 
   // Toggle visibility of all layers in a group
   function toggleGroupVisibility(groupId: string) {
-    const groupLayers = possibleLayers.value.filter((layer) => layer.groupId === groupId)
-    const groupLayerIds = groupLayers.map((layer) => layer.id)
-
     // Check if any layer from this group is currently selected
     const isVisible = isGroupVisible(groupId)
+
+    // Create arrays needed for both branches
+    const groupLayers = possibleLayers.value.filter((layer) => layer.groupId === groupId)
+    const groupLayerIds = groupLayers.map((layer) => layer.id)
 
     if (isVisible) {
       // If visible, remove all layers from this group
@@ -120,7 +119,6 @@ export const useLayersStore = defineStore('layers', () => {
 
   return {
     layerGroups,
-    sp0Period,
     selectedLayers,
     filteredCategories,
     expandedGroups,

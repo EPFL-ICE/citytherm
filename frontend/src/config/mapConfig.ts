@@ -253,9 +253,9 @@ export const landCoverFractionLayers = (city: CityKey = 'geneva'): MapLayerConfi
             '#969696',
             0.6,
             '#636363',
-            0.8,
-            '#252525',
             0.796,
+            '#252525',
+            0.8,
             '#000000'
           ],
           'fill-opacity': 0.8
@@ -639,7 +639,7 @@ export const canyonLengthLayers = (city: CityKey = 'geneva'): MapLayerConfig[] =
             ['to-number', ['get', 'Length highway']],
             0,
             '#f7f7f7',
-            0,
+            1,
             '#053061'
           ],
           'fill-opacity': 0.8

@@ -18,15 +18,15 @@ import {
 } from 'maplibre-gl'
 import type { LegendColor } from '@/utils/legendColor'
 import { onMounted, ref, watch, type Ref } from 'vue'
+import { useFeatureSelections } from '@/stores/useFeatureSelections'
 
 import { Protocol } from 'pmtiles'
-// import { useApiKeyStore } from '@/stores/apiKey'
 import { useLayersStore } from '@/stores/layers'
 import { useCityStore } from '@/stores/city'
 
-// const apiKeyStore = useApiKeyStore()
 const layersStore = useLayersStore()
 const cityStore = useCityStore()
+const featureSelections = useFeatureSelections()
 
 const props = withDefaults(
   defineProps<{
@@ -69,9 +69,208 @@ const protocol = new Protocol()
 // Use the map events composable
 const mapEventManager = useMapEvents(map as Ref<Map | undefined>)
 
-addProtocol('pmtiles', protocol.tile)
+// Add PMTiles protocol only once
+let protocolAdded = false
+function addPMTilesProtocol() {
+  if (!protocolAdded) {
+    addProtocol('pmtiles', protocol.tile)
+    protocolAdded = true
+  }
+}
+
+// Add selection source and layers to the map
+function addSelectionLayers() {
+  if (!map.value) return
+
+  console.log('Adding selection layers...')
+
+  // Add selection source
+  if (!map.value.getSource('selected')) {
+    console.log('Adding selected source...')
+    map.value.addSource('selected', {
+      type: 'geojson',
+      data: { type: 'FeatureCollection', features: [] }
+    })
+  }
+
+  // Add selection circle layer
+  if (!map.value.getLayer('selected-circles')) {
+    console.log('Adding selected-circles layer...')
+    try {
+      map.value.addLayer({
+        id: 'selected-circles',
+        type: 'circle',
+        source: 'selected',
+        paint: {
+          'circle-radius': 14,
+          'circle-color': '#ffffff',
+          'circle-stroke-color': '#000000',
+          'circle-stroke-width': 1
+        }
+      })
+      console.log('Successfully added selected-circles layer')
+    } catch (error) {
+      console.error('Error adding selected-circles layer:', error)
+    }
+  }
+
+  // Add selection label layer
+  if (!map.value.getLayer('selected-labels')) {
+    console.log('Adding selected-labels layer...')
+    const labelLayer = {
+      id: 'selected-labels',
+      type: 'symbol',
+      source: 'selected',
+      layout: {
+        'text-field': ['to-string', ['get', 'label']],
+        'text-size': 14,
+        'text-allow-overlap': true
+      },
+      paint: {
+        'text-color': '#000000',
+        'text-halo-color': '#ffffff',
+        'text-halo-width': 1
+      }
+    }
+    console.log('Label layer config:', labelLayer)
+    try {
+      map.value.addLayer(labelLayer)
+      console.log('Successfully added selected-labels layer')
+    } catch (error) {
+      console.error('Error adding selected-labels layer:', error)
+    }
+  }
+
+  // Ensure the layers are visible
+  if (map.value.getLayer('selected-circles')) {
+    map.value.setLayoutProperty('selected-circles', 'visibility', 'visible')
+  }
+  if (map.value.getLayer('selected-labels')) {
+    map.value.setLayoutProperty('selected-labels', 'visibility', 'visible')
+  }
+
+  // Move layers to top to ensure they're visible above all other layers
+  setTimeout(() => {
+    try {
+      if (map.value.getLayer('selected-circles')) {
+        console.log('Moving selected-circles layer to top...')
+        map.value.moveLayer('selected-circles')
+      }
+      if (map.value.getLayer('selected-labels')) {
+        console.log('Moving selected-labels layer to top...')
+        map.value.moveLayer('selected-labels')
+      }
+
+      // Log all layers after moving
+      console.log(
+        'Layers after moving:',
+        map.value.getStyle().layers.map((l: any) => l.id)
+      )
+    } catch (e) {
+      console.warn('Error moving layers to top:', e)
+    }
+  }, 100)
+
+  // Log the layers to verify they were added
+  console.log(
+    'Available layers:',
+    map.value.getStyle().layers.map((l: any) => l.id)
+  )
+  console.log('Selection layers added.')
+
+  // Test with sample data
+  setTimeout(() => {
+    console.log('Testing with sample data...')
+    const testFeatureCollection = {
+      type: 'FeatureCollection',
+      features: [
+        {
+          type: 'Feature',
+          geometry: {
+            type: 'Point',
+            coordinates: [6.143, 46.204] // Geneva coordinates
+          },
+          properties: {
+            id: 'test1',
+            label: 'TEST'
+          }
+        }
+      ]
+    }
+
+    console.log('Test feature collection:', testFeatureCollection)
+
+    const source = map.value.getSource('selected')
+    if (source) {
+      console.log('Setting test data...')
+      source.setData(testFeatureCollection)
+      console.log('Test data set successfully')
+      // Verify the data was set correctly
+      console.log('Source data after setting:', source.getData())
+
+      // Check if layers exist and are visible
+      setTimeout(() => {
+        console.log('Checking layer status...')
+        if (map.value.getLayer('selected-circles')) {
+          console.log('Selected-circles layer exists')
+          console.log('Visibility:', map.value.getLayoutProperty('selected-circles', 'visibility'))
+          console.log(
+            'Circle paint properties:',
+            map.value.getPaintProperty('selected-circles', 'circle-color')
+          )
+        } else {
+          console.log('Selected-circles layer does not exist')
+        }
+
+        if (map.value.getLayer('selected-labels')) {
+          console.log('Selected-labels layer exists')
+          console.log('Visibility:', map.value.getLayoutProperty('selected-labels', 'visibility'))
+          console.log('Text field:', map.value.getLayoutProperty('selected-labels', 'text-field'))
+          console.log('Text size:', map.value.getLayoutProperty('selected-labels', 'text-size'))
+          console.log('Text color:', map.value.getPaintProperty('selected-labels', 'text-color'))
+
+          // Try to query rendered features to see if they're actually being rendered
+          const renderedFeatures = map.value.queryRenderedFeatures({
+            layers: ['selected-labels', 'selected-circles']
+          })
+          console.log('Rendered features:', renderedFeatures)
+
+          // Also try querying just the text features
+          const textFeatures = map.value.queryRenderedFeatures({
+            layers: ['selected-labels']
+          })
+          console.log('Rendered text features:', textFeatures)
+        } else {
+          console.log('Selected-labels layer does not exist')
+        }
+      }, 1000)
+    } else {
+      console.log('Selected source not found')
+    }
+  }, 5000)
+}
+
+// Update selection source data when selections change
+function updateSelectionSource() {
+  if (!map.value) return
+  const source = map.value.getSource('selected')
+  if (source) {
+    console.log('Updating selection source with data:', featureSelections.featureCollection)
+    source.setData(featureSelections.featureCollection)
+    console.log('Selection source data updated successfully')
+    // Verify the data was set correctly
+    console.log('Source data after updating:', source.getData())
+  } else {
+    console.log('Selected source not found')
+  }
+}
+
+// Watch for selection changes and update the map
+watch(() => featureSelections.featureCollection, updateSelectionSource, { deep: true })
 
 function initMap() {
+  // Add PMTiles protocol
+  addPMTilesProtocol()
   const newMap = new Map({
     container: container.value as HTMLDivElement,
     style: props.styleSpec,
@@ -103,25 +302,28 @@ function initMap() {
 
     // Add all sources dynamically
     const mapConfig = getMapConfig(cityStore.city)
-    Object.entries(mapConfig.layers).forEach(([, { id, source, layer }]) => {
-      map.value?.addSource(id, source)
-      map.value?.addLayer(layer)
+    Object.entries(mapConfig.layers).forEach(([, { id, source, layer, label }]) => {
+      try {
+        map.value?.addSource(id, source)
+        map.value?.addLayer(layer)
+        // Attach popup listeners for layers that should have them
+        if (props.popupLayerIds?.includes(id)) {
+          mapEventManager.attachPopupListeners(id, label ?? '')
+        }
+      } catch (e) {
+        // Ignore errors when adding sources/layers
+        console.warn(`Failed to add source/layer ${id}:`, e)
+      }
     })
 
-    function testTilesLoaded() {
-      if (map.value?.areTilesLoaded()) {
-        loading.value = false
-      } else {
-        loading.value = true
-        setTimeout(testTilesLoaded, 1000)
-      }
-    }
+    // Add selection layers after all other layers
+    addSelectionLayers()
 
     function handleDataEvent() {
       if (map.value?.areTilesLoaded()) {
         loading.value = false
       } else {
-        testTilesLoaded()
+        loading.value = true
       }
     }
 
@@ -130,8 +332,9 @@ function initMap() {
 
     mapInstance.on('sourcedata', handleDataEvent)
     mapInstance.on('sourcedataloading', handleDataEvent)
-
-    filterSP0Period(layersStore.sp0Period)
+    mapInstance.on('idle', () => {
+      loading.value = false
+    })
 
     if (props.callbackLoaded) {
       props.callbackLoaded()
@@ -140,18 +343,8 @@ function initMap() {
 }
 
 onMounted(() => {
-  addProtocol('pmtiles', protocol.tile)
   initMap()
-  // if (apiKeyStore.apiKey) {
-  // }
 })
-
-// watch(
-//   () => apiKeyStore.apiKey,
-//   () => {
-//     initMap()
-//   }
-// )
 
 const setFilter = (
   layerId: string,
@@ -241,27 +434,6 @@ watch(
   { deep: true }
 )
 
-function filterSP0Period(period: string) {
-  const sp0Group = layersStore.layerGroups.find((group) => group.id === 'sp0_migration')
-
-  if (!sp0Group) return
-  sp0Group.layers
-    .filter((layer) => {
-      return layersStore.selectedLayers.includes(layer.layer.id)
-    })
-    .forEach((layer) => {
-      const filter = ['==', ['get', 'year'], period] as FilterSpecification
-      map.value?.setFilter(layer.layer.id, filter)
-    })
-}
-
-// Filter SP0 migration layers by period
-watch(
-  () => [layersStore.sp0Period, layersStore.selectedLayers],
-  ([newPeriod]) => filterSP0Period(newPeriod as string),
-  { immediate: true }
-)
-
 // Automatic pitch change when 3D layers are added or removed
 watch(
   () => layersStore.visibleLayers,
@@ -291,11 +463,18 @@ watch(
     // Get the new configuration for the selected city
     const mapConfig = getMapConfig(cityStore.city)
 
-    // Update sources for all grid-based layers
+    // Update sources for grid-based layers only if URLs actually changed
     mapConfig.layers.forEach((layerConfig) => {
       const src = layerConfig.source as any
       if (src?.url && /pmtiles:\/\/.*\/(geneva|zurich)_grid_data\.pmtiles$/.test(src.url)) {
-        map.value?.getSource(layerConfig.id)?.setUrl(src.url)
+        // Get the current source URL
+        const currentSource = map.value?.getSource(layerConfig.id) as VectorTileSource
+        const currentUrl = currentSource?.url
+
+        // Only update if the URL has actually changed
+        if (currentUrl !== src.url) {
+          map.value?.getSource(layerConfig.id)?.setUrl(src.url)
+        }
       }
     })
   }
@@ -311,7 +490,8 @@ defineExpose({
   onZoom,
   changeSourceTilesUrl,
   setLayerVisibility,
-  getSourceTilesUrl
+  getSourceTilesUrl,
+  getMap: () => map.value
 })
 
 watch(

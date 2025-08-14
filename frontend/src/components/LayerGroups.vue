@@ -2,10 +2,11 @@
 import InfoTooltip from '@/components/InfoTooltip.vue'
 import { mdiChevronDown, mdiChevronRight, mdiEyeOutline, mdiEyeOffOutline } from '@mdi/js'
 import { useLayersStore } from '@/stores/layers'
-import SP0PeriodSelector from './SP0PeriodSelector.vue'
+import { useCompareStore } from '@/stores/compare'
 
-// Use the store - now the component gets everything from the store, no props needed
+// Use the stores - now the component gets everything from the stores, no props needed
 const layersStore = useLayersStore()
+const compareStore = useCompareStore()
 </script>
 
 <template>
@@ -39,18 +40,22 @@ const layersStore = useLayersStore()
 
       <!-- Group Content (Collapsible) -->
       <div v-show="layersStore.expandedGroups[group.id]" class="mt-2">
-        <div v-if="group.id == 'sp0_migration'">
-          <SP0PeriodSelector></SP0PeriodSelector>
+        <!-- Layer selection with checkboxes for all layers -->
+        <div class="layer-selection-counter mb-2">
+          {{ layersStore.selectedLayers.length }}/{{ compareStore.layerLimit }} selected
         </div>
-        <!-- Use checkbox for multiple selection groups -->
-        <template v-if="group.multiple">
+        <template
+          v-for="item in layersStore.possibleLayers.filter((layer) => layer.groupId === group.id)"
+          :key="item.id"
+        >
           <v-checkbox
-            v-for="item in layersStore.possibleLayers.filter((layer) => layer.groupId === group.id)"
-            :key="item.id"
-            :model-value="layersStore.selectedLayers"
-            dense
+            v-model="layersStore.selectedLayers"
             :value="item.id"
-            @update:model-value="layersStore.updateSelectedLayers"
+            :disabled="
+              !layersStore.selectedLayers.includes(item.id) &&
+              layersStore.selectedLayers.length >= compareStore.layerLimit
+            "
+            dense
           >
             <template #label>
               <h5 class="text-uppercase mb-0">{{ item.label }}</h5>
@@ -62,40 +67,6 @@ const layersStore = useLayersStore()
               >
             </template>
           </v-checkbox>
-        </template>
-
-        <!-- Use radio buttons for single selection groups -->
-        <template v-else>
-          <v-radio-group
-            :model-value="
-              layersStore.selectedLayers.find((id) => {
-                const layer = layersStore.possibleLayers.find((l) => l.id === id)
-                return layer && layer.groupId === group.id
-              }) || ''
-            "
-          >
-            <div
-              v-for="item in layersStore.possibleLayers.filter(
-                (layer) => layer.groupId === group.id
-              )"
-              :key="item.id"
-              class="d-flex flex-grow-1 flex-row align-center"
-            >
-              <v-radio
-                :value="item.id"
-                dense
-                @change="layersStore.updateSingleLayerSelection(group.id, item.id)"
-              >
-                <template #label>
-                  <h5 class="text-uppercase flex-grow-1 mb-0">{{ item.label }}</h5>
-                </template>
-              </v-radio>
-              <info-tooltip class="ml-2">
-                <div>{{ item.info }}</div>
-                <div v-if="item.attribution">Source: {{ item.attribution }}</div>
-              </info-tooltip>
-            </div>
-          </v-radio-group>
         </template>
       </div>
     </div>
@@ -141,5 +112,11 @@ const layersStore = useLayersStore()
   text-overflow: ellipsis;
   max-width: 150px;
   display: inline-block;
+}
+
+.layer-selection-counter {
+  font-size: 0.875rem;
+  color: rgba(var(--v-theme-on-surface), var(--v-medium-emphasis-opacity));
+  font-weight: 500;
 }
 </style>

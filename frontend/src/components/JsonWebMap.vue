@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import MapLibreMap from '@/components/MapLibreMap.vue'
-import { useTheme } from 'vuetify'
+import SelectionPanel from '@/components/SelectionPanel.vue'
 
 import { ref, shallowRef, watch, computed } from 'vue'
 import LegendMap from '@/components/LegendMap.vue'
@@ -11,7 +11,30 @@ import type { Parameters } from '@/utils/jsonWebMap'
 
 const map = ref<InstanceType<typeof MapLibreMap>>()
 
-const parameters = shallowRef<Parameters>({})
+const parameters = shallowRef<Parameters>({
+  popupLayerIds: [
+    'building_height-layer',
+    'sky_view_factor-layer',
+    'frontal_area-layer',
+    'aspect_ratio-layer',
+    'water_fraction-layer',
+    'impervious_fraction-layer',
+    'building_fraction-layer',
+    'pervious_fraction-layer',
+    'intersections-layer',
+    'length_ns-layer',
+    'length_ne_sw-layer',
+    'length_se_nw-layer',
+    'length_e_w-layer',
+    'primary_road_len-layer',
+    'secondary_road_len-layer',
+    'highway_len-layer',
+    'lcz_typology-layer',
+    'irr_summer-layer',
+    'irr_winter-layer',
+    'lst_measurement-layer'
+  ]
+})
 
 const layersStore = useLayersStore()
 const cityStore = useCityStore()
@@ -33,22 +56,7 @@ const syncAllLayersVisibility = (layersSelected: string[]) => {
 
 watch(() => layersStore.selectedLayers, syncAllLayersVisibility, { immediate: true, deep: true })
 
-const vuetifyTheme = useTheme()
-
-const theme = ref('style/light.json') // Default theme
-const themes = [
-  { value: 'style/light.json', label: 'Light' },
-  { value: 'style/dark.json', label: 'Dark' },
-  { value: 'style/none.json', label: 'None' }
-]
-
-watch(
-  () => theme.value,
-  (newTheme) => {
-    vuetifyTheme.global.name.value = newTheme === 'style/light.json' ? 'light' : 'dark'
-  },
-  { immediate: true }
-)
+const style = ref('style/style.json') // Default style
 </script>
 
 <template>
@@ -56,6 +64,18 @@ watch(
     <v-row class="fill-height overflow-y-hidden">
       <v-col xl="2" cols="3" class="params-col border-e-md overflow-y-auto overflow-x-hidden">
         <v-card flat>
+          <v-card-text class="pa-2">
+            <v-select
+              v-model="cityStore.city"
+              :items="cityStore.cities"
+              item-value="value"
+              item-title="label"
+              label="City"
+              density="comfortable"
+              hide-details
+              variant="outlined"
+            />
+          </v-card-text>
           <v-card-title class="ml-2"> <h4 class="text-center mb-12 mt-6">LAYERS</h4> </v-card-title>
           <v-card-text class="d-flex flex-column">
             <!-- Use the new LayerGroups component -->
@@ -63,12 +83,17 @@ watch(
           </v-card-text>
         </v-card>
       </v-col>
-      <v-col id="map-time-input-container" xl="10" cols="9" class="py-0 pl-0 d-flex flex-column">
+      <v-col
+        id="map-time-input-container"
+        xl="10"
+        cols="9"
+        class="py-0 pl-0 d-flex flex-column position-relative"
+      >
         <MapLibreMap
-          :key="theme + cityStore.city"
+          :key="style + cityStore.city"
           ref="map"
           :center="mapCenter"
-          :style-spec="theme"
+          :style-spec="style"
           :popup-layer-ids="parameters.popupLayerIds"
           :zoom="mapZoom"
           :max-zoom="20"
@@ -80,30 +105,7 @@ watch(
             <legend-map :layers="layersStore.visibleLayers"></legend-map>
           </template>
         </MapLibreMap>
-        <div class="theme-selector d-flex gap-2">
-          <v-select
-            v-model="theme"
-            :items="themes"
-            item-value="value"
-            item-title="label"
-            label="Theme"
-            density="comfortable"
-            hide-details
-            variant="outlined"
-            style="max-width: 140px"
-          />
-          <v-select
-            v-model="cityStore.city"
-            :items="cityStore.cities"
-            item-value="value"
-            item-title="label"
-            label="City"
-            density="comfortable"
-            hide-details
-            variant="outlined"
-            style="max-width: 140px"
-          />
-        </div>
+        <SelectionPanel class="map-selections-overlay" />
       </v-col>
     </v-row>
   </v-container>
@@ -122,10 +124,11 @@ watch(
   height: 32px;
 }
 
-.theme-selector {
+.map-selections-overlay {
   position: absolute;
-  top: 12px;
-  right: 56px;
+  bottom: 10px;
+  left: 10px;
+  max-width: 400px;
   z-index: 1000;
 }
 </style>
