@@ -31,20 +31,20 @@ export const useFeatureSelections = defineStore('featureSelections', {
           label: state.labelMode === '0..9' ? it.index % 10 : it.index
         }
       }))
-      
+
       const collection = {
         type: 'FeatureCollection',
         features: features
       }
-      
+
       console.log('Generated featureCollection:', collection)
       console.log('Number of features:', features.length)
-      
+
       // Log individual features for debugging
       features.forEach((feature, index) => {
         console.log(`Feature ${index}:`, feature)
       })
-      
+
       return collection
     }
   },
