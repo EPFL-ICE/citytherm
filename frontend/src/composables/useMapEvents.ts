@@ -12,15 +12,94 @@ interface EventListeners {
   }
 }
 
+// Mapping of layer groups to their relevant properties
+const layerGroupProperties: Record<string, string[]> = {
+  'urban_morphology': [
+    'Building height',
+    'Sky view factor',
+    'Frontal area index',
+    'Aspect ratio'
+  ],
+  'land_cover_fraction': [
+    'Water cover fraction',
+    'Impervious surface cover fraction',
+    'Building cover fraction',
+    'Pervious surface cover fraction'
+  ],
+  'canyon_network': [
+    'Intersections',
+    'Length N-S',
+    'Length NE-SW',
+    'Length SE-NW',
+    'Length E-W',
+    'Length primary road',
+    'Length secondary road',
+    'Length highway'
+  ],
+  'local_climate_zones': [
+    'lcz_typology'
+  ],
+  'irradiance': [
+    'solar_summer',
+    'solar_winter_2'
+  ],
+  'land_surface_temperature': [
+    'lst_measurement'
+  ]
+}
+
+// Helper function to get layer group ID from layer ID
+function getLayerGroupId(layerId: string): string | null {
+  // Remove '-layer' suffix if present
+  const baseLayerId = layerId.replace('-layer', '')
+  
+  // Map layer IDs to group IDs
+  const layerToGroupMap: Record<string, string> = {
+    'building_height': 'urban_morphology',
+    'sky_view_factor': 'urban_morphology',
+    'frontal_area': 'urban_morphology',
+    'aspect_ratio': 'urban_morphology',
+    'water_fraction': 'land_cover_fraction',
+    'impervious_fraction': 'land_cover_fraction',
+    'building_fraction': 'land_cover_fraction',
+    'pervious_fraction': 'land_cover_fraction',
+    'intersections': 'canyon_network',
+    'length_ns': 'canyon_network',
+    'length_ne_sw': 'canyon_network',
+    'length_se_nw': 'canyon_network',
+    'length_e_w': 'canyon_network',
+    'primary_road_len': 'canyon_network',
+    'secondary_road_len': 'canyon_network',
+    'highway_len': 'canyon_network',
+    'lcz_typology': 'local_climate_zones',
+    'irr_summer': 'irradiance',
+    'irr_winter': 'irradiance',
+    'lst_measurement': 'land_surface_temperature'
+  }
+  
+  return layerToGroupMap[baseLayerId] || null
+}
+
 // Helper function to format popup content
-function formatPopupContent(properties: Record<string, any> | null, label: string): string {
+function formatPopupContent(properties: Record<string, any> | null, label: string, layerId: string): string {
   if (!properties) return 'No data available'
 
-  // Create HTML table to display all properties
+  // Get the layer group ID
+  const layerGroupId = getLayerGroupId(layerId)
+  
+  // Get relevant properties for this layer group, or all properties if no group found
+  const relevantProperties = layerGroupId ? layerGroupProperties[layerGroupId] : null
+
+  // Create HTML table to display properties
   let content = `<div class="popup-content"><h3>${label}</h3><table class="popup-table">`
 
+  // Filter properties based on layer group
+  const propertiesToDisplay = relevantProperties 
+    ? Object.entries(properties).filter(([key]) => relevantProperties.includes(key))
+    : Object.entries(properties)
+
   // Filter out null/undefined values and internal properties
-  Object.entries(properties)
+  propertiesToDisplay
     .filter(
       ([key, value]) =>
         value !== null && value !== undefined && !key.startsWith('_') && key !== 'id' // Skip internal keys
@@ -132,7 +211,7 @@ export function useMapEvents(
     })
 
     // Format popup content
-    const popupContent = formatPopupContent(feature.properties, layerLabel)
+    const popupContent = formatPopupContent(feature.properties, layerLabel, _layerId)
 
     // Add popup to the map
     persistentPopup.setLngLat(e.lngLat).setHTML(popupContent).addTo(mapRef.value)
@@ -168,7 +247,7 @@ export function useMapEvents(
       hoveredFeature.value = feature.properties
 
       // Format popup content
-      const popupContent = formatPopupContent(feature.properties, layerLabel)
+      const popupContent = formatPopupContent(feature.properties, layerLabel, _layerId)
 
       hoverPopup.setLngLat(e.lngLat).setHTML(popupContent).addTo(mapRef.value)
     }
