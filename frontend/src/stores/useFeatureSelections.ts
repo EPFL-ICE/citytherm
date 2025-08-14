@@ -30,7 +30,7 @@ export const useFeatureSelections = defineStore('featureSelections', {
           geometry: { type: 'Point', coordinates: it.centroid },
           properties: {
             id: it.id,
-            label: state.labelMode === '0..9' ? (it.index % 10) : it.index
+            label: state.labelMode === '0..9' ? it.index % 10 : it.index
           }
         }))
       } as const
@@ -43,7 +43,10 @@ export const useFeatureSelections = defineStore('featureSelections', {
       if (opts.storageKey) this.storageKey = opts.storageKey
     },
 
-    toggleFromFeature(f: Feature<Polygon | MultiPolygon | Point, any> | MapGeoJSONFeature, cellIdProp = 'cell_id') {
+    toggleFromFeature(
+      f: Feature<Polygon | MultiPolygon | Point, any> | MapGeoJSONFeature,
+      cellIdProp = 'cell_id'
+    ) {
       const id = (f.properties?.[cellIdProp] ?? f.id) as string | number | undefined
       if (id == null) return
 

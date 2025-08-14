@@ -1,8 +1,18 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useFeatureSelections } from '@/stores/useFeatureSelections'
 
 const featureSelections = useFeatureSelections()
+
+onMounted(() => {
+  featureSelections.hydrate()
+})
+
+function toggleLabelMode() {
+  featureSelections.configure({
+    labelMode: featureSelections.labelMode === '1..N' ? '0..9' : '1..N'
+  })
+}
 
 // Export helpers
 function downloadBlob(filename: string, mime: string, data: string | BlobPart[]) {
@@ -41,14 +51,27 @@ const items = computed(() => featureSelections.items)
   <div class="selections-panel">
     <div class="toolbar">
       <button @click="featureSelections.clear()" :disabled="!items.length">Clear</button>
+      <button @click="toggleLabelMode">Label Mode: {{ featureSelections.labelMode }}</button>
       <button
-        @click="downloadBlob(`selected_cells_${new Date().toISOString().slice(0, 16).replace(/[:T]/g, '')}.json`, 'application/json', JSON.stringify(items, null, 2))"
+        @click="
+          downloadBlob(
+            `selected_cells_${new Date().toISOString().slice(0, 16).replace(/[:T]/g, '')}.json`,
+            'application/json',
+            JSON.stringify(items, null, 2)
+          )
+        "
         :disabled="!items.length"
       >
         Export JSON
       </button>
       <button
-        @click="downloadBlob(`selected_cells_${new Date().toISOString().slice(0, 16).replace(/[:T]/g, '')}.csv`, 'text/csv', toCsv(items))"
+        @click="
+          downloadBlob(
+            `selected_cells_${new Date().toISOString().slice(0, 16).replace(/[:T]/g, '')}.csv`,
+            'text/csv',
+            toCsv(items)
+          )
+        "
         :disabled="!items.length"
       >
         Export CSV
@@ -86,7 +109,12 @@ const items = computed(() => featureSelections.items)
 
 <style scoped>
 .selections-panel {
-  font: 14px/1.4 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  font:
+    14px/1.4 system-ui,
+    -apple-system,
+    Segoe UI,
+    Roboto,
+    sans-serif;
   border: 1px solid #ddd;
   padding: 8px;
   background: #fff;

@@ -31,7 +31,7 @@ onMounted(() => {
             if (newSelectedFeatureId) {
               // Add the selected feature to the compare store
               compareStore.toggleNeighborhood(newSelectedFeatureId)
-              
+
               // Also log the feature properties for debugging
               console.log('Selected feature:', newSelectedFeatureId, newMapComponent.hoveredFeature)
             }

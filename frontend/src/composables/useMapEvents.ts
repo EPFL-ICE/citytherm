@@ -96,7 +96,6 @@ export function useMapEvents(
    * Handle layer click events
    */
   function handleLayerClick(_layerId: string, layerLabel: string, e: MapLayerMouseEvent): void {
-    debugger
     if (!e.features || e.features.length === 0 || !mapRef.value) return
 
     const feature = e.features[0]

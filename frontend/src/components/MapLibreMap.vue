@@ -81,7 +81,7 @@ function addPMTilesProtocol() {
 // Add selection source and layers to the map
 function addSelectionLayers() {
   if (!map.value) return
-  
+
   // Add selection source
   if (!map.value.getSource('selected')) {
     map.value.addSource('selected', {
@@ -89,7 +89,7 @@ function addSelectionLayers() {
       data: { type: 'FeatureCollection', features: [] }
     })
   }
-  
+
   // Add selection circle layer
   if (!map.value.getLayer('selected-circles')) {
     map.value.addLayer({
@@ -105,7 +105,7 @@ function addSelectionLayers() {
       }
     })
   }
-  
+
   // Add selection label layer
   if (!map.value.getLayer('selected-labels')) {
     map.value.addLayer({
@@ -113,11 +113,10 @@ function addSelectionLayers() {
       type: 'symbol',
       source: 'selected',
       layout: {
-        'text-field': ['to-string', ['get', 'label']],
+        'text-field': ['get', 'label'],
         'text-size': 12,
         'text-allow-overlap': true,
-        'symbol-placement': 'point',
-        'text-font': ['Open Sans Bold', 'Arial Unicode MS Bold']
+        'symbol-placement': 'point'
       },
       paint: {
         'text-color': '#000000',
@@ -125,6 +124,17 @@ function addSelectionLayers() {
         'text-halo-width': 1
       }
     })
+  }
+
+  // Ensure selection layers are moved to the foreground
+  // Move circle layer to top
+  if (map.value.getLayer('selected-circles')) {
+    map.value.moveLayer('selected-circles')
+  }
+
+  // Move label layer to top (above circles)
+  if (map.value.getLayer('selected-labels')) {
+    map.value.moveLayer('selected-labels')
   }
 }
 
@@ -166,52 +176,52 @@ function initMap() {
     })
   )
 
-    mapInstance.on('load', () => {
-      if (!map.value) return
-      hasLoaded.value = true
-      loading.value = false
-      map.value.resize()
+  mapInstance.on('load', () => {
+    if (!map.value) return
+    hasLoaded.value = true
+    loading.value = false
+    map.value.resize()
 
-      // Add selection layers
-      addSelectionLayers()
+    // Add selection layers
+    addSelectionLayers()
 
-      // Add all sources dynamically
-      const mapConfig = getMapConfig(cityStore.city)
-      Object.entries(mapConfig.layers).forEach(([, { id, source, layer, label }]) => {
-        try {
-          map.value?.addSource(id, source)
-          map.value?.addLayer(layer)
-          // Attach popup listeners for layers that should have them
-          if (props.popupLayerIds?.includes(id)) {
-            mapEventManager.attachPopupListeners(id, label ?? '')
-          }
-        } catch (e) {
-          // Ignore errors when adding sources/layers
-          console.warn(`Failed to add source/layer ${id}:`, e)
+    // Add all sources dynamically
+    const mapConfig = getMapConfig(cityStore.city)
+    Object.entries(mapConfig.layers).forEach(([, { id, source, layer, label }]) => {
+      try {
+        map.value?.addSource(id, source)
+        map.value?.addLayer(layer)
+        // Attach popup listeners for layers that should have them
+        if (props.popupLayerIds?.includes(id)) {
+          mapEventManager.attachPopupListeners(id, label ?? '')
         }
-      })
-
-      function handleDataEvent() {
-        if (map.value?.areTilesLoaded()) {
-          loading.value = false
-        } else {
-          loading.value = true
-        }
-      }
-
-      // Attach popup listeners to each layer using our composable
-      // mapConfig.layers.forEach((layer) => attachPopupListeners(layer.layer.id, layer.label))
-
-      mapInstance.on('sourcedata', handleDataEvent)
-      mapInstance.on('sourcedataloading', handleDataEvent)
-      mapInstance.on('idle', () => {
-        loading.value = false
-      })
-
-      if (props.callbackLoaded) {
-        props.callbackLoaded()
+      } catch (e) {
+        // Ignore errors when adding sources/layers
+        console.warn(`Failed to add source/layer ${id}:`, e)
       }
     })
+
+    function handleDataEvent() {
+      if (map.value?.areTilesLoaded()) {
+        loading.value = false
+      } else {
+        loading.value = true
+      }
+    }
+
+    // Attach popup listeners to each layer using our composable
+    // mapConfig.layers.forEach((layer) => attachPopupListeners(layer.layer.id, layer.label))
+
+    mapInstance.on('sourcedata', handleDataEvent)
+    mapInstance.on('sourcedataloading', handleDataEvent)
+    mapInstance.on('idle', () => {
+      loading.value = false
+    })
+
+    if (props.callbackLoaded) {
+      props.callbackLoaded()
+    }
+  })
 }
 
 onMounted(() => {

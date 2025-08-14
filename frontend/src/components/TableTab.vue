@@ -2,11 +2,13 @@
 import { computed } from 'vue'
 import { useCompareStore } from '@/stores/compare'
 import { useLayersStore } from '@/stores/layers'
+import { useFeatureSelections } from '@/stores/useFeatureSelections'
 import { toCSV } from '@/utils/exportUtils'
 import type { MapLayerConfig } from '@/config/layerTypes'
 
 const compareStore = useCompareStore()
 const layersStore = useLayersStore()
+const featureSelections = useFeatureSelections()
 
 // Create a map of layer ID to layer config for easy lookup
 const layerMap = computed<Record<string, MapLayerConfig>>(() => {
@@ -24,19 +26,32 @@ const selectedLayerConfigs = computed(() => {
 
 // Check if we have data to display
 const hasData = computed(() => {
-  return compareStore.selectedNeighborhoodIds.length > 0 && compareStore.selectedLayerIds.length > 0
+  return featureSelections.items.length > 0
 })
 
 // Check if we have no selections
 const isEmpty = computed(() => {
-  return (
-    compareStore.selectedNeighborhoodIds.length === 0 && compareStore.selectedLayerIds.length === 0
-  )
+  return featureSelections.items.length === 0
 })
 
 function exportCSV() {
-  toCSV(compareStore.tableData, compareStore.selectedLayerIds, layerMap.value)
+  // Convert featureSelections.items to the format expected by toCSV
+  const tableData = featureSelections.items.map((item) => ({
+    uid: item.id.toString(),
+    label: `Cell ${item.id}`,
+    values: item.props
+  }))
+  toCSV(tableData, Object.keys(tableData[0]?.values || {}), layerMap.value)
 }
+
+// Convert featureSelections.items to the format expected by the table
+const tableData = computed(() => {
+  return featureSelections.items.map((item) => ({
+    uid: item.id.toString(),
+    label: `Cell ${item.id}`,
+    values: item.props
+  }))
+})
 </script>
 
 <template>
@@ -50,22 +65,25 @@ function exportCSV() {
     <v-data-table
       v-if="hasData"
       :headers="[
-        { title: 'Neighborhood ID', key: 'uid' },
+        { title: 'ID', key: 'uid' },
         { title: 'Label', key: 'label' },
-        ...selectedLayerConfigs.map((layer) => ({
-          title: layer?.label || '',
-          key: `values.${layer?.layer.id}`
+        ...Object.keys(featureSelections.items[0]?.props || {}).map((propKey) => ({
+          title: propKey,
+          key: `values.${propKey}`
         }))
       ]"
-      :items="compareStore.tableData"
+      :items="tableData"
       class="flex-grow-1"
     >
       <template #item="{ item }">
         <tr>
           <td>{{ item.uid }}</td>
           <td>{{ item.label || '' }}</td>
-          <td v-for="layer in selectedLayerConfigs" :key="layer?.layer.id">
-            {{ item.values[layer?.layer.id] || '-' }}
+          <td
+            v-for="propKey in Object.keys(featureSelections.items[0]?.props || {})"
+            :key="propKey"
+          >
+            {{ item.values[propKey] || '-' }}
           </td>
         </tr>
       </template>

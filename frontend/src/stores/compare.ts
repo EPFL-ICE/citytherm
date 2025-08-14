@@ -61,7 +61,7 @@ export const useCompareStore = defineStore('compare', () => {
   // Function to update table data based on selected layers and neighborhoods
   function updateTableData() {
     // Create table rows for each selected neighborhood
-    const rows: TableRow[] = selectedNeighborhoodIds.value.map(uid => ({
+    const rows: TableRow[] = selectedNeighborhoodIds.value.map((uid) => ({
       uid,
       label: `Neighborhood ${uid}`, // In a real implementation, this would come from the feature properties
       values: {}
@@ -69,8 +69,8 @@ export const useCompareStore = defineStore('compare', () => {
 
     // For each selected layer, add placeholder values
     // In a real implementation, this would fetch actual data from the map features
-    selectedLayerIds.value.forEach(layerId => {
-      rows.forEach(row => {
+    selectedLayerIds.value.forEach((layerId) => {
+      rows.forEach((row) => {
         // Placeholder values - in a real implementation, these would come from querying the map features
         row.values[layerId] = Math.random() * 100 // Random placeholder value
       })
@@ -78,15 +78,19 @@ export const useCompareStore = defineStore('compare', () => {
 
     // Set the table data
     tableData.value = rows
-    
+
     // Log for debugging
     console.log('Updated table data:', rows)
   }
 
   // Watch for changes in selected layers and neighborhoods to update table data
-  watch([selectedLayerIds, selectedNeighborhoodIds], () => {
-    updateTableData()
-  }, { deep: true })
+  watch(
+    [selectedLayerIds, selectedNeighborhoodIds],
+    () => {
+      updateTableData()
+    },
+    { deep: true }
+  )
 
   return {
     selectedLayerIds,

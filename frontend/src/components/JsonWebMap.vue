@@ -11,7 +11,30 @@ import type { Parameters } from '@/utils/jsonWebMap'
 
 const map = ref<InstanceType<typeof MapLibreMap>>()
 
-const parameters = shallowRef<Parameters>({})
+const parameters = shallowRef<Parameters>({
+  popupLayerIds: [
+    'building_height-layer',
+    'sky_view_factor-layer',
+    'frontal_area-layer',
+    'aspect_ratio-layer',
+    'water_fraction-layer',
+    'impervious_fraction-layer',
+    'building_fraction-layer',
+    'pervious_fraction-layer',
+    'intersections-layer',
+    'length_ns-layer',
+    'length_ne_sw-layer',
+    'length_se_nw-layer',
+    'length_e_w-layer',
+    'primary_road_len-layer',
+    'secondary_road_len-layer',
+    'highway_len-layer',
+    'lcz_typology-layer',
+    'irr_summer-layer',
+    'irr_winter-layer',
+    'lst_measurement-layer'
+  ]
+})
 
 const layersStore = useLayersStore()
 const cityStore = useCityStore()
@@ -60,7 +83,12 @@ const style = ref('style/style.json') // Default style
           </v-card-text>
         </v-card>
       </v-col>
-      <v-col id="map-time-input-container" xl="10" cols="9" class="py-0 pl-0 d-flex flex-column position-relative">
+      <v-col
+        id="map-time-input-container"
+        xl="10"
+        cols="9"
+        class="py-0 pl-0 d-flex flex-column position-relative"
+      >
         <MapLibreMap
           :key="style + cityStore.city"
           ref="map"
