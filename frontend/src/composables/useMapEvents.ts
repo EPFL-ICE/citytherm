@@ -84,14 +84,14 @@ function formatPopupContent(
 
   // Always include these specific properties in the header
   const headerProperties = ['id', 'col_index', 'row_index']
-  
+
   // Create header content with ID and coordinates
   let headerContent = `${label}`
   if (properties) {
     const id = properties['id']
     const colIndex = properties['col_index']
     const rowIndex = properties['row_index']
-    
+
     if (id !== undefined || colIndex !== undefined || rowIndex !== undefined) {
       headerContent += ' ('
       const parts = []
@@ -106,16 +106,15 @@ function formatPopupContent(
   let content = `<div class="popup-content"><h3>${headerContent}</h3><table class="popup-table">`
 
   // Get properties to display - only relevant properties, excluding header properties
-  const propertiesToDisplay = relevantProperties 
-    ? Object.entries(properties).filter(([key]) => relevantProperties.includes(key) && !headerProperties.includes(key))
+  const propertiesToDisplay = relevantProperties
+    ? Object.entries(properties).filter(
+        ([key]) => relevantProperties.includes(key) && !headerProperties.includes(key)
+      )
     : Object.entries(properties).filter(([key]) => !headerProperties.includes(key))
 
   // Filter out null/undefined values and internal properties
   propertiesToDisplay
-    .filter(
-      ([key, value]) =>
-        value !== null && value !== undefined && !key.startsWith('_')
-    )
+    .filter(([key, value]) => value !== null && value !== undefined && !key.startsWith('_'))
     .forEach(([key, value]) => {
       // Format the property key to be more readable
       const formattedKey = key
