@@ -1,6 +1,7 @@
 {
   "version": 8,
   "name": "Default Style",
+  "glyphs": "https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf",
   "sources": {
     "osm": {
       "type": "raster",

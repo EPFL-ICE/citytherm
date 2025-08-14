@@ -23,17 +23,29 @@ export const useFeatureSelections = defineStore('featureSelections', {
   }),
   getters: {
     featureCollection(state) {
-      return {
+      const features = state.items.map((it) => ({
+        type: 'Feature',
+        geometry: { type: 'Point', coordinates: it.centroid },
+        properties: {
+          id: it.id,
+          label: state.labelMode === '0..9' ? it.index % 10 : it.index
+        }
+      }))
+      
+      const collection = {
         type: 'FeatureCollection',
-        features: state.items.map((it) => ({
-          type: 'Feature',
-          geometry: { type: 'Point', coordinates: it.centroid },
-          properties: {
-            id: it.id,
-            label: state.labelMode === '0..9' ? it.index % 10 : it.index
-          }
-        }))
-      } as const
+        features: features
+      }
+      
+      console.log('Generated featureCollection:', collection)
+      console.log('Number of features:', features.length)
+      
+      // Log individual features for debugging
+      features.forEach((feature, index) => {
+        console.log(`Feature ${index}:`, feature)
+      })
+      
+      return collection
     }
   },
   actions: {

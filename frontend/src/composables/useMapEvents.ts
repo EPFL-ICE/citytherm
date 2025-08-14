@@ -188,6 +188,7 @@ export function useMapEvents(
     if (!e.features || e.features.length === 0 || !mapRef.value) return
 
     const feature = e.features[0]
+    console.log('Clicked feature:', feature)
 
     // Handle selection if this is a selectable layer
     // For now, we'll assume all layers can be selected

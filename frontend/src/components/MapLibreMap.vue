@@ -82,8 +82,11 @@ function addPMTilesProtocol() {
 function addSelectionLayers() {
   if (!map.value) return
 
+  console.log('Adding selection layers...')
+
   // Add selection source
   if (!map.value.getSource('selected')) {
+    console.log('Adding selected source...')
     map.value.addSource('selected', {
       type: 'geojson',
       data: { type: 'FeatureCollection', features: [] }
@@ -92,50 +95,159 @@ function addSelectionLayers() {
 
   // Add selection circle layer
   if (!map.value.getLayer('selected-circles')) {
-    map.value.addLayer({
-      id: 'selected-circles',
-      type: 'circle',
-      source: 'selected',
-      paint: {
-        'circle-radius': ['interpolate', ['linear'], ['zoom'], 8, 10, 16, 14],
-        'circle-color': '#ffffff',
-        'circle-stroke-color': '#000000',
-        'circle-stroke-width': 1,
-        'circle-pitch-scale': 'viewport'
-      }
-    })
+    console.log('Adding selected-circles layer...')
+    try {
+      map.value.addLayer({
+        id: 'selected-circles',
+        type: 'circle',
+        source: 'selected',
+        paint: {
+          'circle-radius': 14,
+          'circle-color': '#ffffff',
+          'circle-stroke-color': '#000000',
+          'circle-stroke-width': 1
+        }
+      })
+      console.log('Successfully added selected-circles layer')
+    } catch (error) {
+      console.error('Error adding selected-circles layer:', error)
+    }
   }
 
   // Add selection label layer
   if (!map.value.getLayer('selected-labels')) {
-    map.value.addLayer({
+    console.log('Adding selected-labels layer...')
+    const labelLayer = {
       id: 'selected-labels',
       type: 'symbol',
       source: 'selected',
       layout: {
-        'text-field': ['get', 'label'],
-        'text-size': 12,
-        'text-allow-overlap': true,
-        'symbol-placement': 'point'
+        'text-field': ['to-string', ['get', 'label']],
+        'text-size': 14,
+        'text-allow-overlap': true
       },
       paint: {
         'text-color': '#000000',
         'text-halo-color': '#ffffff',
         'text-halo-width': 1
       }
-    })
+    }
+    console.log('Label layer config:', labelLayer)
+    try {
+      map.value.addLayer(labelLayer)
+      console.log('Successfully added selected-labels layer')
+    } catch (error) {
+      console.error('Error adding selected-labels layer:', error)
+    }
   }
 
-  // Ensure selection layers are moved to the foreground
-  // Move circle layer to top
+  // Ensure the layers are visible
   if (map.value.getLayer('selected-circles')) {
-    map.value.moveLayer('selected-circles')
+    map.value.setLayoutProperty('selected-circles', 'visibility', 'visible')
+  }
+  if (map.value.getLayer('selected-labels')) {
+    map.value.setLayoutProperty('selected-labels', 'visibility', 'visible')
   }
 
-  // Move label layer to top (above circles)
-  if (map.value.getLayer('selected-labels')) {
-    map.value.moveLayer('selected-labels')
-  }
+  // Move layers to top to ensure they're visible above all other layers
+  setTimeout(() => {
+    try {
+      if (map.value.getLayer('selected-circles')) {
+        console.log('Moving selected-circles layer to top...')
+        map.value.moveLayer('selected-circles')
+      }
+      if (map.value.getLayer('selected-labels')) {
+        console.log('Moving selected-labels layer to top...')
+        map.value.moveLayer('selected-labels')
+      }
+
+      // Log all layers after moving
+      console.log(
+        'Layers after moving:',
+        map.value.getStyle().layers.map((l: any) => l.id)
+      )
+    } catch (e) {
+      console.warn('Error moving layers to top:', e)
+    }
+  }, 100)
+
+  // Log the layers to verify they were added
+  console.log(
+    'Available layers:',
+    map.value.getStyle().layers.map((l: any) => l.id)
+  )
+  console.log('Selection layers added.')
+
+  // Test with sample data
+  setTimeout(() => {
+    console.log('Testing with sample data...')
+    const testFeatureCollection = {
+      type: 'FeatureCollection',
+      features: [
+        {
+          type: 'Feature',
+          geometry: {
+            type: 'Point',
+            coordinates: [6.143, 46.204] // Geneva coordinates
+          },
+          properties: {
+            id: 'test1',
+            label: 'TEST'
+          }
+        }
+      ]
+    }
+
+    console.log('Test feature collection:', testFeatureCollection)
+
+    const source = map.value.getSource('selected')
+    if (source) {
+      console.log('Setting test data...')
+      source.setData(testFeatureCollection)
+      console.log('Test data set successfully')
+      // Verify the data was set correctly
+      console.log('Source data after setting:', source.getData())
+
+      // Check if layers exist and are visible
+      setTimeout(() => {
+        console.log('Checking layer status...')
+        if (map.value.getLayer('selected-circles')) {
+          console.log('Selected-circles layer exists')
+          console.log('Visibility:', map.value.getLayoutProperty('selected-circles', 'visibility'))
+          console.log(
+            'Circle paint properties:',
+            map.value.getPaintProperty('selected-circles', 'circle-color')
+          )
+        } else {
+          console.log('Selected-circles layer does not exist')
+        }
+
+        if (map.value.getLayer('selected-labels')) {
+          console.log('Selected-labels layer exists')
+          console.log('Visibility:', map.value.getLayoutProperty('selected-labels', 'visibility'))
+          console.log('Text field:', map.value.getLayoutProperty('selected-labels', 'text-field'))
+          console.log('Text size:', map.value.getLayoutProperty('selected-labels', 'text-size'))
+          console.log('Text color:', map.value.getPaintProperty('selected-labels', 'text-color'))
+
+          // Try to query rendered features to see if they're actually being rendered
+          const renderedFeatures = map.value.queryRenderedFeatures({
+            layers: ['selected-labels', 'selected-circles']
+          })
+          console.log('Rendered features:', renderedFeatures)
+
+          // Also try querying just the text features
+          const textFeatures = map.value.queryRenderedFeatures({
+            layers: ['selected-labels']
+          })
+          console.log('Rendered text features:', textFeatures)
+        } else {
+          console.log('Selected-labels layer does not exist')
+        }
+      }, 1000)
+    } else {
+      console.log('Selected source not found')
+    }
+  }, 5000)
 }
 
 // Update selection source data when selections change
@@ -143,7 +255,13 @@ function updateSelectionSource() {
   if (!map.value) return
   const source = map.value.getSource('selected')
   if (source) {
+    console.log('Updating selection source with data:', featureSelections.featureCollection)
     source.setData(featureSelections.featureCollection)
+    console.log('Selection source data updated successfully')
+    // Verify the data was set correctly
+    console.log('Source data after updating:', source.getData())
+  } else {
+    console.log('Selected source not found')
   }
 }
 
@@ -182,9 +300,6 @@ function initMap() {
     loading.value = false
     map.value.resize()
 
-    // Add selection layers
-    addSelectionLayers()
-
     // Add all sources dynamically
     const mapConfig = getMapConfig(cityStore.city)
     Object.entries(mapConfig.layers).forEach(([, { id, source, layer, label }]) => {
@@ -200,6 +315,9 @@ function initMap() {
         console.warn(`Failed to add source/layer ${id}:`, e)
       }
     })
+
+    // Add selection layers after all other layers
+    addSelectionLayers()
 
     function handleDataEvent() {
       if (map.value?.areTilesLoaded()) {

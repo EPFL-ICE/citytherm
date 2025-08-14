@@ -342,13 +342,16 @@ function ensureSelectedLayers() {
           'text-field': ['to-string', ['get', 'label']],
           'text-size': 12,
           'text-allow-overlap': true,
+          'text-allow-overlap': true,
+          'text-anchor': 'center', // Add this
+          'text-offset': [0, 0]    // Add this
           'symbol-placement': 'point',
-          'text-font': ['Open Sans Bold', 'Arial Unicode MS Bold']
+          'text-font': ['Arial']
         },
         paint: {
-          'text-color': '#000000',
-          'text-halo-color': '#ffffff',
-          'text-halo-width': 1
+    'text-color': '#ff0000', // Use red for testing
+    'text-halo-color': '#ffffff',
+    'text-halo-width': 2
         }
       },
       props.insertAboveLayerId
