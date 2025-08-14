@@ -164,7 +164,6 @@ export function useMapEvents(
   // State refs exposed by the composable
   const hoveredFeature = ref<Record<string, any> | null>(null)
   const selectedFeatureId = ref<string | undefined>(undefined)
-  const clickedPopup = ref<any | null>(null)
 
   // Private state
   const currentFeatureId = ref<string | undefined>(undefined)
@@ -203,35 +202,11 @@ export function useMapEvents(
           ? feature.geometry.coordinates.toString()
           : e.lngLat.toString())
 
-    // Remove existing clicked popup if any
-    if (clickedPopup.value) {
-      clickedPopup.value.remove()
-      clickedPopup.value = null
-    }
-
     // Save this as the selected feature
     selectedFeatureId.value = featureId
     hoveredFeature.value = feature.properties
 
-    // Create a new persistent popup
-    const persistentPopup = new MapLibrePopup({
-      closeButton: true,
-      closeOnClick: false,
-      maxWidth: '500px',
-      className: 'feature-popup persistent-popup'
-    })
-
-    // Format popup content
-    const popupContent = formatPopupContent(feature.properties, layerLabel, _layerId)
-
-    // Add popup to the map
-    persistentPopup.setLngLat(e.lngLat).setHTML(popupContent).addTo(mapRef.value)
-    clickedPopup.value = persistentPopup
-
-    // Remove the normal hover popup
-    hoverPopup.remove()
-
-    // Stop event propagation to prevent map click from closing it immediately
+    // Stop event propagation
     e.preventDefault()
   }
 
@@ -348,11 +323,6 @@ export function useMapEvents(
 
     if (hoverPopup) {
       hoverPopup.remove()
-    }
-
-    if (clickedPopup.value) {
-      clickedPopup.value.remove()
-      clickedPopup.value = null
     }
 
     hoveredFeature.value = null
