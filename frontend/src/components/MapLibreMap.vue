@@ -18,6 +18,7 @@ import {
 } from 'maplibre-gl'
 import type { LegendColor } from '@/utils/legendColor'
 import { onMounted, ref, watch, type Ref } from 'vue'
+import { useFeatureSelections } from '@/stores/useFeatureSelections'
 
 import { Protocol } from 'pmtiles'
 import { useLayersStore } from '@/stores/layers'
@@ -25,6 +26,7 @@ import { useCityStore } from '@/stores/city'
 
 const layersStore = useLayersStore()
 const cityStore = useCityStore()
+const featureSelections = useFeatureSelections()
 
 const props = withDefaults(
   defineProps<{
@@ -76,6 +78,68 @@ function addPMTilesProtocol() {
   }
 }
 
+// Add selection source and layers to the map
+function addSelectionLayers() {
+  if (!map.value) return
+  
+  // Add selection source
+  if (!map.value.getSource('selected')) {
+    map.value.addSource('selected', {
+      type: 'geojson',
+      data: { type: 'FeatureCollection', features: [] }
+    })
+  }
+  
+  // Add selection circle layer
+  if (!map.value.getLayer('selected-circles')) {
+    map.value.addLayer({
+      id: 'selected-circles',
+      type: 'circle',
+      source: 'selected',
+      paint: {
+        'circle-radius': ['interpolate', ['linear'], ['zoom'], 8, 10, 16, 14],
+        'circle-color': '#ffffff',
+        'circle-stroke-color': '#000000',
+        'circle-stroke-width': 1,
+        'circle-pitch-scale': 'viewport'
+      }
+    })
+  }
+  
+  // Add selection label layer
+  if (!map.value.getLayer('selected-labels')) {
+    map.value.addLayer({
+      id: 'selected-labels',
+      type: 'symbol',
+      source: 'selected',
+      layout: {
+        'text-field': ['to-string', ['get', 'label']],
+        'text-size': 12,
+        'text-allow-overlap': true,
+        'symbol-placement': 'point',
+        'text-font': ['Open Sans Bold', 'Arial Unicode MS Bold']
+      },
+      paint: {
+        'text-color': '#000000',
+        'text-halo-color': '#ffffff',
+        'text-halo-width': 1
+      }
+    })
+  }
+}
+
+// Update selection source data when selections change
+function updateSelectionSource() {
+  if (!map.value) return
+  const source = map.value.getSource('selected')
+  if (source) {
+    source.setData(featureSelections.featureCollection)
+  }
+}
+
+// Watch for selection changes and update the map
+watch(() => featureSelections.featureCollection, updateSelectionSource, { deep: true })
+
 function initMap() {
   // Add PMTiles protocol
   addPMTilesProtocol()
@@ -102,47 +166,52 @@ function initMap() {
     })
   )
 
-  mapInstance.on('load', () => {
-    if (!map.value) return
-    hasLoaded.value = true
-    loading.value = false
-    map.value.resize()
-
-    // Add all sources dynamically
-    const mapConfig = getMapConfig(cityStore.city)
-    Object.entries(mapConfig.layers).forEach(([, { id, source, layer }]) => {
-      try {
-        map.value?.addSource(id, source)
-        map.value?.addLayer(layer)
-      } catch (e) {
-        // Ignore errors when adding sources/layers
-        console.warn(`Failed to add source/layer ${id}:`, e)
-      }
-    })
-
-    function handleDataEvent() {
-      if (map.value?.areTilesLoaded()) {
-        loading.value = false
-      } else {
-        loading.value = true
-      }
-    }
-
-    // Attach popup listeners to each layer using our composable
-    // mapConfig.layers.forEach((layer) => attachPopupListeners(layer.layer.id, layer.label))
-
-    mapInstance.on('sourcedata', handleDataEvent)
-    mapInstance.on('sourcedataloading', handleDataEvent)
-    mapInstance.on('idle', () => {
+    mapInstance.on('load', () => {
+      if (!map.value) return
+      hasLoaded.value = true
       loading.value = false
+      map.value.resize()
+
+      // Add selection layers
+      addSelectionLayers()
+
+      // Add all sources dynamically
+      const mapConfig = getMapConfig(cityStore.city)
+      Object.entries(mapConfig.layers).forEach(([, { id, source, layer, label }]) => {
+        try {
+          map.value?.addSource(id, source)
+          map.value?.addLayer(layer)
+          // Attach popup listeners for layers that should have them
+          if (props.popupLayerIds?.includes(id)) {
+            mapEventManager.attachPopupListeners(id, label ?? '')
+          }
+        } catch (e) {
+          // Ignore errors when adding sources/layers
+          console.warn(`Failed to add source/layer ${id}:`, e)
+        }
+      })
+
+      function handleDataEvent() {
+        if (map.value?.areTilesLoaded()) {
+          loading.value = false
+        } else {
+          loading.value = true
+        }
+      }
+
+      // Attach popup listeners to each layer using our composable
+      // mapConfig.layers.forEach((layer) => attachPopupListeners(layer.layer.id, layer.label))
+
+      mapInstance.on('sourcedata', handleDataEvent)
+      mapInstance.on('sourcedataloading', handleDataEvent)
+      mapInstance.on('idle', () => {
+        loading.value = false
+      })
+
+      if (props.callbackLoaded) {
+        props.callbackLoaded()
+      }
     })
-
-    filterSP0Period(layersStore.sp0Period)
-
-    if (props.callbackLoaded) {
-      props.callbackLoaded()
-    }
-  })
 }
 
 onMounted(() => {
@@ -237,27 +306,6 @@ watch(
   { deep: true }
 )
 
-function filterSP0Period(period: string) {
-  const sp0Group = layersStore.layerGroups.find((group) => group.id === 'sp0_migration')
-
-  if (!sp0Group) return
-  sp0Group.layers
-    .filter((layer) => {
-      return layersStore.selectedLayers.includes(layer.layer.id)
-    })
-    .forEach((layer) => {
-      const filter = ['==', ['get', 'year'], period] as FilterSpecification
-      map.value?.setFilter(layer.layer.id, filter)
-    })
-}
-
-// Filter SP0 migration layers by period
-watch(
-  () => [layersStore.sp0Period, layersStore.selectedLayers],
-  ([newPeriod]) => filterSP0Period(newPeriod as string),
-  { immediate: true }
-)
-
 // Automatic pitch change when 3D layers are added or removed
 watch(
   () => layersStore.visibleLayers,
@@ -314,7 +362,8 @@ defineExpose({
   onZoom,
   changeSourceTilesUrl,
   setLayerVisibility,
-  getSourceTilesUrl
+  getSourceTilesUrl,
+  getMap: () => map.value
 })
 
 watch(

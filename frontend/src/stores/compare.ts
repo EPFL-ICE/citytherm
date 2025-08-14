@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 
 export interface TableRow {
   uid: string
@@ -29,6 +29,8 @@ export const useCompareStore = defineStore('compare', () => {
       // Add layer if under limit
       selectedLayerIds.value.push(id)
     }
+    // Update table data when layers change
+    updateTableData()
   }
 
   function toggleNeighborhood(uid: string) {
@@ -40,6 +42,8 @@ export const useCompareStore = defineStore('compare', () => {
       // Add neighborhood if under limit
       selectedNeighborhoodIds.value.push(uid)
     }
+    // Update table data when neighborhoods change
+    updateTableData()
   }
 
   function setViewport(v: any) {
@@ -54,6 +58,36 @@ export const useCompareStore = defineStore('compare', () => {
     selectedNeighborhoodIds.value = []
   }
 
+  // Function to update table data based on selected layers and neighborhoods
+  function updateTableData() {
+    // Create table rows for each selected neighborhood
+    const rows: TableRow[] = selectedNeighborhoodIds.value.map(uid => ({
+      uid,
+      label: `Neighborhood ${uid}`, // In a real implementation, this would come from the feature properties
+      values: {}
+    }))
+
+    // For each selected layer, add placeholder values
+    // In a real implementation, this would fetch actual data from the map features
+    selectedLayerIds.value.forEach(layerId => {
+      rows.forEach(row => {
+        // Placeholder values - in a real implementation, these would come from querying the map features
+        row.values[layerId] = Math.random() * 100 // Random placeholder value
+      })
+    })
+
+    // Set the table data
+    tableData.value = rows
+    
+    // Log for debugging
+    console.log('Updated table data:', rows)
+  }
+
+  // Watch for changes in selected layers and neighborhoods to update table data
+  watch([selectedLayerIds, selectedNeighborhoodIds], () => {
+    updateTableData()
+  }, { deep: true })
+
   return {
     selectedLayerIds,
     selectedNeighborhoodIds,
@@ -67,6 +101,7 @@ export const useCompareStore = defineStore('compare', () => {
     toggleNeighborhood,
     setViewport,
     setTableData,
-    clearSelections
+    clearSelections,
+    updateTableData
   }
 })

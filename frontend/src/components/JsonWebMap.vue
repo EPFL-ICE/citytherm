@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import MapLibreMap from '@/components/MapLibreMap.vue'
+import SelectionPanel from '@/components/SelectionPanel.vue'
 
 import { ref, shallowRef, watch, computed } from 'vue'
 import LegendMap from '@/components/LegendMap.vue'
@@ -59,7 +60,7 @@ const style = ref('style/style.json') // Default style
           </v-card-text>
         </v-card>
       </v-col>
-      <v-col id="map-time-input-container" xl="10" cols="9" class="py-0 pl-0 d-flex flex-column">
+      <v-col id="map-time-input-container" xl="10" cols="9" class="py-0 pl-0 d-flex flex-column position-relative">
         <MapLibreMap
           :key="style + cityStore.city"
           ref="map"
@@ -76,6 +77,7 @@ const style = ref('style/style.json') // Default style
             <legend-map :layers="layersStore.visibleLayers"></legend-map>
           </template>
         </MapLibreMap>
+        <SelectionPanel class="map-selections-overlay" />
       </v-col>
     </v-row>
   </v-container>
@@ -92,5 +94,13 @@ const style = ref('style/style.json') // Default style
 
 .no-min-height {
   height: 32px;
+}
+
+.map-selections-overlay {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  max-width: 400px;
+  z-index: 1000;
 }
 </style>

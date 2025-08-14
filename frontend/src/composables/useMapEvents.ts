@@ -1,6 +1,7 @@
 import type { Map as MapLibre, MapLayerMouseEvent } from 'maplibre-gl'
 import { Popup as MapLibrePopup } from 'maplibre-gl'
 import { onUnmounted, ref, type Ref } from 'vue'
+import { useFeatureSelections } from '@/stores/useFeatureSelections'
 
 // Interface for tracking attached event listeners
 interface EventListeners {
@@ -88,13 +89,22 @@ export function useMapEvents(
     ...popupOptions
   })
 
+  // Get the selections store
+  const featureSelections = useFeatureSelections()
+
   /**
    * Handle layer click events
    */
   function handleLayerClick(_layerId: string, layerLabel: string, e: MapLayerMouseEvent): void {
+    debugger
     if (!e.features || e.features.length === 0 || !mapRef.value) return
 
     const feature = e.features[0]
+
+    // Handle selection if this is a selectable layer
+    // For now, we'll assume all layers can be selected
+    // In a more sophisticated implementation, we might want to check if the layer is in a specific list
+    featureSelections.toggleFromFeature(feature, 'id')
 
     // Generate unique ID for clicked feature
     const featureId =

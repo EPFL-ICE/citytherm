@@ -9,8 +9,6 @@ export const useLayersStore = defineStore('layers', () => {
   // Store the layer groups from config, reactively based on current city
   const layerGroups = computed(() => getLayerGroups(cityStore.city))
 
-  const sp0Period = ref<string>('2020-2023')
-
   // Selected layer IDs
   const selectedLayers = ref<string[]>([])
 
@@ -121,7 +119,6 @@ export const useLayersStore = defineStore('layers', () => {
 
   return {
     layerGroups,
-    sp0Period,
     selectedLayers,
     filteredCategories,
     expandedGroups,

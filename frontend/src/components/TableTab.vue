@@ -47,20 +47,8 @@ function exportCSV() {
       </v-btn>
     </div>
 
-    <div v-if="isEmpty" class="empty-state fill-height d-flex align-center justify-center">
-      <v-alert type="info" prominent>
-        Please select neighborhoods and layers to view data.
-      </v-alert>
-    </div>
-
-    <div v-else-if="!hasData" class="empty-state fill-height d-flex align-center justify-center">
-      <v-alert type="info" prominent>
-        Please select both neighborhoods and layers to view data.
-      </v-alert>
-    </div>
-
     <v-data-table
-      v-else
+      v-if="hasData"
       :headers="[
         { title: 'Neighborhood ID', key: 'uid' },
         { title: 'Label', key: 'label' },

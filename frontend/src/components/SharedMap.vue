@@ -4,6 +4,8 @@ import { useLayersStore } from '@/stores/layers'
 import { useCityStore } from '@/stores/city'
 import MapLibreMap from '@/components/MapLibreMap.vue'
 import LegendMap from '@/components/LegendMap.vue'
+import { useMapEvents } from '@/composables/useMapEvents'
+import type { Map } from 'maplibre-gl'
 import type { MapLayerConfig } from '@/config/layerTypes'
 
 const props = defineProps<{
@@ -14,6 +16,21 @@ const props = defineProps<{
 const layersStore = useLayersStore()
 const cityStore = useCityStore()
 const map = ref<InstanceType<typeof MapLibreMap> | null>(null)
+const mapInstance = ref<Map | undefined>(undefined)
+
+// Use the map events composable
+const mapEventManager = useMapEvents(mapInstance as any)
+
+// Watch for map component changes and get the actual map instance
+watch(
+  () => map.value?.getMap(),
+  (newMapInstance) => {
+    if (newMapInstance) {
+      mapInstance.value = newMapInstance
+    }
+  },
+  { immediate: true }
+)
 
 // derive center/zoom from city store
 const mapCenter = computed(() => cityStore.current.center)
@@ -92,12 +109,14 @@ const handleMove = () => {
   }
 }
 
-// Expose map methods
+// Expose map methods and events
 defineExpose({
-  getMap: () => map.value?.getMap(),
+  getMap: () => mapInstance.value,
   setLayerVisibility: (layerId: string, visibility: boolean) => {
     map.value?.setLayerVisibility(layerId, visibility)
-  }
+  },
+  selectedFeatureId: mapEventManager.selectedFeatureId,
+  hoveredFeature: mapEventManager.hoveredFeature
 })
 </script>
 
@@ -112,6 +131,7 @@ defineExpose({
       :min-zoom="6"
       style-spec="style/style.json"
       :callback-loaded="handleMapLoaded"
+      :popup-layer-ids="fullLayerConfig ? [fullLayerConfig.layer.id] : []"
       class="maplibre-container"
       @move="handleMove"
     >

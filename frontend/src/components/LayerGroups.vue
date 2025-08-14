@@ -3,7 +3,6 @@ import InfoTooltip from '@/components/InfoTooltip.vue'
 import { mdiChevronDown, mdiChevronRight, mdiEyeOutline, mdiEyeOffOutline } from '@mdi/js'
 import { useLayersStore } from '@/stores/layers'
 import { useCompareStore } from '@/stores/compare'
-import SP0PeriodSelector from './SP0PeriodSelector.vue'
 
 // Use the stores - now the component gets everything from the stores, no props needed
 const layersStore = useLayersStore()
@@ -41,9 +40,6 @@ const compareStore = useCompareStore()
 
       <!-- Group Content (Collapsible) -->
       <div v-show="layersStore.expandedGroups[group.id]" class="mt-2">
-        <div v-if="group.id == 'sp0_migration'">
-          <SP0PeriodSelector></SP0PeriodSelector>
-        </div>
         <!-- Layer selection with checkboxes for all layers -->
         <div class="layer-selection-counter mb-2">
           {{ layersStore.selectedLayers.length }}/{{ compareStore.layerLimit }} selected
