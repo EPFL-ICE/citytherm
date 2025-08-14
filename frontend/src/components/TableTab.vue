@@ -12,19 +12,14 @@ const featureSelections = useFeatureSelections()
 
 // Mapping of layer groups to their relevant properties
 const layerGroupProperties: Record<string, string[]> = {
-  'urban_morphology': [
-    'Building height',
-    'Sky view factor',
-    'Frontal area index',
-    'Aspect ratio'
-  ],
-  'land_cover_fraction': [
+  urban_morphology: ['Building height', 'Sky view factor', 'Frontal area index', 'Aspect ratio'],
+  land_cover_fraction: [
     'Water cover fraction',
     'Impervious surface cover fraction',
     'Building cover fraction',
     'Pervious surface cover fraction'
   ],
-  'canyon_network': [
+  canyon_network: [
     'Intersections',
     'Length N-S',
     'Length NE-SW',
@@ -34,47 +29,40 @@ const layerGroupProperties: Record<string, string[]> = {
     'Length secondary road',
     'Length highway'
   ],
-  'local_climate_zones': [
-    'lcz_typology'
-  ],
-  'irradiance': [
-    'solar_summer',
-    'solar_winter_2'
-  ],
-  'land_surface_temperature': [
-    'lst_measurement'
-  ]
+  local_climate_zones: ['lcz_typology'],
+  irradiance: ['solar_summer', 'solar_winter_2'],
+  land_surface_temperature: ['lst_measurement']
 }
 
 // Helper function to get layer group ID from layer ID
 function getLayerGroupId(layerId: string): string | null {
   // Remove '-layer' suffix if present
   const baseLayerId = layerId.replace('-layer', '')
-  
+
   // Map layer IDs to group IDs
   const layerToGroupMap: Record<string, string> = {
-    'building_height': 'urban_morphology',
-    'sky_view_factor': 'urban_morphology',
-    'frontal_area': 'urban_morphology',
-    'aspect_ratio': 'urban_morphology',
-    'water_fraction': 'land_cover_fraction',
-    'impervious_fraction': 'land_cover_fraction',
-    'building_fraction': 'land_cover_fraction',
-    'pervious_fraction': 'land_cover_fraction',
-    'intersections': 'canyon_network',
-    'length_ns': 'canyon_network',
-    'length_ne_sw': 'canyon_network',
-    'length_se_nw': 'canyon_network',
-    'length_e_w': 'canyon_network',
-    'primary_road_len': 'canyon_network',
-    'secondary_road_len': 'canyon_network',
-    'highway_len': 'canyon_network',
-    'lcz_typology': 'local_climate_zones',
-    'irr_summer': 'irradiance',
-    'irr_winter': 'irradiance',
-    'lst_measurement': 'land_surface_temperature'
+    building_height: 'urban_morphology',
+    sky_view_factor: 'urban_morphology',
+    frontal_area: 'urban_morphology',
+    aspect_ratio: 'urban_morphology',
+    water_fraction: 'land_cover_fraction',
+    impervious_fraction: 'land_cover_fraction',
+    building_fraction: 'land_cover_fraction',
+    pervious_fraction: 'land_cover_fraction',
+    intersections: 'canyon_network',
+    length_ns: 'canyon_network',
+    length_ne_sw: 'canyon_network',
+    length_se_nw: 'canyon_network',
+    length_e_w: 'canyon_network',
+    primary_road_len: 'canyon_network',
+    secondary_road_len: 'canyon_network',
+    highway_len: 'canyon_network',
+    lcz_typology: 'local_climate_zones',
+    irr_summer: 'irradiance',
+    irr_winter: 'irradiance',
+    lst_measurement: 'land_surface_temperature'
   }
-  
+
   return layerToGroupMap[baseLayerId] || null
 }
 
@@ -106,19 +94,19 @@ const relevantProperties = computed(() => {
     // If no groups selected, return all properties from the first item
     return Object.keys(featureSelections.items[0]?.props || {})
   }
-  
+
   // Combine properties from all selected layer groups
   const properties = new Set<string>()
-  selectedLayerGroupIds.value.forEach(groupId => {
+  selectedLayerGroupIds.value.forEach((groupId) => {
     const groupProps = layerGroupProperties[groupId]
     if (groupProps) {
-      groupProps.forEach(prop => properties.add(prop))
+      groupProps.forEach((prop) => properties.add(prop))
     }
   })
-  
+
   // Convert to array, but only include properties that actually exist in the data
   const firstItemProps = Object.keys(featureSelections.items[0]?.props || {})
-  return Array.from(properties).filter(prop => firstItemProps.includes(prop))
+  return Array.from(properties).filter((prop) => firstItemProps.includes(prop))
 })
 
 // Check if we have data to display
@@ -134,9 +122,9 @@ const isEmpty = computed(() => {
 function exportCSV() {
   // Create a custom CSV export for feature selections
   const headers = ['ID', 'Label', ...relevantProperties.value]
-  
+
   // Format property names for headers (similar to popup formatting)
-  const formattedHeaders = headers.map(header => {
+  const formattedHeaders = headers.map((header) => {
     if (header === 'ID' || header === 'Label') return header
     return header
       .replace(/_/g, ' ')
@@ -146,16 +134,20 @@ function exportCSV() {
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ')
   })
-  
+
   const lines = [
     formattedHeaders.join(','),
     ...featureSelections.items.map((item) =>
-      [item.id.toString(), `Cell ${item.id}`, ...relevantProperties.value.map((prop) => item.props[prop] ?? '')]
+      [
+        item.id.toString(),
+        `Cell ${item.id}`,
+        ...relevantProperties.value.map((prop) => item.props[prop] ?? '')
+      ]
         .map((v) => `"${String(v).replace(/"/g, '""')}"`)
         .join(',')
     )
   ]
-  
+
   const blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8;' })
   const a = document.createElement('a')
   a.href = URL.createObjectURL(blob)
@@ -198,10 +190,7 @@ const tableData = computed(() => {
         <tr>
           <td>{{ item.uid }}</td>
           <td>{{ item.label || '' }}</td>
-          <td
-            v-for="propKey in relevantProperties"
-            :key="propKey"
-          >
+          <td v-for="propKey in relevantProperties" :key="propKey">
             {{ item.values[propKey] || '-' }}
           </td>
         </tr>
