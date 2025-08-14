@@ -82,19 +82,39 @@ function formatPopupContent(
   // Get relevant properties for this layer group, or all properties if no group found
   const relevantProperties = layerGroupId ? layerGroupProperties[layerGroupId] : null
 
-  // Create HTML table to display properties
-  let content = `<div class="popup-content"><h3>${label}</h3><table class="popup-table">`
+  // Always include these specific properties in the header
+  const headerProperties = ['id', 'col_index', 'row_index']
+  
+  // Create header content with ID and coordinates
+  let headerContent = `${label}`
+  if (properties) {
+    const id = properties['id']
+    const colIndex = properties['col_index']
+    const rowIndex = properties['row_index']
+    
+    if (id !== undefined || colIndex !== undefined || rowIndex !== undefined) {
+      headerContent += ' ('
+      const parts = []
+      if (id !== undefined) parts.push(`ID: ${id}`)
+      if (colIndex !== undefined) parts.push(`Col: ${colIndex}`)
+      if (rowIndex !== undefined) parts.push(`Row: ${rowIndex}`)
+      headerContent += parts.join(', ') + ')'
+    }
+  }
 
-  // Filter properties based on layer group
-  const propertiesToDisplay = relevantProperties
-    ? Object.entries(properties).filter(([key]) => relevantProperties.includes(key))
-    : Object.entries(properties)
+  // Create HTML table to display properties
+  let content = `<div class="popup-content"><h3>${headerContent}</h3><table class="popup-table">`
+
+  // Get properties to display - only relevant properties, excluding header properties
+  const propertiesToDisplay = relevantProperties 
+    ? Object.entries(properties).filter(([key]) => relevantProperties.includes(key) && !headerProperties.includes(key))
+    : Object.entries(properties).filter(([key]) => !headerProperties.includes(key))
 
   // Filter out null/undefined values and internal properties
   propertiesToDisplay
     .filter(
       ([key, value]) =>
-        value !== null && value !== undefined && !key.startsWith('_') && key !== 'id' // Skip internal keys
+        value !== null && value !== undefined && !key.startsWith('_')
     )
     .forEach(([key, value]) => {
       // Format the property key to be more readable
