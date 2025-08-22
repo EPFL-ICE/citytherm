@@ -177,9 +177,7 @@ function addSelectionLayers() {
     map.value.getStyle().layers.map((l: any) => l.id)
   )
   console.log('Selection layers added.')
-
 }
-
 // Update selection source data when selections change
 function updateSelectionSource() {
   if (!map.value) return
