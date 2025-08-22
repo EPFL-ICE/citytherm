@@ -855,6 +855,28 @@ export const landSurfaceTemperatureLayers: MapLayerConfig[] = [
         'fill-opacity': 0.8
       }
     } as LayerSpecification
+  },
+  {
+    id: 'lst_geotiff',
+    label: 'GeoTIFF',
+    unit: '°C',
+    info: 'Land surface temperature from GeoTIFF files',
+    hasDatePicker: true,
+    source: {
+      type: 'raster',
+      attribution: 'CityTherm Land Surface Temperature Data',
+      tiles: [`/geodata/lst/{z}/{x}/{y}.png`], // Placeholder - will be handled by GeoTIFF component
+      minzoom: 5,
+      maxzoom: 15
+    } as any,
+    layer: {
+      id: 'lst_geotiff-layer',
+      type: 'raster',
+      source: 'lst_geotiff',
+      paint: {
+        'raster-opacity': 0.8
+      }
+    } as LayerSpecification
   }
 ]
 
@@ -904,7 +926,7 @@ export const getLayerGroups = (city: CityKey = 'geneva') => [
     id: 'land_surface_temperature',
     label: 'Land surface temperature',
     expanded: false,
-    multiple: false,
+    multiple: true,
     layers: landSurfaceTemperatureLayers
   }
 ]

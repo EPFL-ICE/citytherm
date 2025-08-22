@@ -33,11 +33,14 @@ const generateLegendColors = (layer: LayerSpecification): LegendColor[] | null =
       paint['circle-color'] ||
       null
 
+    // Return null for raster layers or layers without color properties
     if (!paintProperty) return null
 
     // Handle 'match' expressions for categorical data
     if (Array.isArray(paintProperty) && paintProperty[0] === 'match') {
-      const variableProperty = paintProperty[1][1]
+      // Check if paintProperty[1] exists and has the expected structure before accessing [1]
+      const variableProperty =
+        paintProperty[1] && Array.isArray(paintProperty[1]) ? paintProperty[1][1] : undefined
       const stops = paintProperty.slice(2)
       const defaultColor = stops.pop()
       const legendColors: LegendColor[] = []
@@ -103,14 +106,25 @@ const generateOneLayerWithColors = (layer: MapLayerConfig) => {
   const isCategorical =
     Array.isArray(paintProperty) && (paintProperty[0] === 'match' || paintProperty[0] === 'case')
 
+  // Safely extract variable property, checking for existence and structure
+  let variable = undefined
+  if (paintProperty && Array.isArray(paintProperty) && paintProperty[1]) {
+    if (Array.isArray(paintProperty[1])) {
+      variable = paintProperty[1][1]
+    } else if (typeof paintProperty[1] === 'string') {
+      variable = paintProperty[1]
+    }
+  }
+
   return {
     ...layer,
     colors: isCategorical ? colors : colors.reverse(),
     isCategorical,
-    variable: paintProperty[1][1],
-    gradient: !isCategorical
-      ? `linear-gradient(to bottom, ${colors.map((c) => c.color).join(', ')})`
-      : undefined
+    variable: variable,
+    gradient:
+      !isCategorical && colors.length > 0
+        ? `linear-gradient(to bottom, ${colors.map((c) => c.color).join(', ')})`
+        : undefined
   }
 }
 

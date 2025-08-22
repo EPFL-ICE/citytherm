@@ -23,6 +23,9 @@ import { useFeatureSelections } from '@/stores/useFeatureSelections'
 import { Protocol } from 'pmtiles'
 import { useLayersStore } from '@/stores/layers'
 import { useCityStore } from '@/stores/city'
+import GeoRaster from 'georaster'
+import GeoRasterLayer from 'georaster-layer-for-leaflet'
+import * as L from 'leaflet'
 
 const layersStore = useLayersStore()
 const cityStore = useCityStore()
