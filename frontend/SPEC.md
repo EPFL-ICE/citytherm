@@ -2,12 +2,10 @@
 
 ## Version History
 
-
 - v1.0 (2025-08-22): Initial version based on current codebase
 - v1.1 (2025-08-22): Fixed TEST text issue in Neighborhood badges and updated documentation
 
 ## Overview
-
 
 CityTherm is a web mapping application built with Vue.js 3 that visualizes urban climate data. The application allows users to:
 
@@ -20,7 +18,6 @@ The application is structured as a single-page application (SPA) with a responsi
 
 ## Technology Stack
 
-
 ### Core Frameworks
 
 - **Vue.js 3**: Progressive JavaScript framework for building user interfaces
@@ -31,21 +28,17 @@ The application is structured as a single-page application (SPA) with a responsi
 
 ### State Management
 
-
 - **Pinia**: Intuitive, type-safe state management for Vue.js
 
 ### Mapping
 
-
 - **MapLibre GL JS**: Library for interactive vector tile maps
 - **PMTiles**: Efficient format for serving map tiles
-
 
 ### Utilities
 
 - **Turf.js**: Geospatial analysis library
 - **Lodash**: Utility library for common programming tasks
-
 
 ### Testing
 
@@ -87,13 +80,11 @@ frontend/
 
 ## Core Components Architecture
 
-
 ### Root Component
 
 - **App.vue**: The root component that sets up the Vuetify application container and renders the router view.
 
 ### Main Views
-
 
 - **ComparisonView.vue**: The primary view that displays the main application interface with layer selection, maps, and data tables.
 
@@ -128,17 +119,13 @@ frontend/
 
 ### City Store (`stores/city.ts`)
 
-
-
 Manages the currently selected city and its configuration:
 
 - Available cities (Geneva, Zurich)
 - City-specific map center and zoom levels
 - Grid data file references
 
-
 ### Layers Store (`stores/layers.ts`)
-
 
 Handles map layer configuration and selection:
 
@@ -147,9 +134,7 @@ Handles map layer configuration and selection:
 - Layer filtering capabilities
 - Expansion state for layer groups
 
-
 ### Compare Store (`stores/compare.ts`)
-
 
 Manages comparison functionality:
 
@@ -173,7 +158,6 @@ Manages selected map features:
 
 ### Layer Configuration (`config/layerTypes.ts`, `config/mapConfig.ts`)
 
-
 The application uses a dynamic layer configuration system:
 
 - Layer specifications with MapLibre GL layer definitions
@@ -181,14 +165,12 @@ The application uses a dynamic layer configuration system:
 - Color scales and styling information
 - Layer categorization into groups (Urban Morphology, Land Cover, etc.)
 
-
 ### Map Components Integration
 
 1. **MapLibreMap.vue**: Low-level MapLibre GL wrapper
 2. **SharedMap.vue**: Mid-level component that manages layer visibility and events
 
 3. **MapPanel.vue**: High-level component that integrates the map with application state
-
 
 ### Neighborhood Badges
 
@@ -204,7 +186,6 @@ The **NeighborhoodBadges.vue** component displays visual indicators on the map s
 
 #### Data Flow
 
-
 1. User clicks on a map feature → Triggers selection in `useFeatureSelections` store
 2. Feature selections are synchronized with `compare` store
 3. NeighborhoodBadges component reacts to changes in `compare.selectedNeighborhoodIds`
@@ -212,13 +193,11 @@ The **NeighborhoodBadges.vue** component displays visual indicators on the map s
 
 #### Styling
 
-
 - Circular badges with shadow effect
 - Consistent color scheme with the application theme
 - Responsive sizing for different screen resolutions
 
 ### Event Handling (`composables/useMapEvents.ts`)
-
 
 Composable for managing map interactions:
 
@@ -232,12 +211,10 @@ Composable for managing map interactions:
 
 ### Initialization
 
-
 1. Application loads with default city (Geneva)
 2. Map configuration is loaded based on selected city
 3. Layer groups are initialized and displayed
 4. Main map view is rendered
-
 
 ### User Interaction Flow
 
@@ -248,12 +225,10 @@ Composable for managing map interactions:
 
 ### Data Persistence
 
-
 - Feature selections are persisted in localStorage
 - Application state is managed in-memory through Pinia stores
 
 ## Configuration Management
-
 
 ### Environment Configuration
 
@@ -264,7 +239,6 @@ Composable for managing map interactions:
 
 ### Layer Configuration
 
-
 - Dynamic layer configuration based on selected city
 - JSON schemas for validating configuration data
 - PMTiles URLs for efficient map data delivery
@@ -273,23 +247,18 @@ Composable for managing map interactions:
 
 ### Vuetify Integration
 
-
-
 - Material Design components for consistent UI
 - Responsive grid system for different screen sizes
 - Theme customization through Vuetify configuration
 
 ### Custom Components
 
-
 - Enhanced slider for parameter adjustment
 - Interactive tooltips for information display
 - Loading indicators for asynchronous operations
 - Data tables for feature comparison
 
-
 ## Build and Deployment
-
 
 ### Development
 
