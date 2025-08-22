@@ -121,11 +121,11 @@ const isEmpty = computed(() => {
 
 function exportCSV() {
   // Create a custom CSV export for feature selections
-  const headers = ['ID', 'Label', ...relevantProperties.value]
+  const headers = ['Index', 'Label', ...relevantProperties.value]
 
   // Format property names for headers (similar to popup formatting)
   const formattedHeaders = headers.map((header) => {
-    if (header === 'ID' || header === 'Label') return header
+    if (header === 'Index' || header === 'Label') return header
     return header
       .replace(/_/g, ' ')
       .replace(/([A-Z])/g, ' $1')
@@ -139,8 +139,8 @@ function exportCSV() {
     formattedHeaders.join(','),
     ...featureSelections.items.map((item) =>
       [
-        item.id.toString(),
-        `Cell ${item.id}`,
+        item.index.toString(),
+        `Cell ${item.index}`,
         ...relevantProperties.value.map((prop) => item.props[prop] ?? '')
       ]
         .map((v) => `"${String(v).replace(/"/g, '""')}"`)
@@ -159,9 +159,15 @@ function exportCSV() {
 const tableData = computed(() => {
   return featureSelections.items.map((item) => ({
     uid: item.id.toString(),
-    label: `Cell ${item.id}`,
+    index: item.index,
+    label: `Cell ${item.index}`,
     values: item.props
   }))
+})
+
+// Get selected neighborhood IDs from the compare store
+const selectedNeighborhoodIds = computed(() => {
+  return compareStore.selectedNeighborhoodIds
 })
 </script>
 
@@ -173,10 +179,26 @@ const tableData = computed(() => {
       </v-btn>
     </div>
 
+    <!-- Display selected neighborhood IDs -->
+    <div v-if="selectedNeighborhoodIds.length > 0" class="neighborhood-section pa-4">
+      <h3>Selected Neighborhoods</h3>
+      <div class="neighborhood-list">
+        <v-chip
+          v-for="neighborhoodId in selectedNeighborhoodIds"
+          :key="neighborhoodId"
+          class="ma-1"
+          color="primary"
+          variant="outlined"
+        >
+          {{ neighborhoodId }}
+        </v-chip>
+      </div>
+    </div>
+
     <v-data-table
       v-if="hasData"
       :headers="[
-        { title: 'ID', key: 'uid' },
+        { title: 'Index', key: 'index' },
         { title: 'Label', key: 'label' },
         ...relevantProperties.map((propKey) => ({
           title: propKey,
@@ -188,7 +210,7 @@ const tableData = computed(() => {
     >
       <template #item="{ item }">
         <tr>
-          <td>{{ item.uid }}</td>
+          <td>{{ item.index }}</td>
           <td>{{ item.label || '' }}</td>
           <td v-for="propKey in relevantProperties" :key="propKey">
             {{ item.values[propKey] || '-' }}
@@ -210,5 +232,19 @@ const tableData = computed(() => {
 
 .empty-state {
   background-color: #f5f5f5;
+}
+
+.neighborhood-section {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.neighborhood-section h3 {
+  margin-bottom: 8px;
+}
+
+.neighborhood-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 </style>
