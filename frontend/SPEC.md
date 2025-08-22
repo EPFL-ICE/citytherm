@@ -148,13 +148,16 @@ Manages comparison functionality:
 
 ### Feature Selections Store (`stores/useFeatureSelections.ts`)
 
-Manages selected map features:
+Manages selected map features with city-specific storage:
 
-- Collection of selected geographic features
+- Collection of selected geographic features, maintained separately for each city
 - Feature centroid calculations
-- Local storage persistence
+- Local storage persistence with city-specific data separation
+- Automatic data migration from previous single-city format
+- Maximum selection limits (6 items per city)
+- City-aware feature collection generation for map display
 
-- Maximum selection limits
+The store now maintains separate selections for Geneva and Zurich, ensuring that when users switch between cities, their respective neighborhood selections are preserved. When a city is selected, the store automatically loads the appropriate feature selections for that city.
 
 ## Mapping Architecture
 
