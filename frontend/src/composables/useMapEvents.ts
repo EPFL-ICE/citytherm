@@ -22,11 +22,6 @@ const layerGroupProperties: Record<string, string[]> = {
     'Pervious surface cover fraction'
   ],
   canyon_network: [
-    'Intersections',
-    'Length N-S',
-    'Length NE-SW',
-    'Length SE-NW',
-    'Length E-W',
     'Length primary road',
     'Length secondary road',
     'Length highway'
@@ -51,11 +46,11 @@ function getLayerGroupId(layerId: string): string | null {
     impervious_fraction: 'land_cover_fraction',
     building_fraction: 'land_cover_fraction',
     pervious_fraction: 'land_cover_fraction',
-    intersections: 'canyon_network',
-    length_ns: 'canyon_network',
-    length_ne_sw: 'canyon_network',
-    length_se_nw: 'canyon_network',
-    length_e_w: 'canyon_network',
+    // intersections: 'canyon_network',
+    // length_ns: 'canyon_network',
+    // length_ne_sw: 'canyon_network',
+    // length_se_nw: 'canyon_network',
+    // length_e_w: 'canyon_network',
     primary_road_len: 'canyon_network',
     secondary_road_len: 'canyon_network',
     highway_len: 'canyon_network',

@@ -107,8 +107,6 @@ frontend/
 
 - **LegendMap.vue**: Map legend component that displays layer information
 
-- **NeighborhoodBadges.vue**: Visual indicators displayed on maps showing selected neighborhood indices
-
 ### Utility Components
 
 - **CustomSlider.vue**: Enhanced slider component with custom styling
@@ -178,30 +176,6 @@ The application uses a dynamic layer configuration system:
 
 3. **MapPanel.vue**: High-level component that integrates the map with application state
 
-### Neighborhood Badges
-
-The **NeighborhoodBadges.vue** component displays visual indicators on the map showing the indices of selected neighborhoods. These badges appear as numbered circles positioned on the map corresponding to selected features.
-
-#### Implementation Details
-
-- Located in `src/components/NeighborhoodBadges.vue`
-
-- Uses absolute positioning to appear in the top-right corner of the map panel
-- Styled as circular badges with blue background and white text
-- Dynamically updates based on selections in the compare store
-
-#### Data Flow
-
-1. User clicks on a map feature → Triggers selection in `useFeatureSelections` store
-2. Feature selections are synchronized with `compare` store
-3. NeighborhoodBadges component reacts to changes in `compare.selectedNeighborhoodIds`
-4. Component displays numbered badges for each selected neighborhood
-
-#### Styling
-
-- Circular badges with shadow effect
-- Consistent color scheme with the application theme
-- Responsive sizing for different screen resolutions
 
 ### Event Handling (`composables/useMapEvents.ts`)
 

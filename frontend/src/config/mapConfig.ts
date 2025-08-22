@@ -388,158 +388,158 @@ export const canyonIntersectionLayers = (city: CityKey = 'geneva'): MapLayerConf
 export const canyonLengthLayers = (city: CityKey = 'geneva'): MapLayerConfig[] => {
   const config = getGridDataConfig(city)
   return [
-    {
-      id: 'length_ns',
-      label: 'N-S',
-      unit: 'm',
-      info: 'Total length of north-south oriented streets',
-      source: {
-        type: 'vector',
-        attribution: 'CityTherm Canyon Network Data',
-        url: `pmtiles://${baseUrl}/${config.gridFile}`,
-        minzoom: 5
-      } as VectorSourceSpecification,
-      layer: {
-        id: 'length_ns-layer',
-        type: 'fill',
-        source: 'length_ns',
-        'source-layer': config.sourceLayer,
-        paint: {
-          'fill-color': [
-            'interpolate',
-            ['linear'],
-            ['to-number', ['get', 'Length N-S']],
-            0,
-            '#f7f7f7',
-            200,
-            '#d1e5f0',
-            400,
-            '#92c5de',
-            600,
-            '#4393c3',
-            700,
-            '#2166ac',
-            852.78,
-            '#053061'
-          ],
-          'fill-opacity': 0.8
-        }
-      } as LayerSpecification
-    },
-    {
-      id: 'length_ne_sw',
-      label: 'NE-SW',
-      unit: 'm',
-      info: 'Total length of northeast-southwest oriented streets',
-      source: {
-        type: 'vector',
-        attribution: 'CityTherm Canyon Network Data',
-        url: `pmtiles://${baseUrl}/${config.gridFile}`,
-        minzoom: 5
-      } as VectorSourceSpecification,
-      layer: {
-        id: 'length_ne_sw-layer',
-        type: 'fill',
-        source: 'length_ne_sw',
-        'source-layer': config.sourceLayer,
-        paint: {
-          'fill-color': [
-            'interpolate',
-            ['linear'],
-            ['to-number', ['get', 'Length NE-SW']],
-            0,
-            '#f7f7f7',
-            200,
-            '#d1e5f0',
-            400,
-            '#92c5de',
-            600,
-            '#4393c3',
-            800,
-            '#2166ac',
-            1195.65,
-            '#053061'
-          ],
-          'fill-opacity': 0.8
-        }
-      } as LayerSpecification
-    },
-    {
-      id: 'length_se_nw',
-      label: 'SE-NW',
-      unit: 'm',
-      info: 'Total length of southeast-northwest oriented streets',
-      source: {
-        type: 'vector',
-        attribution: 'CityTherm Canyon Network Data',
-        url: `pmtiles://${baseUrl}/${config.gridFile}`,
-        minzoom: 5
-      } as VectorSourceSpecification,
-      layer: {
-        id: 'length_se_nw-layer',
-        type: 'fill',
-        source: 'length_se_nw',
-        'source-layer': config.sourceLayer,
-        paint: {
-          'fill-color': [
-            'interpolate',
-            ['linear'],
-            ['to-number', ['get', 'Length SE-NW']],
-            0,
-            '#f7f7f7',
-            200,
-            '#d1e5f0',
-            400,
-            '#92c5de',
-            600,
-            '#4393c3',
-            800,
-            '#2166ac',
-            978.55,
-            '#053061'
-          ],
-          'fill-opacity': 0.8
-        }
-      } as LayerSpecification
-    },
-    {
-      id: 'length_e_w',
-      label: 'E-W',
-      unit: 'm',
-      info: 'Total length of east-west oriented streets',
-      source: {
-        type: 'vector',
-        attribution: 'CityTherm Canyon Network Data',
-        url: `pmtiles://${baseUrl}/${config.gridFile}`,
-        minzoom: 5
-      } as VectorSourceSpecification,
-      layer: {
-        id: 'length_e_w-layer',
-        type: 'fill',
-        source: 'length_e_w',
-        'source-layer': config.sourceLayer,
-        paint: {
-          'fill-color': [
-            'interpolate',
-            ['linear'],
-            ['to-number', ['get', 'Length E-W']],
-            0,
-            '#f7f7f7',
-            200,
-            '#d1e5f0',
-            400,
-            '#92c5de',
-            600,
-            '#4393c3',
-            800,
-            '#2166ac',
-            1068.08,
-            '#053061'
-          ],
-          'fill-opacity': 0.8
-        }
-      } as LayerSpecification
-    },
+    // {
+    //   id: 'length_ns',
+    //   label: 'N-S',
+    //   unit: 'm',
+    //   info: 'Total length of north-south oriented streets',
+    //   source: {
+    //     type: 'vector',
+    //     attribution: 'CityTherm Canyon Network Data',
+    //     url: `pmtiles://${baseUrl}/${config.gridFile}`,
+    //     minzoom: 5
+    //   } as VectorSourceSpecification,
+    //   layer: {
+    //     id: 'length_ns-layer',
+    //     type: 'fill',
+    //     source: 'length_ns',
+    //     'source-layer': config.sourceLayer,
+    //     paint: {
+    //       'fill-color': [
+    //         'interpolate',
+    //         ['linear'],
+    //         ['to-number', ['get', 'Length N-S']],
+    //         0,
+    //         '#f7f7f7',
+    //         200,
+    //         '#d1e5f0',
+    //         400,
+    //         '#92c5de',
+    //         600,
+    //         '#4393c3',
+    //         700,
+    //         '#2166ac',
+    //         852.78,
+    //         '#053061'
+    //       ],
+    //       'fill-opacity': 0.8
+    //     }
+    //   } as LayerSpecification
+    // },
+    // {
+    //   id: 'length_ne_sw',
+    //   label: 'NE-SW',
+    //   unit: 'm',
+    //   info: 'Total length of northeast-southwest oriented streets',
+    //   source: {
+    //     type: 'vector',
+    //     attribution: 'CityTherm Canyon Network Data',
+    //     url: `pmtiles://${baseUrl}/${config.gridFile}`,
+    //     minzoom: 5
+    //   } as VectorSourceSpecification,
+    //   layer: {
+    //     id: 'length_ne_sw-layer',
+    //     type: 'fill',
+    //     source: 'length_ne_sw',
+    //     'source-layer': config.sourceLayer,
+    //     paint: {
+    //       'fill-color': [
+    //         'interpolate',
+    //         ['linear'],
+    //         ['to-number', ['get', 'Length NE-SW']],
+    //         0,
+    //         '#f7f7f7',
+    //         200,
+    //         '#d1e5f0',
+    //         400,
+    //         '#92c5de',
+    //         600,
+    //         '#4393c3',
+    //         800,
+    //         '#2166ac',
+    //         1195.65,
+    //         '#053061'
+    //       ],
+    //       'fill-opacity': 0.8
+    //     }
+    //   } as LayerSpecification
+    // },
+    // {
+    //   id: 'length_se_nw',
+    //   label: 'SE-NW',
+    //   unit: 'm',
+    //   info: 'Total length of southeast-northwest oriented streets',
+    //   source: {
+    //     type: 'vector',
+    //     attribution: 'CityTherm Canyon Network Data',
+    //     url: `pmtiles://${baseUrl}/${config.gridFile}`,
+    //     minzoom: 5
+    //   } as VectorSourceSpecification,
+    //   layer: {
+    //     id: 'length_se_nw-layer',
+    //     type: 'fill',
+    //     source: 'length_se_nw',
+    //     'source-layer': config.sourceLayer,
+    //     paint: {
+    //       'fill-color': [
+    //         'interpolate',
+    //         ['linear'],
+    //         ['to-number', ['get', 'Length SE-NW']],
+    //         0,
+    //         '#f7f7f7',
+    //         200,
+    //         '#d1e5f0',
+    //         400,
+    //         '#92c5de',
+    //         600,
+    //         '#4393c3',
+    //         800,
+    //         '#2166ac',
+    //         978.55,
+    //         '#053061'
+    //       ],
+    //       'fill-opacity': 0.8
+    //     }
+    //   } as LayerSpecification
+    // },
+    // {
+    //   id: 'length_e_w',
+    //   label: 'E-W',
+    //   unit: 'm',
+    //   info: 'Total length of east-west oriented streets',
+    //   source: {
+    //     type: 'vector',
+    //     attribution: 'CityTherm Canyon Network Data',
+    //     url: `pmtiles://${baseUrl}/${config.gridFile}`,
+    //     minzoom: 5
+    //   } as VectorSourceSpecification,
+    //   layer: {
+    //     id: 'length_e_w-layer',
+    //     type: 'fill',
+    //     source: 'length_e_w',
+    //     'source-layer': config.sourceLayer,
+    //     paint: {
+    //       'fill-color': [
+    //         'interpolate',
+    //         ['linear'],
+    //         ['to-number', ['get', 'Length E-W']],
+    //         0,
+    //         '#f7f7f7',
+    //         200,
+    //         '#d1e5f0',
+    //         400,
+    //         '#92c5de',
+    //         600,
+    //         '#4393c3',
+    //         800,
+    //         '#2166ac',
+    //         1068.08,
+    //         '#053061'
+    //       ],
+    //       'fill-opacity': 0.8
+    //     }
+    //   } as LayerSpecification
+    // },
     {
       id: 'primary_road_len',
       label: 'Primary road',
@@ -881,7 +881,9 @@ export const getLayerGroups = (city: CityKey = 'geneva') => [
     label: 'Canyon network',
     expanded: false,
     multiple: true, // check-box style (lengths + intersections)
-    layers: [...canyonIntersectionLayers(city), ...canyonLengthLayers(city)]
+    layers: [
+      //  ...canyonIntersectionLayers(city),
+       ...canyonLengthLayers(city)]
   },
   {
     id: 'local_climate_zones',

@@ -20,11 +20,11 @@ const layerGroupProperties: Record<string, string[]> = {
     'Pervious surface cover fraction'
   ],
   canyon_network: [
-    'Intersections',
-    'Length N-S',
-    'Length NE-SW',
-    'Length SE-NW',
-    'Length E-W',
+    // 'Intersections',
+    // 'Length N-S',
+    // 'Length NE-SW',
+    // 'Length SE-NW',
+    // 'Length E-W',
     'Length primary road',
     'Length secondary road',
     'Length highway'
@@ -121,11 +121,11 @@ const isEmpty = computed(() => {
 
 function exportCSV() {
   // Create a custom CSV export for feature selections
-  const headers = ['Index', 'Label', ...relevantProperties.value]
+  const headers = ['Index', 'ID', ...relevantProperties.value]
 
   // Format property names for headers (similar to popup formatting)
   const formattedHeaders = headers.map((header) => {
-    if (header === 'Index' || header === 'Label') return header
+    if (header === 'Index' || header === 'ID') return header
     return header
       .replace(/_/g, ' ')
       .replace(/([A-Z])/g, ' $1')
@@ -140,7 +140,7 @@ function exportCSV() {
     ...featureSelections.items.map((item) =>
       [
         item.index.toString(),
-        `Cell ${item.index}`,
+        item.id.toString(),
         ...relevantProperties.value.map((prop) => item.props[prop] ?? '')
       ]
         .map((v) => `"${String(v).replace(/"/g, '""')}"`)
@@ -153,6 +153,25 @@ function exportCSV() {
   a.href = URL.createObjectURL(blob)
   a.download = `selected_cells_${new Date().toISOString().slice(0, 16).replace(/[-:T]/g, '')}.csv`
   a.click()
+}
+
+// Function to remove a neighborhood from both stores
+function removeNeighborhood(uid: string) {
+  // Remove from feature selections store
+  featureSelections.remove(uid)
+  // Remove from compare store
+  compareStore.toggleNeighborhood(uid)
+  // The map will automatically update due to the watcher on featureSelections.featureCollection
+}
+
+// Function to clear all neighborhoods from both stores
+function clearAllNeighborhoods() {
+  // Clear feature selections store
+  featureSelections.clear()
+  // Clear compare store
+  compareStore.clearSelections()
+  
+  // The map will automatically update due to the watcher on featureSelections.featureCollection
 }
 
 // Convert featureSelections.items to the format expected by the table
@@ -174,36 +193,24 @@ const selectedNeighborhoodIds = computed(() => {
 <template>
   <div class="table-tab fill-height d-flex flex-column">
     <div class="controls d-flex justify-end pa-2">
+      <v-btn v-if="hasData" color="error" prepend-icon="mdi-delete" @click="clearAllNeighborhoods" class="mr-2">
+        Clear All
+      </v-btn>
       <v-btn v-if="hasData" color="primary" prepend-icon="mdi-download" @click="exportCSV">
         Download CSV
       </v-btn>
-    </div>
-
-    <!-- Display selected neighborhood IDs -->
-    <div v-if="selectedNeighborhoodIds.length > 0" class="neighborhood-section pa-4">
-      <h3>Selected Neighborhoods</h3>
-      <div class="neighborhood-list">
-        <v-chip
-          v-for="neighborhoodId in selectedNeighborhoodIds"
-          :key="neighborhoodId"
-          class="ma-1"
-          color="primary"
-          variant="outlined"
-        >
-          {{ neighborhoodId }}
-        </v-chip>
-      </div>
     </div>
 
     <v-data-table
       v-if="hasData"
       :headers="[
         { title: 'Index', key: 'index' },
-        { title: 'Label', key: 'label' },
+        { title: 'ID', key: 'uid' },
         ...relevantProperties.map((propKey) => ({
           title: propKey,
           key: `values.${propKey}`
-        }))
+        })),
+        { title: 'Actions', key: 'actions', sortable: false }
       ]"
       :items="tableData"
       class="flex-grow-1"
@@ -211,9 +218,12 @@ const selectedNeighborhoodIds = computed(() => {
       <template #item="{ item }">
         <tr>
           <td>{{ item.index }}</td>
-          <td>{{ item.label || '' }}</td>
+          <td>{{ item.uid }}</td>
           <td v-for="propKey in relevantProperties" :key="propKey">
             {{ item.values[propKey] || '-' }}
+          </td>
+          <td>
+            <v-btn icon="mdi-delete" size="small" @click="removeNeighborhood(item.uid)" variant="text"></v-btn>
           </td>
         </tr>
       </template>

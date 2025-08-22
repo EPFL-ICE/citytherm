@@ -17,7 +17,7 @@ import {
   addProtocol
 } from 'maplibre-gl'
 import type { LegendColor } from '@/utils/legendColor'
-import { onMounted, ref, watch, type Ref } from 'vue'
+import { onMounted, onUnmounted, ref, watch, type Ref } from 'vue'
 import { useFeatureSelections } from '@/stores/useFeatureSelections'
 
 import { Protocol } from 'pmtiles'
@@ -168,6 +168,7 @@ function updateSelectionSource() {
 }
 
 // Watch for selection changes and update the map
+// We watch the featureCollection getter directly to ensure we catch all changes
 watch(() => featureSelections.featureCollection, updateSelectionSource, { deep: true })
 
 function initMap() {
@@ -246,6 +247,14 @@ function initMap() {
 
 onMounted(() => {
   initMap()
+  
+  // Listen for force update events from TableTab
+  window.addEventListener('force-map-update', updateSelectionSource)
+})
+
+onUnmounted(() => {
+  // Clean up event listener
+  window.removeEventListener('force-map-update', updateSelectionSource)
 })
 
 const setFilter = (
