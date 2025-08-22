@@ -170,7 +170,7 @@ function clearAllNeighborhoods() {
   featureSelections.clear()
   // Clear compare store
   compareStore.clearSelections()
-  
+
   // The map will automatically update due to the watcher on featureSelections.featureCollection
 }
 
@@ -193,7 +193,13 @@ const selectedNeighborhoodIds = computed(() => {
 <template>
   <div class="table-tab fill-height d-flex flex-column">
     <div class="controls d-flex justify-end pa-2">
-      <v-btn v-if="hasData" color="error" prepend-icon="mdi-delete" @click="clearAllNeighborhoods" class="mr-2">
+      <v-btn
+        v-if="hasData"
+        color="error"
+        prepend-icon="mdi-delete"
+        @click="clearAllNeighborhoods"
+        class="mr-2"
+      >
         Clear All
       </v-btn>
       <v-btn v-if="hasData" color="primary" prepend-icon="mdi-download" @click="exportCSV">
@@ -223,7 +229,12 @@ const selectedNeighborhoodIds = computed(() => {
             {{ item.values[propKey] || '-' }}
           </td>
           <td>
-            <v-btn icon="mdi-delete" size="small" @click="removeNeighborhood(item.uid)" variant="text"></v-btn>
+            <v-btn
+              icon="mdi-delete"
+              size="small"
+              @click="removeNeighborhood(item.uid)"
+              variant="text"
+            ></v-btn>
           </td>
         </tr>
       </template>

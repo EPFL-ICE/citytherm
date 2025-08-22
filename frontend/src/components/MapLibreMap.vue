@@ -247,7 +247,7 @@ function initMap() {
 
 onMounted(() => {
   initMap()
-  
+
   // Listen for force update events from TableTab
   window.addEventListener('force-map-update', updateSelectionSource)
 })

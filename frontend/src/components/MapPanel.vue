@@ -24,29 +24,29 @@ watch(
   () => featureSelections.items,
   (newItems, oldItems) => {
     // Get the current selected neighborhood IDs from the feature selections
-    const currentFeatureIds = newItems.map(item => item.id.toString());
-    
+    const currentFeatureIds = newItems.map((item) => item.id.toString())
+
     // Get the current selected neighborhood IDs from the compare store
-    const currentCompareIds = compareStore.selectedNeighborhoodIds;
-    
+    const currentCompareIds = compareStore.selectedNeighborhoodIds
+
     // Find items that were added
-    const addedIds = currentFeatureIds.filter(id => !currentCompareIds.includes(id));
-    
+    const addedIds = currentFeatureIds.filter((id) => !currentCompareIds.includes(id))
+
     // Find items that were removed
-    const removedIds = currentCompareIds.filter(id => !currentFeatureIds.includes(id));
-    
+    const removedIds = currentCompareIds.filter((id) => !currentFeatureIds.includes(id))
+
     // Add new items to compare store
-    addedIds.forEach(id => {
-      compareStore.toggleNeighborhood(id);
-    });
-    
+    addedIds.forEach((id) => {
+      compareStore.toggleNeighborhood(id)
+    })
+
     // Remove deleted items from compare store
-    removedIds.forEach(id => {
-      compareStore.toggleNeighborhood(id);
-    });
+    removedIds.forEach((id) => {
+      compareStore.toggleNeighborhood(id)
+    })
   },
   { immediate: true, deep: true }
-);
+)
 
 onMounted(() => {
   // Initialize feature selections for the current city

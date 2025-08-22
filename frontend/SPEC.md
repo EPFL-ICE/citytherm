@@ -176,7 +176,6 @@ The application uses a dynamic layer configuration system:
 
 3. **MapPanel.vue**: High-level component that integrates the map with application state
 
-
 ### Event Handling (`composables/useMapEvents.ts`)
 
 Composable for managing map interactions:

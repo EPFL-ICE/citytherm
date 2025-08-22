@@ -883,7 +883,8 @@ export const getLayerGroups = (city: CityKey = 'geneva') => [
     multiple: true, // check-box style (lengths + intersections)
     layers: [
       //  ...canyonIntersectionLayers(city),
-       ...canyonLengthLayers(city)]
+      ...canyonLengthLayers(city)
+    ]
   },
   {
     id: 'local_climate_zones',
