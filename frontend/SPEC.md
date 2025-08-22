@@ -4,6 +4,8 @@
 
 - v1.0 (2025-08-22): Initial version based on current codebase
 - v1.1 (2025-08-22): Fixed TEST text issue in Neighborhood badges and updated documentation
+- v1.2 (2025-08-22): Removed debug console.log statements throughout the codebase
+- v1.3 (2025-08-22): Implemented city-specific neighborhood storage and persistence
 
 ## Overview
 

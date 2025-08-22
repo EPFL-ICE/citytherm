@@ -82,11 +82,8 @@ function addPMTilesProtocol() {
 function addSelectionLayers() {
   if (!map.value) return
 
-  console.log('Adding selection layers...')
-
   // Add selection source
   if (!map.value.getSource('selected')) {
-    console.log('Adding selected source...')
     map.value.addSource('selected', {
       type: 'geojson',
       data: { type: 'FeatureCollection', features: [] }
@@ -95,7 +92,6 @@ function addSelectionLayers() {
 
   // Add selection circle layer
   if (!map.value.getLayer('selected-circles')) {
-    console.log('Adding selected-circles layer...')
     try {
       map.value.addLayer({
         id: 'selected-circles',
@@ -108,7 +104,6 @@ function addSelectionLayers() {
           'circle-stroke-width': 1
         }
       })
-      console.log('Successfully added selected-circles layer')
     } catch (error) {
       console.error('Error adding selected-circles layer:', error)
     }
@@ -116,7 +111,6 @@ function addSelectionLayers() {
 
   // Add selection label layer
   if (!map.value.getLayer('selected-labels')) {
-    console.log('Adding selected-labels layer...')
     const labelLayer = {
       id: 'selected-labels',
       type: 'symbol',
@@ -132,10 +126,8 @@ function addSelectionLayers() {
         'text-halo-width': 1
       }
     }
-    console.log('Label layer config:', labelLayer)
     try {
       map.value.addLayer(labelLayer)
-      console.log('Successfully added selected-labels layer')
     } catch (error) {
       console.error('Error adding selected-labels layer:', error)
     }
@@ -153,43 +145,22 @@ function addSelectionLayers() {
   setTimeout(() => {
     try {
       if (map.value.getLayer('selected-circles')) {
-        console.log('Moving selected-circles layer to top...')
         map.value.moveLayer('selected-circles')
       }
       if (map.value.getLayer('selected-labels')) {
-        console.log('Moving selected-labels layer to top...')
         map.value.moveLayer('selected-labels')
       }
-
-      // Log all layers after moving
-      console.log(
-        'Layers after moving:',
-        map.value.getStyle().layers.map((l: any) => l.id)
-      )
     } catch (e) {
       console.warn('Error moving layers to top:', e)
     }
   }, 100)
-
-  // Log the layers to verify they were added
-  console.log(
-    'Available layers:',
-    map.value.getStyle().layers.map((l: any) => l.id)
-  )
-  console.log('Selection layers added.')
 }
 // Update selection source data when selections change
 function updateSelectionSource() {
   if (!map.value) return
   const source = map.value.getSource('selected')
   if (source) {
-    console.log('Updating selection source with data:', featureSelections.featureCollection)
     source.setData(featureSelections.featureCollection)
-    console.log('Selection source data updated successfully')
-    // Verify the data was set correctly
-    console.log('Source data after updating:', source.getData())
-  } else {
-    console.log('Selected source not found')
   }
 }
 

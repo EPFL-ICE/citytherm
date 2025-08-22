@@ -2,6 +2,7 @@
 import { computed, ref, watch, onMounted } from 'vue'
 import { useLayersStore } from '@/stores/layers'
 import { useCompareStore } from '@/stores/compare'
+import { useFeatureSelections } from '@/stores/useFeatureSelections'
 import NeighborhoodBadges from '@/components/NeighborhoodBadges.vue'
 import SharedMap from '@/components/SharedMap.vue'
 
@@ -11,6 +12,7 @@ const props = defineProps<{
 
 const layersStore = useLayersStore()
 const compareStore = useCompareStore()
+const featureSelections = useFeatureSelections()
 const mapComponent = ref<InstanceType<typeof SharedMap> | null>(null)
 
 // Get basic layer info
@@ -19,6 +21,9 @@ const layerInfo = computed(() => {
 })
 
 onMounted(() => {
+  // Initialize feature selections for the current city
+  featureSelections.hydrate()
+  
   // Set up a watcher to get the map instance when it's available
   const unwatch = watch(
     () => mapComponent.value,
@@ -31,9 +36,6 @@ onMounted(() => {
             if (newSelectedFeatureId) {
               // Add the selected feature to the compare store
               compareStore.toggleNeighborhood(newSelectedFeatureId)
-
-              // Also log the feature properties for debugging
-              console.log('Selected feature:', newSelectedFeatureId, newMapComponent.hoveredFeature)
             }
           }
         )
