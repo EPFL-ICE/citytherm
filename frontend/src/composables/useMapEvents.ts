@@ -21,16 +21,7 @@ const layerGroupProperties: Record<string, string[]> = {
     'Building cover fraction',
     'Pervious surface cover fraction'
   ],
-  canyon_network: [
-    'Intersections',
-    'Length N-S',
-    'Length NE-SW',
-    'Length SE-NW',
-    'Length E-W',
-    'Length primary road',
-    'Length secondary road',
-    'Length highway'
-  ],
+  canyon_network: ['Length primary road', 'Length secondary road', 'Length highway'],
   local_climate_zones: ['lcz_typology'],
   irradiance: ['solar_summer', 'solar_winter_2'],
   land_surface_temperature: ['lst_measurement']
@@ -51,11 +42,11 @@ function getLayerGroupId(layerId: string): string | null {
     impervious_fraction: 'land_cover_fraction',
     building_fraction: 'land_cover_fraction',
     pervious_fraction: 'land_cover_fraction',
-    intersections: 'canyon_network',
-    length_ns: 'canyon_network',
-    length_ne_sw: 'canyon_network',
-    length_se_nw: 'canyon_network',
-    length_e_w: 'canyon_network',
+    // intersections: 'canyon_network',
+    // length_ns: 'canyon_network',
+    // length_ne_sw: 'canyon_network',
+    // length_se_nw: 'canyon_network',
+    // length_e_w: 'canyon_network',
     primary_road_len: 'canyon_network',
     secondary_road_len: 'canyon_network',
     highway_len: 'canyon_network',
@@ -188,7 +179,6 @@ export function useMapEvents(
     if (!e.features || e.features.length === 0 || !mapRef.value) return
 
     const feature = e.features[0]
-    console.log('Clicked feature:', feature)
 
     // Handle selection if this is a selectable layer
     // For now, we'll assume all layers can be selected

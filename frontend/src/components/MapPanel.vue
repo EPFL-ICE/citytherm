@@ -2,7 +2,7 @@
 import { computed, ref, watch, onMounted } from 'vue'
 import { useLayersStore } from '@/stores/layers'
 import { useCompareStore } from '@/stores/compare'
-import NeighborhoodBadges from '@/components/NeighborhoodBadges.vue'
+import { useFeatureSelections } from '@/stores/useFeatureSelections'
 import SharedMap from '@/components/SharedMap.vue'
 
 const props = defineProps<{
@@ -11,6 +11,7 @@ const props = defineProps<{
 
 const layersStore = useLayersStore()
 const compareStore = useCompareStore()
+const featureSelections = useFeatureSelections()
 const mapComponent = ref<InstanceType<typeof SharedMap> | null>(null)
 
 // Get basic layer info
@@ -18,25 +19,47 @@ const layerInfo = computed(() => {
   return layersStore.possibleLayers.find((layer) => layer.id === props.layerId)
 })
 
+// Watch for changes in feature selections and synchronize with compare store
+watch(
+  () => featureSelections.items,
+  (newItems, oldItems) => {
+    // Get the current selected neighborhood IDs from the feature selections
+    const currentFeatureIds = newItems.map((item) => item.id.toString())
+
+    // Get the current selected neighborhood IDs from the compare store
+    const currentCompareIds = compareStore.selectedNeighborhoodIds
+
+    // Find items that were added
+    const addedIds = currentFeatureIds.filter((id) => !currentCompareIds.includes(id))
+
+    // Find items that were removed
+    const removedIds = currentCompareIds.filter((id) => !currentFeatureIds.includes(id))
+
+    // Add new items to compare store
+    addedIds.forEach((id) => {
+      compareStore.toggleNeighborhood(id)
+    })
+
+    // Remove deleted items from compare store
+    removedIds.forEach((id) => {
+      compareStore.toggleNeighborhood(id)
+    })
+  },
+  { immediate: true, deep: true }
+)
+
 onMounted(() => {
+  // Initialize feature selections for the current city
+  featureSelections.hydrate()
+
   // Set up a watcher to get the map instance when it's available
   const unwatch = watch(
     () => mapComponent.value,
     (newMapComponent) => {
       if (newMapComponent) {
-        // Set up a watcher for selected features
-        const featureUnwatch = watch(
-          () => newMapComponent.selectedFeatureId,
-          (newSelectedFeatureId) => {
-            if (newSelectedFeatureId) {
-              // Add the selected feature to the compare store
-              compareStore.toggleNeighborhood(newSelectedFeatureId)
-
-              // Also log the feature properties for debugging
-              console.log('Selected feature:', newSelectedFeatureId, newMapComponent.hoveredFeature)
-            }
-          }
-        )
+        // The useMapEvents composable already handles updating the featureSelections store
+        // We don't need to manually watch selectedFeatureId and update the compare store
+        // The synchronization is handled by the watcher above
       }
     },
     { immediate: true }
@@ -47,7 +70,6 @@ onMounted(() => {
 <template>
   <div class="map-panel">
     <SharedMap ref="mapComponent" :visible-layer-id="layerId" class="maplibre-container" />
-    <NeighborhoodBadges />
   </div>
 </template>
 

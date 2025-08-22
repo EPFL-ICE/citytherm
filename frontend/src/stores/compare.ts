@@ -78,9 +78,6 @@ export const useCompareStore = defineStore('compare', () => {
 
     // Set the table data
     tableData.value = rows
-
-    // Log for debugging
-    console.log('Updated table data:', rows)
   }
 
   // Watch for changes in selected layers and neighborhoods to update table data

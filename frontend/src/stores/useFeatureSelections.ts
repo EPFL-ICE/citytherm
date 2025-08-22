@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import centroid from '@turf/centroid'
 import type { Feature, Polygon, MultiPolygon, Point } from 'geojson'
 import type { MapGeoJSONFeature } from 'maplibre-gl'
+import { useCityStore } from './city'
 
 export type SelectedItem = {
   id: string | number
@@ -12,23 +13,34 @@ export type SelectedItem = {
 
 export type LabelMode = '1..N' | '0..9'
 
-const STORAGE_KEY_DEFAULT = 'ml-selected-cells:v1'
+// City-specific selections storage
+type CitySelections = Record<string, SelectedItem[]>
+
+const STORAGE_KEY_DEFAULT = 'ml-selected-cells:v2' // Updated version
 
 export const useFeatureSelections = defineStore('featureSelections', {
   state: () => ({
-    items: [] as SelectedItem[],
+    // Store selections for each city separately
+    citySelections: {} as CitySelections,
     max: 6 as number,
     labelMode: '1..N' as LabelMode,
     storageKey: STORAGE_KEY_DEFAULT as string
   }),
   getters: {
-    featureCollection(state) {
-      const features = state.items.map((it) => ({
+    // Get items for the current city
+    items(): SelectedItem[] {
+      const cityStore = useCityStore()
+      return this.citySelections[cityStore.city] || []
+    },
+    featureCollection(): any {
+      const cityStore = useCityStore()
+      const currentItems = this.citySelections[cityStore.city] || []
+      const features = currentItems.map((it) => ({
         type: 'Feature',
         geometry: { type: 'Point', coordinates: it.centroid },
         properties: {
           id: it.id,
-          label: state.labelMode === '0..9' ? it.index % 10 : it.index
+          label: this.labelMode === '0..9' ? it.index % 10 : it.index
         }
       }))
 
@@ -37,18 +49,17 @@ export const useFeatureSelections = defineStore('featureSelections', {
         features: features
       }
 
-      console.log('Generated featureCollection:', collection)
-      console.log('Number of features:', features.length)
-
-      // Log individual features for debugging
-      features.forEach((feature, index) => {
-        console.log(`Feature ${index}:`, feature)
-      })
-
       return collection
     }
   },
   actions: {
+    // Initialize selections for a city if not already present
+    initializeCitySelections(city: string) {
+      if (!this.citySelections[city]) {
+        this.citySelections[city] = []
+      }
+    },
+
     configure(opts: { max?: number; labelMode?: LabelMode; storageKey?: string } = {}) {
       if (typeof opts.max === 'number') this.max = opts.max
       if (opts.labelMode) this.labelMode = opts.labelMode
@@ -59,22 +70,32 @@ export const useFeatureSelections = defineStore('featureSelections', {
       f: Feature<Polygon | MultiPolygon | Point, any> | MapGeoJSONFeature,
       cellIdProp = 'cell_id'
     ) {
+      const cityStore = useCityStore()
+      const currentCity = cityStore.city
+
+      // Initialize selections for current city if needed
+      this.initializeCitySelections(currentCity)
+
       const id = (f.properties?.[cellIdProp] ?? f.id) as string | number | undefined
       if (id == null) return
 
-      const idx = this.items.findIndex((x) => x.id === id)
+      const currentItems = this.citySelections[currentCity]
+      const idx = currentItems.findIndex((x) => x.id === id)
+
       if (idx >= 0) {
-        this.items.splice(idx, 1)
-        this.reindex()
+        // Remove item
+        currentItems.splice(idx, 1)
+        this.reindex(currentCity)
         this.serialize()
         return
       }
-      if (this.items.length >= this.max) return
+
+      if (currentItems.length >= this.max) return
 
       const c = this.safeCentroid(f)
-      this.items.push({
+      currentItems.push({
         id,
-        index: this.items.length + 1,
+        index: currentItems.length + 1,
         centroid: c,
         props: f.properties ?? {}
       })
@@ -82,21 +103,36 @@ export const useFeatureSelections = defineStore('featureSelections', {
     },
 
     remove(id: string | number) {
-      const i = this.items.findIndex((x) => x.id === id)
+      const cityStore = useCityStore()
+      const currentCity = cityStore.city
+
+      // Initialize selections for current city if needed
+      this.initializeCitySelections(currentCity)
+
+      const currentItems = this.citySelections[currentCity]
+      const i = currentItems.findIndex((x) => x.id === id)
+
       if (i >= 0) {
-        this.items.splice(i, 1)
-        this.reindex()
+        currentItems.splice(i, 1)
+        this.reindex(currentCity)
         this.serialize()
       }
     },
 
     clear() {
-      this.items = []
+      const cityStore = useCityStore()
+      const currentCity = cityStore.city
+
+      // Initialize selections for current city if needed
+      this.initializeCitySelections(currentCity)
+
+      this.citySelections[currentCity] = []
       this.serialize()
     },
 
-    reindex() {
-      this.items.forEach((x, i) => (x.index = i + 1))
+    reindex(city: string) {
+      const currentItems = this.citySelections[city]
+      currentItems.forEach((x, i) => (x.index = i + 1))
     },
 
     safeCentroid(f: Feature<any, any> | MapGeoJSONFeature): [number, number] {
@@ -117,9 +153,10 @@ export const useFeatureSelections = defineStore('featureSelections', {
 
     serialize() {
       try {
+        // Serialize all city selections
         const payload = {
-          version: 1,
-          items: this.items
+          version: 2, // Updated version
+          citySelections: this.citySelections
         }
         localStorage.setItem(this.storageKey, JSON.stringify(payload))
       } catch {
@@ -132,13 +169,20 @@ export const useFeatureSelections = defineStore('featureSelections', {
         const raw = localStorage.getItem(this.storageKey)
         if (!raw) return
         const parsed = JSON.parse(raw)
-        if (parsed?.items && Array.isArray(parsed.items)) {
-          this.items = parsed.items.map((it: any) => ({
-            id: it.id,
-            index: it.index,
-            centroid: it.centroid,
-            props: it.props ?? {}
-          }))
+
+        if (parsed.version === 2 && parsed.citySelections) {
+          // New format with city-specific selections
+          this.citySelections = parsed.citySelections
+        } else if (parsed.version === 1 && parsed.items && Array.isArray(parsed.items)) {
+          // Old format - migrate to new format with default city (Geneva)
+          this.citySelections = {
+            geneva: parsed.items.map((it: any) => ({
+              id: it.id,
+              index: it.index,
+              centroid: it.centroid,
+              props: it.props ?? {}
+            }))
+          }
         }
       } catch {
         /* ignore */

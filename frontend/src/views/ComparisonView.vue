@@ -3,7 +3,6 @@ import { useCompareStore } from '@/stores/compare'
 import { useLayersStore } from '@/stores/layers'
 import LayerGroups from '@/components/LayerGroups.vue'
 import MapGrid from '@/components/MapGrid.vue'
-import SelectionBar from '@/components/SelectionBar.vue'
 import TableTab from '@/components/TableTab.vue'
 import { useCityStore } from '@/stores/city'
 
@@ -37,8 +36,6 @@ const cityStore = useCityStore()
         </v-card>
       </v-col>
       <v-col id="map-time-input-container" xl="10" cols="9" class="py-0 pl-0 d-flex flex-column">
-        <SelectionBar class="ma-2" />
-
         <!-- Maps Container - Takes most of the space -->
         <div class="maps-container flex-grow-1">
           <MapGrid v-if="layersStore.selectedLayers.length > 0" class="pa-2 fill-height" />

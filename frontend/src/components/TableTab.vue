@@ -20,11 +20,11 @@ const layerGroupProperties: Record<string, string[]> = {
     'Pervious surface cover fraction'
   ],
   canyon_network: [
-    'Intersections',
-    'Length N-S',
-    'Length NE-SW',
-    'Length SE-NW',
-    'Length E-W',
+    // 'Intersections',
+    // 'Length N-S',
+    // 'Length NE-SW',
+    // 'Length SE-NW',
+    // 'Length E-W',
     'Length primary road',
     'Length secondary road',
     'Length highway'
@@ -121,11 +121,11 @@ const isEmpty = computed(() => {
 
 function exportCSV() {
   // Create a custom CSV export for feature selections
-  const headers = ['ID', 'Label', ...relevantProperties.value]
+  const headers = ['Index', 'ID', ...relevantProperties.value]
 
   // Format property names for headers (similar to popup formatting)
   const formattedHeaders = headers.map((header) => {
-    if (header === 'ID' || header === 'Label') return header
+    if (header === 'Index' || header === 'ID') return header
     return header
       .replace(/_/g, ' ')
       .replace(/([A-Z])/g, ' $1')
@@ -139,8 +139,8 @@ function exportCSV() {
     formattedHeaders.join(','),
     ...featureSelections.items.map((item) =>
       [
+        item.index.toString(),
         item.id.toString(),
-        `Cell ${item.id}`,
         ...relevantProperties.value.map((prop) => item.props[prop] ?? '')
       ]
         .map((v) => `"${String(v).replace(/"/g, '""')}"`)
@@ -155,19 +155,53 @@ function exportCSV() {
   a.click()
 }
 
+// Function to remove a neighborhood from both stores
+function removeNeighborhood(uid: string) {
+  // Remove from feature selections store
+  featureSelections.remove(uid)
+  // Remove from compare store
+  compareStore.toggleNeighborhood(uid)
+  // The map will automatically update due to the watcher on featureSelections.featureCollection
+}
+
+// Function to clear all neighborhoods from both stores
+function clearAllNeighborhoods() {
+  // Clear feature selections store
+  featureSelections.clear()
+  // Clear compare store
+  compareStore.clearSelections()
+
+  // The map will automatically update due to the watcher on featureSelections.featureCollection
+}
+
 // Convert featureSelections.items to the format expected by the table
 const tableData = computed(() => {
   return featureSelections.items.map((item) => ({
     uid: item.id.toString(),
-    label: `Cell ${item.id}`,
+    index: item.index,
+    label: `Cell ${item.index}`,
     values: item.props
   }))
+})
+
+// Get selected neighborhood IDs from the compare store
+const selectedNeighborhoodIds = computed(() => {
+  return compareStore.selectedNeighborhoodIds
 })
 </script>
 
 <template>
   <div class="table-tab fill-height d-flex flex-column">
     <div class="controls d-flex justify-end pa-2">
+      <v-btn
+        v-if="hasData"
+        color="error"
+        prepend-icon="mdi-delete"
+        @click="clearAllNeighborhoods"
+        class="mr-2"
+      >
+        Clear All
+      </v-btn>
       <v-btn v-if="hasData" color="primary" prepend-icon="mdi-download" @click="exportCSV">
         Download CSV
       </v-btn>
@@ -176,22 +210,31 @@ const tableData = computed(() => {
     <v-data-table
       v-if="hasData"
       :headers="[
+        { title: 'Index', key: 'index' },
         { title: 'ID', key: 'uid' },
-        { title: 'Label', key: 'label' },
         ...relevantProperties.map((propKey) => ({
           title: propKey,
           key: `values.${propKey}`
-        }))
+        })),
+        { title: 'Actions', key: 'actions', sortable: false }
       ]"
       :items="tableData"
       class="flex-grow-1"
     >
       <template #item="{ item }">
         <tr>
+          <td>{{ item.index }}</td>
           <td>{{ item.uid }}</td>
-          <td>{{ item.label || '' }}</td>
           <td v-for="propKey in relevantProperties" :key="propKey">
             {{ item.values[propKey] || '-' }}
+          </td>
+          <td>
+            <v-btn
+              icon="mdi-delete"
+              size="small"
+              @click="removeNeighborhood(item.uid)"
+              variant="text"
+            ></v-btn>
           </td>
         </tr>
       </template>
@@ -210,5 +253,19 @@ const tableData = computed(() => {
 
 .empty-state {
   background-color: #f5f5f5;
+}
+
+.neighborhood-section {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.neighborhood-section h3 {
+  margin-bottom: 8px;
+}
+
+.neighborhood-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 </style>
