@@ -153,7 +153,7 @@ function addSelectionLayers() {
     } catch (e) {
       console.warn('Error moving layers to top:', e)
     }
-    
+
     // Immediately update the selection source with existing feature selections
     updateSelectionSource()
   }, 100)

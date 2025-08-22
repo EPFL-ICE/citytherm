@@ -72,16 +72,16 @@ export const useFeatureSelections = defineStore('featureSelections', {
     ) {
       const cityStore = useCityStore()
       const currentCity = cityStore.city
-      
+
       // Initialize selections for current city if needed
       this.initializeCitySelections(currentCity)
-      
+
       const id = (f.properties?.[cellIdProp] ?? f.id) as string | number | undefined
       if (id == null) return
 
       const currentItems = this.citySelections[currentCity]
       const idx = currentItems.findIndex((x) => x.id === id)
-      
+
       if (idx >= 0) {
         // Remove item
         currentItems.splice(idx, 1)
@@ -89,7 +89,7 @@ export const useFeatureSelections = defineStore('featureSelections', {
         this.serialize()
         return
       }
-      
+
       if (currentItems.length >= this.max) return
 
       const c = this.safeCentroid(f)
@@ -105,13 +105,13 @@ export const useFeatureSelections = defineStore('featureSelections', {
     remove(id: string | number) {
       const cityStore = useCityStore()
       const currentCity = cityStore.city
-      
+
       // Initialize selections for current city if needed
       this.initializeCitySelections(currentCity)
-      
+
       const currentItems = this.citySelections[currentCity]
       const i = currentItems.findIndex((x) => x.id === id)
-      
+
       if (i >= 0) {
         currentItems.splice(i, 1)
         this.reindex(currentCity)
@@ -122,10 +122,10 @@ export const useFeatureSelections = defineStore('featureSelections', {
     clear() {
       const cityStore = useCityStore()
       const currentCity = cityStore.city
-      
+
       // Initialize selections for current city if needed
       this.initializeCitySelections(currentCity)
-      
+
       this.citySelections[currentCity] = []
       this.serialize()
     },
@@ -169,7 +169,7 @@ export const useFeatureSelections = defineStore('featureSelections', {
         const raw = localStorage.getItem(this.storageKey)
         if (!raw) return
         const parsed = JSON.parse(raw)
-        
+
         if (parsed.version === 2 && parsed.citySelections) {
           // New format with city-specific selections
           this.citySelections = parsed.citySelections

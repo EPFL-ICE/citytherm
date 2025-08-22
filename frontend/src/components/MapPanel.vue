@@ -23,7 +23,7 @@ const layerInfo = computed(() => {
 onMounted(() => {
   // Initialize feature selections for the current city
   featureSelections.hydrate()
-  
+
   // Set up a watcher to get the map instance when it's available
   const unwatch = watch(
     () => mapComponent.value,
