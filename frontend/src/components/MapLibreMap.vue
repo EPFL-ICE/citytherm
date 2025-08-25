@@ -23,10 +23,21 @@ import { useFeatureSelections } from '@/stores/useFeatureSelections'
 import { Protocol } from 'pmtiles'
 import { useLayersStore } from '@/stores/layers'
 import { useCityStore } from '@/stores/city'
+// import GeoRaster from 'georaster'
+// import GeoRasterLayer from 'georaster-layer-for-leaflet'
+// import * as L from 'leaflet'
 
 const layersStore = useLayersStore()
 const cityStore = useCityStore()
 const featureSelections = useFeatureSelections()
+
+// Define types for our layer configuration
+interface LayerConfig {
+  id: string
+  source: any
+  layer: any
+  label?: string
+}
 
 const props = withDefaults(
   defineProps<{
@@ -43,6 +54,8 @@ const props = withDefaults(
     variableSelected?: string
     legendColors?: LegendColor[]
     callbackLoaded?: () => void
+    // New prop for specific layer to display
+    specificLayer?: LayerConfig | null
   }>(),
   {
     center: undefined,
@@ -56,7 +69,8 @@ const props = withDefaults(
     legendColors: undefined,
     callbackLoaded: undefined,
     popupLayerIds: () => [],
-    areaLayerIds: () => []
+    areaLayerIds: () => [],
+    specificLayer: null
   }
 )
 
@@ -201,23 +215,37 @@ function initMap() {
     if (!map.value) return
     hasLoaded.value = true
     loading.value = false
-    map.value.resize()
+    // Add error handling for resize call
+    try {
+      if (container.value) {
+        map.value.resize()
+      }
+    } catch (error) {
+      console.warn('Error resizing map:', error)
+    }
 
-    // Add all sources dynamically
-    const mapConfig = getMapConfig(cityStore.city)
-    Object.entries(mapConfig.layers).forEach(([, { id, source, layer, label }]) => {
+    // Add base style layers from the style specification
+    // These are shared across all maps
+
+    // Add the specific layer if provided
+    if (props.specificLayer) {
       try {
-        map.value?.addSource(id, source)
-        map.value?.addLayer(layer)
-        // Attach popup listeners for layers that should have them
-        if (props.popupLayerIds?.includes(id)) {
-          mapEventManager.attachPopupListeners(id, label ?? '')
+        // Extract source ID from the layer configuration
+        const sourceId = props.specificLayer.layer.source
+        map.value?.addSource(sourceId, props.specificLayer.source)
+        map.value?.addLayer(props.specificLayer.layer)
+        // Attach popup listeners for the specific layer if it should have them
+        if (props.popupLayerIds?.includes(props.specificLayer.layer.id)) {
+          mapEventManager.attachPopupListeners(
+            props.specificLayer.layer.id,
+            props.specificLayer.label ?? ''
+          )
         }
       } catch (e) {
         // Ignore errors when adding sources/layers
-        console.warn(`Failed to add source/layer ${id}:`, e)
+        console.warn(`Failed to add specific source/layer:`, e)
       }
-    })
+    }
 
     // Add selection layers after all other layers
     addSelectionLayers()

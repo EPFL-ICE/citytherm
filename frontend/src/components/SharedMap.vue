@@ -43,44 +43,29 @@ const fullLayerConfig = computed(() => {
   return mapConfig
 })
 
-// Sync layer visibility with the map
-const syncLayerVisibility = () => {
-  if (map.value && props.visibleLayerId) {
-    try {
-      // Hide all layers first
-      layersStore.possibleLayers.forEach((layer) => {
-        try {
-          map.value?.setLayerVisibility(layer.id, false)
-        } catch (e) {
-          // Ignore errors for layers that might not be loaded yet
-        }
-      })
-
-      // Then show only the selected layer
-      try {
-        map.value.setLayerVisibility(props.visibleLayerId, true)
-      } catch (e) {
-        // Ignore errors for layers that might not be loaded yet
-      }
-    } catch (e) {
-      // Ignore errors during visibility sync
-    }
+// Create a simplified layer config for MapLibreMap
+const specificLayerConfig = computed(() => {
+  if (!fullLayerConfig.value) return null
+  return {
+    id: fullLayerConfig.value.layer.id,
+    source: fullLayerConfig.value.source,
+    layer: fullLayerConfig.value.layer,
+    label: fullLayerConfig.value.label
   }
-}
+})
 
 // Handle map loaded event
 const handleMapLoaded = () => {
-  // Small delay to ensure map is fully initialized
-  setTimeout(() => {
-    syncLayerVisibility()
-  }, 100)
+  // Map is loaded with its specific layer, no need to sync visibility
+  console.log('Map loaded with specific layer:', props.visibleLayerId)
 }
 
 // Watch for changes in visible layer
 watch(
   () => props.visibleLayerId,
   () => {
-    syncLayerVisibility()
+    // Layer change will trigger a map reload due to the key change
+    console.log('Visible layer changed to:', props.visibleLayerId)
   },
   { immediate: true }
 )
@@ -124,7 +109,7 @@ defineExpose({
   <div class="shared-map">
     <MapLibreMap
       ref="map"
-      :key="cityStore.city"
+      :key="`${cityStore.city}-${props.visibleLayerId || 'no-layer'}`"
       :center="mapCenter"
       :zoom="mapZoom"
       :max-zoom="20"
@@ -132,6 +117,7 @@ defineExpose({
       style-spec="style/style.json"
       :callback-loaded="handleMapLoaded"
       :popup-layer-ids="fullLayerConfig ? [fullLayerConfig.layer.id] : []"
+      :specific-layer="specificLayerConfig"
       class="maplibre-container"
       @move="handleMove"
     >
