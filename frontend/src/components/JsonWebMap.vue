@@ -9,6 +9,7 @@ import LegendMap from '@/components/LegendMap.vue'
 import LayerGroups from '@/components/LayerGroups.vue'
 import { useLayersStore } from '@/stores/layers'
 import { useCityStore } from '@/stores/city'
+import { getMapConfig } from '@/config/mapConfig'
 import type { Parameters } from '@/utils/jsonWebMap'
 
 const map = ref<InstanceType<typeof MapLibreMap>>()
@@ -48,7 +49,14 @@ const isLstLayerVisible = ref<boolean>(true)
 
 // Check if any LST layer is selected
 const isLstLayerSelected = computed(() => {
-  return layersStore.selectedLayers.some((layerId) => layerId.startsWith('lst_'))
+  // Get the current map configuration
+  const mapConfig = getMapConfig(cityStore.city)
+  
+  // Check if any selected layer has hasDatePicker: true
+  return layersStore.selectedLayers.some((layerId) => {
+    const layerConfig = mapConfig.layers.find((layer: any) => layer.layer.id === layerId)
+    return layerConfig?.hasDatePicker === true
+  })
 })
 
 // derive center/zoom from city store

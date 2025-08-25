@@ -189,7 +189,7 @@ watch(() => featureSelections.featureCollection, updateSelectionSource, { deep: 
 function initMap() {
   // Add PMTiles protocol
   addPMTilesProtocol()
-  
+
   // Add COG protocol
   addProtocol('cog', cogProtocol)
   const newMap = new Map({
