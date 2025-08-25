@@ -1,5 +1,10 @@
 import type { LayerSpecification, SourceSpecification } from 'maplibre-gl'
 
+export type LegendColor = {
+  color: string
+  label: string
+}
+
 export type CustomLayerSpecification = LayerSpecification & { groupId: string }
 
 export type LayerGroup = {
@@ -17,6 +22,8 @@ export interface MapLayerConfig {
   source: SourceSpecification
   layer: LayerSpecification
   hasDatePicker?: boolean
+  isCategorical?: boolean
+  legendColors?: LegendColor[]
 }
 
 export const baseUrlOptions = {

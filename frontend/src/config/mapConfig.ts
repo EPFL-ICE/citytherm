@@ -505,6 +505,18 @@ export const localClimateZoneLayers = (city: CityKey = 'geneva'): MapLayerConfig
       label: 'Typology',
       unit: 'category',
       info: 'Local Climate Zone classification based on urban morphology',
+      isCategorical: true,
+      legendColors: [
+        { color: '#D9081C', label: 'LCZ 2 - Compact midrise' },
+        { color: '#FF6628', label: 'LCZ 5 - Open midrise' },
+        { color: '#FF985E', label: 'LCZ 6 - Open lowrise' },
+        { color: '#FFCBAB', label: 'LCZ 9 - Sparsely built' },
+        { color: '#006A18', label: 'LCZ 11 (A) - Dense trees' },
+        { color: '#00A926', label: 'LCZ 12 (B) - Scattered trees' },
+        { color: '#B5DA7F', label: 'LCZ 14 (D) - Low plants' },
+        { color: '#656BFA', label: 'LCZ 17 (G) - Water' },
+        { color: '#BBBBBB', label: 'LCZ 8 - Large low-rise' }
+      ],
       source: {
         type: 'vector',
         attribution: 'CityTherm Local Climate Zone Data',

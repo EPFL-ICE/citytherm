@@ -20,9 +20,15 @@ const store = useLayersStore()
 /**
  * Generate legend colors for a given layer's paint property.
  * @param layer The MapLibre layer specification.
+ * @param config Optional layer configuration with predefined legend colors.
  * @returns An array of LegendColor or null if no color stops are found.
  */
-const generateLegendColors = (layer: LayerSpecification): LegendColor[] | null => {
+const generateLegendColors = (layer: LayerSpecification, config?: MapLayerConfig): LegendColor[] | null => {
+  // Use predefined legend colors if available
+  if (config?.legendColors && config.legendColors.length > 0) {
+    return config.legendColors
+  }
+
   if (layer.paint) {
     // Handle fill-extrusion, line-color, or other paint properties
     const paint = layer.paint as any
@@ -93,7 +99,7 @@ const generateLegendColors = (layer: LayerSpecification): LegendColor[] | null =
 }
 
 const generateOneLayerWithColors = (layer: MapLayerConfig) => {
-  const colors = generateLegendColors(layer.layer) || []
+  const colors = generateLegendColors(layer.layer, layer) || []
   const paint = layer.layer.paint as any
   const paintProperty =
     paint['fill-color'] ||
@@ -102,9 +108,11 @@ const generateOneLayerWithColors = (layer: MapLayerConfig) => {
     paint['circle-color'] ||
     null
 
-  // Check if the layer is categorical based on paint property expression
-  const isCategorical =
-    Array.isArray(paintProperty) && (paintProperty[0] === 'match' || paintProperty[0] === 'case')
+  // Check if the layer is categorical based on paint property expression or override
+  const isCategorical = 
+    layer.isCategorical !== undefined 
+      ? layer.isCategorical 
+      : Array.isArray(paintProperty) && (paintProperty[0] === 'match' || paintProperty[0] === 'case')
 
   // Safely extract variable property, checking for existence and structure
   let variable = undefined
