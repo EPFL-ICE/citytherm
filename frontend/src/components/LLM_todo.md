@@ -520,7 +520,12 @@ onMounted(() => {
 
 <style scoped>
 .selections-panel {
-  font: 14px/1.4 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  font:
+    14px/1.4 system-ui,
+    -apple-system,
+    Segoe UI,
+    Roboto,
+    sans-serif;
   border: 1px solid #ddd;
   padding: 8px;
   background: #fff;
