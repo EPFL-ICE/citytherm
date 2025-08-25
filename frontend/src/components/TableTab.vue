@@ -216,7 +216,7 @@ const selectedNeighborhoodIds = computed(() => {
           title: propKey,
           key: `values.${propKey}`
         })),
-        { title: 'Actions', key: 'actions', sortable: false }
+        // { title: 'Actions', key: 'actions', sortable: false }
       ]"
       :items="tableData"
       class="flex-grow-1"
@@ -226,16 +226,20 @@ const selectedNeighborhoodIds = computed(() => {
           <td>{{ item.index }}</td>
           <td>{{ item.uid }}</td>
           <td v-for="propKey in relevantProperties" :key="propKey">
-            {{ item.values[propKey] || '-' }}
+            <span v-if="propKey === 'color'" :style="{ backgroundColor: item.values[propKey], display: 'inline-block', width: '16px', height: '16px', borderRadius: '50%', marginLeft: '8px' }"></span>
+            <span v-else>
+
+              {{ item.values[propKey] || '-' }}
+            </span>
           </td>
-          <td>
+          <!-- <td>
             <v-btn
               icon="mdi-delete"
               size="small"
               @click="removeNeighborhood(item.uid)"
               variant="text"
             ></v-btn>
-          </td>
+          </td> -->
         </tr>
       </template>
     </v-data-table>
