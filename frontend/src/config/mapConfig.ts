@@ -497,34 +497,32 @@ export const canyonLengthLayers = (city: CityKey = 'geneva'): MapLayerConfig[] =
   ]
 }
 
-
-
 export const localClimateZoneLayers = (city: CityKey = 'geneva'): MapLayerConfig[] => {
   const config = getGridDataConfig(city)
   return [
-  {
-    id: 'lcz_typology',
-    label: 'Typology',
-    unit: 'category',
-    info: 'Local Climate Zone classification based on urban morphology',
-    source: {
-      type: 'vector',
-      attribution: 'CityTherm Local Climate Zone Data',
-      url: `pmtiles://${baseUrl}/${config.gridFile}`,
-      minzoom: 5
-    } as VectorSourceSpecification,
-    layer: {
-      id: 'lcz_typology-layer',
-      type: 'fill',
-      source: 'lcz_typology',
-      'source-layer': config.sourceLayer,
-      paint: {
-        'fill-color': ['get', 'color'],
-        'fill-opacity': 0.8
-      }
-    } as LayerSpecification
-  }
-]
+    {
+      id: 'lcz_typology',
+      label: 'Typology',
+      unit: 'category',
+      info: 'Local Climate Zone classification based on urban morphology',
+      source: {
+        type: 'vector',
+        attribution: 'CityTherm Local Climate Zone Data',
+        url: `pmtiles://${baseUrl}/${config.gridFile}`,
+        minzoom: 5
+      } as VectorSourceSpecification,
+      layer: {
+        id: 'lcz_typology-layer',
+        type: 'fill',
+        source: 'lcz_typology',
+        'source-layer': config.sourceLayer,
+        paint: {
+          'fill-color': ['get', 'color'],
+          'fill-opacity': 0.8
+        }
+      } as LayerSpecification
+    }
+  ]
 }
 
 export const irradianceLayers = (city: CityKey = 'geneva'): MapLayerConfig[] => {
@@ -624,78 +622,78 @@ export const irradianceLayers = (city: CityKey = 'geneva'): MapLayerConfig[] => 
 export const landSurfaceTemperatureLayers = (city: CityKey = 'geneva'): MapLayerConfig[] => {
   const config = getGridDataConfig(city)
   return [
-  {
-    id: 'lst_measurement',
-    label: 'Measurement',
-    unit: '°C',
-    info: 'Land surface temperature measurements from satellite data',
-    hasDatePicker: true,
-    source: {
-      type: 'vector',
-      attribution: 'CityTherm Land Surface Temperature Data',
-      url: `pmtiles://${baseUrl}/${config.gridFile}`,
-      minzoom: 5
-    } as VectorSourceSpecification,
-    layer: {
-      id: 'lst_measurement-layer',
-      type: 'fill',
-      source: 'lst_measurement',
-      'source-layer': config.sourceLayer,
-      paint: {
-        'fill-color': [
-          'interpolate',
-          ['linear'],
-          ['to-number', ['get', 'lst_measurement']],
-          10,
-          '#313695',
-          15,
-          '#4575b4',
-          20,
-          '#74add1',
-          25,
-          '#abd9e9',
-          30,
-          '#e0f3f8',
-          35,
-          '#ffffbf',
-          40,
-          '#fee090',
-          45,
-          '#fdae61',
-          50,
-          '#f46d43',
-          55,
-          '#d73027',
-          60,
-          '#a50026'
-        ],
-        'fill-opacity': 0.8
-      }
-    } as LayerSpecification
-  },
-  {
-    id: 'lst_geotiff',
-    label: 'GeoTIFF',
-    unit: '°C',
-    info: 'Land surface temperature from GeoTIFF files',
-    hasDatePicker: true,
-    source: {
-      type: 'raster',
-      attribution: 'CityTherm Land Surface Temperature Data',
-      tiles: [`/geodata/lst/{z}/{x}/{y}.png`], // Placeholder - will be handled by GeoTIFF component
-      minzoom: 5,
-      maxzoom: 15
-    } as any,
-    layer: {
-      id: 'lst_geotiff-layer',
-      type: 'raster',
-      source: 'lst_geotiff',
-      paint: {
-        'raster-opacity': 0.8
-      }
-    } as LayerSpecification
-  }
-]
+    {
+      id: 'lst_measurement',
+      label: 'Measurement',
+      unit: '°C',
+      info: 'Land surface temperature measurements from satellite data',
+      hasDatePicker: true,
+      source: {
+        type: 'vector',
+        attribution: 'CityTherm Land Surface Temperature Data',
+        url: `pmtiles://${baseUrl}/${config.gridFile}`,
+        minzoom: 5
+      } as VectorSourceSpecification,
+      layer: {
+        id: 'lst_measurement-layer',
+        type: 'fill',
+        source: 'lst_measurement',
+        'source-layer': config.sourceLayer,
+        paint: {
+          'fill-color': [
+            'interpolate',
+            ['linear'],
+            ['to-number', ['get', 'lst_measurement']],
+            10,
+            '#313695',
+            15,
+            '#4575b4',
+            20,
+            '#74add1',
+            25,
+            '#abd9e9',
+            30,
+            '#e0f3f8',
+            35,
+            '#ffffbf',
+            40,
+            '#fee090',
+            45,
+            '#fdae61',
+            50,
+            '#f46d43',
+            55,
+            '#d73027',
+            60,
+            '#a50026'
+          ],
+          'fill-opacity': 0.8
+        }
+      } as LayerSpecification
+    },
+    {
+      id: 'lst_geotiff',
+      label: 'GeoTIFF',
+      unit: '°C',
+      info: 'Land surface temperature from GeoTIFF files',
+      hasDatePicker: true,
+      source: {
+        type: 'raster',
+        attribution: 'CityTherm Land Surface Temperature Data',
+        tiles: [`/geodata/lst/{z}/{x}/{y}.png`], // Placeholder - will be handled by GeoTIFF component
+        minzoom: 5,
+        maxzoom: 15
+      } as any,
+      layer: {
+        id: 'lst_geotiff-layer',
+        type: 'raster',
+        source: 'lst_geotiff',
+        paint: {
+          'raster-opacity': 0.8
+        }
+      } as LayerSpecification
+    }
+  ]
 }
 
 /* ---------------------------------
@@ -707,9 +705,7 @@ export const getLayerGroups = (city: CityKey = 'geneva') => [
     label: 'Urban morphology',
     expanded: true, // open by default (matches mock-up)
     multiple: false, // radio-button style
-    layers: [
-      ...urbanMorphologyLayers(city),
-    ]
+    layers: [...urbanMorphologyLayers(city)]
   },
   {
     id: 'land_cover_fraction',
@@ -733,9 +729,7 @@ export const getLayerGroups = (city: CityKey = 'geneva') => [
     label: 'Local climate zones',
     expanded: false,
     multiple: false,
-    layers: [
-      ...localClimateZoneLayers(city),
-    ]
+    layers: [...localClimateZoneLayers(city)]
   },
   {
     id: 'irradiance',
