@@ -91,7 +91,9 @@ const compareStore = useCompareStore()
 
 .visibility-toggle {
   opacity: 0.6;
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
 }
 
 .visibility-toggle:hover {
