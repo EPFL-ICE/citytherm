@@ -21,6 +21,7 @@ import { onMounted, onUnmounted, ref, watch, type Ref } from 'vue'
 import { useFeatureSelections } from '@/stores/useFeatureSelections'
 
 import { Protocol } from 'pmtiles'
+import { cogProtocol } from '@geomatico/maplibre-cog-protocol'
 import { useLayersStore } from '@/stores/layers'
 import { useCityStore } from '@/stores/city'
 // import GeoRaster from 'georaster'
@@ -188,6 +189,9 @@ watch(() => featureSelections.featureCollection, updateSelectionSource, { deep: 
 function initMap() {
   // Add PMTiles protocol
   addPMTilesProtocol()
+  
+  // Add COG protocol
+  addProtocol('cog', cogProtocol)
   const newMap = new Map({
     container: container.value as HTMLDivElement,
     style: props.styleSpec,

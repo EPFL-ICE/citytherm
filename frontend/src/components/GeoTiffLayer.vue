@@ -4,8 +4,6 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, watch } from 'vue'
-import GeoRaster from 'georaster'
-import GeoRasterLayer from 'georaster-layer-for-leaflet'
 import type { Map } from 'maplibre-gl'
 
 // Props
@@ -21,34 +19,42 @@ const emit = defineEmits<{
   (e: 'error', error: Error): void
 }>()
 
-// Refs
-const geoTiffContainer = ref<HTMLDivElement | null>(null)
-let geoRasterLayer: any = null
+// Generate unique layer ID
+const layerId = `geotiff-layer-${Math.random().toString(36).substr(2, 9)}`
+const sourceId = `geotiff-source-${Math.random().toString(36).substr(2, 9)}`
 
 // Load GeoTIFF layer
-const loadGeoTiffLayer = async () => {
+const loadGeoTiffLayer = () => {
   if (!props.map || !props.url) return
 
   try {
-    // Remove existing layer if it exists
-    if (geoRasterLayer) {
-      props.map.removeLayer(geoRasterLayer)
-      geoRasterLayer = null
+    // Remove existing layer and source if they exist
+    if (props.map.getLayer(layerId)) {
+      props.map.removeLayer(layerId)
+    }
+    if (props.map.getSource(sourceId)) {
+      props.map.removeSource(sourceId)
     }
 
-    // Load the GeoTIFF
-    const geoRaster = await GeoRaster(props.url)
-
-    // Create the GeoRasterLayer
-    geoRasterLayer = new GeoRasterLayer({
-      georaster: geoRaster,
-      opacity: 0.7
+    // Add source using COG protocol
+    props.map.addSource(sourceId, {
+      type: 'raster',
+      url: `cog://${props.url}`,
+      tileSize: 256
     })
 
-    // Add layer to map if visible
-    if (props.visible) {
-      geoRasterLayer.addTo(props.map)
-    }
+    // Add layer
+    props.map.addLayer({
+      id: layerId,
+      type: 'raster',
+      source: sourceId,
+      paint: {
+        'raster-opacity': 0.7
+      }
+    })
+
+    // Set initial visibility
+    props.map.setLayoutProperty(layerId, 'visibility', props.visible ? 'visible' : 'none')
 
     emit('load')
   } catch (error) {
@@ -59,17 +65,9 @@ const loadGeoTiffLayer = async () => {
 
 // Toggle layer visibility
 const toggleLayerVisibility = () => {
-  if (!geoRasterLayer || !props.map) return
+  if (!props.map || !props.map.getLayer(layerId)) return
 
-  if (props.visible) {
-    if (!props.map.hasLayer(geoRasterLayer)) {
-      geoRasterLayer.addTo(props.map)
-    }
-  } else {
-    if (props.map.hasLayer(geoRasterLayer)) {
-      props.map.removeLayer(geoRasterLayer)
-    }
-  }
+  props.map.setLayoutProperty(layerId, 'visibility', props.visible ? 'visible' : 'none')
 }
 
 // Watch for URL changes
@@ -94,8 +92,13 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
-  if (geoRasterLayer && props.map && props.map.hasLayer(geoRasterLayer)) {
-    props.map.removeLayer(geoRasterLayer)
+  if (props.map) {
+    if (props.map.getLayer(layerId)) {
+      props.map.removeLayer(layerId)
+    }
+    if (props.map.getSource(sourceId)) {
+      props.map.removeSource(sourceId)
+    }
   }
 })
 
