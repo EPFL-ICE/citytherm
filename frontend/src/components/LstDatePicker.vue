@@ -60,8 +60,8 @@ const onDateChange = (value: string) => {
 
 // Parse filename to extract date and city
 const parseFilename = (filename: string): { date: string; city: string } | null => {
-  // Expected format: LST-city-YY-M-D.tif or LST-city-YYYY-MM-DD.tif
-  const match = filename.match(/LST-([a-zA-Z]+)-(\d{2,4})-(\d{1,2})-(\d{1,2})\.tif/)
+  // Expected format: LST-city-YY-M-D.cog.tif or LST-city-YYYY-MM-DD.cog.tif
+  const match = filename.match(/LST-([a-zA-Z]+)-(\d{2,4})-(\d{1,2})-(\d{1,2})\.cog\.tif/)
   if (match) {
     const [, city, year, month, day] = match
     // Convert to YYYY-MM-DD format
@@ -74,8 +74,8 @@ const parseFilename = (filename: string): { date: string; city: string } | null 
     }
   }
 
-  // Try alternative format: LST-city-YYYY-MM-DD.tif
-  const altMatch = filename.match(/LST-([a-zA-Z]+)-(\d{4})-(\d{2})-(\d{2})\.tif/)
+  // Try alternative format: LST-city-YYYY-MM-DD.cog.tif
+  const altMatch = filename.match(/LST-([a-zA-Z]+)-(\d{4})-(\d{2})-(\d{2})\.cog\.tif/)
   if (altMatch) {
     const [, city, year, month, day] = altMatch
     return {
@@ -92,50 +92,48 @@ onMounted(() => {
   // In a real implementation, this would come from an API or file scan
   // For now, we'll simulate with the files we know exist
   const files = [
-    'LST-bern-19-6-13 copy.tif',
-    'LST-bern-19-6-13.tif',
-    'LST-bern-19-6-29 copy.tif',
-    'LST-bern-19-6-29.tif',
-    'LST-bern-19-7-24.tif',
-    'LST-bern-19-8-09.tif',
-    'LST-bern-19-8-25.tif',
-    'LST-bern-20-6-24.tif',
-    'LST-bern-20-8-11.tif',
-    'LST-bern-21-7-20.tif',
-    'LST-bern-21-8-14.tif',
-    'LST-bern-21-8-21.tif',
-    'LST-bern-22-7-16.tif',
-    'LST-bern-22-8-1.tif',
-    'LST-bern-22-8-8.tif',
-    'LST-bern-23-08-11.tif',
-    'LST-bern-23-08-20.tif',
-    'LST-bern-23-6-17.tif',
-    'LST-bern-23-6-24.tif',
-    'LST-geneva-19-06-13.tif',
-    'LST-geneva-19-06-29.tif',
-    'LST-geneva-21-7-20.tif',
-    'LST-geneva-21-8-21.tif',
-    'LST-geneva-22-6-21.tif',
-    'LST-geneva-22-7-7.tif',
-    'LST-geneva-22-8-08.tif',
-    'LST-geneva-23-6-24.tif',
-    'LST-geneva-23-7-10.tif',
-    'LST-geneva-23-8-11.tif',
-    'LST-zurich-19-7-24.tif',
-    'LST-zurich-19-8-18.tif',
-    'LST-zurich-19-8-25.tif',
-    'LST-zurich-19-8-9.tif',
-    'LST-zurich-20-6-1.tif',
-    'LST-zurich-20-6-24.tif',
-    'LST-zurich-20-8-11.tif',
-    'LST-zurich-20-8-20.tif',
-    'LST-zurich-21-8-14.tif',
-    'LST-zurich-22-6-23.tif',
-    'LST-zurich-22-7-16.tif',
-    'LST-zurich-22-7-25.tif',
-    'LST-zurich-22-8-1.tif',
-    'LST-zurich-22-8-10.tif',
-    'LST-zurich-23-8-20.tif'
+    'LST-bern-19-6-13.cog.tif',
+    'LST-bern-19-6-29.cog.tif',
+    'LST-bern-19-7-24.cog.tif',
+    'LST-bern-19-8-09.cog.tif',
+    'LST-bern-19-8-25.cog.tif',
+    'LST-bern-20-6-24.cog.tif',
+    'LST-bern-20-8-11.cog.tif',
+    'LST-bern-21-7-20.cog.tif',
+    'LST-bern-21-8-14.cog.tif',
+    'LST-bern-21-8-21.cog.tif',
+    'LST-bern-22-7-16.cog.tif',
+    'LST-bern-22-8-1.cog.tif',
+    'LST-bern-22-8-8.cog.tif',
+    'LST-bern-23-08-11.cog.tif',
+    'LST-bern-23-08-20.cog.tif',
+    'LST-bern-23-6-17.cog.tif',
+    'LST-bern-23-6-24.cog.tif',
+    'LST-geneva-19-06-13.cog.tif',
+    'LST-geneva-19-06-29.cog.tif',
+    'LST-geneva-21-7-20.cog.tif',
+    'LST-geneva-21-8-21.cog.tif',
+    'LST-geneva-22-6-21.cog.tif',
+    'LST-geneva-22-7-7.cog.tif',
+    'LST-geneva-22-8-08.cog.tif',
+    'LST-geneva-23-6-24.cog.tif',
+    'LST-geneva-23-7-10.cog.tif',
+    'LST-geneva-23-8-11.cog.tif',
+    'LST-zurich-19-7-24.cog.tif',
+    'LST-zurich-19-8-18.cog.tif',
+    'LST-zurich-19-8-25.cog.tif',
+    'LST-zurich-19-8-9.cog.tif',
+    'LST-zurich-20-6-1.cog.tif',
+    'LST-zurich-20-6-24.cog.tif',
+    'LST-zurich-20-8-11.cog.tif',
+    'LST-zurich-20-8-20.cog.tif',
+    'LST-zurich-21-8-14.cog.tif',
+    'LST-zurich-22-6-23.cog.tif',
+    'LST-zurich-22-7-16.cog.tif',
+    'LST-zurich-22-7-25.cog.tif',
+    'LST-zurich-22-8-1.cog.tif',
+    'LST-zurich-22-8-10.cog.tif',
+    'LST-zurich-23-8-20.cog.tif'
   ]
 
   lstFiles.value = files
