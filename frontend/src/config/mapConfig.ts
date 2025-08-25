@@ -388,158 +388,6 @@ export const canyonIntersectionLayers = (city: CityKey = 'geneva'): MapLayerConf
 export const canyonLengthLayers = (city: CityKey = 'geneva'): MapLayerConfig[] => {
   const config = getGridDataConfig(city)
   return [
-    // {
-    //   id: 'length_ns',
-    //   label: 'N-S',
-    //   unit: 'm',
-    //   info: 'Total length of north-south oriented streets',
-    //   source: {
-    //     type: 'vector',
-    //     attribution: 'CityTherm Canyon Network Data',
-    //     url: `pmtiles://${baseUrl}/${config.gridFile}`,
-    //     minzoom: 5
-    //   } as VectorSourceSpecification,
-    //   layer: {
-    //     id: 'length_ns-layer',
-    //     type: 'fill',
-    //     source: 'length_ns',
-    //     'source-layer': config.sourceLayer,
-    //     paint: {
-    //       'fill-color': [
-    //         'interpolate',
-    //         ['linear'],
-    //         ['to-number', ['get', 'Length N-S']],
-    //         0,
-    //         '#f7f7f7',
-    //         200,
-    //         '#d1e5f0',
-    //         400,
-    //         '#92c5de',
-    //         600,
-    //         '#4393c3',
-    //         700,
-    //         '#2166ac',
-    //         852.78,
-    //         '#053061'
-    //       ],
-    //       'fill-opacity': 0.8
-    //     }
-    //   } as LayerSpecification
-    // },
-    // {
-    //   id: 'length_ne_sw',
-    //   label: 'NE-SW',
-    //   unit: 'm',
-    //   info: 'Total length of northeast-southwest oriented streets',
-    //   source: {
-    //     type: 'vector',
-    //     attribution: 'CityTherm Canyon Network Data',
-    //     url: `pmtiles://${baseUrl}/${config.gridFile}`,
-    //     minzoom: 5
-    //   } as VectorSourceSpecification,
-    //   layer: {
-    //     id: 'length_ne_sw-layer',
-    //     type: 'fill',
-    //     source: 'length_ne_sw',
-    //     'source-layer': config.sourceLayer,
-    //     paint: {
-    //       'fill-color': [
-    //         'interpolate',
-    //         ['linear'],
-    //         ['to-number', ['get', 'Length NE-SW']],
-    //         0,
-    //         '#f7f7f7',
-    //         200,
-    //         '#d1e5f0',
-    //         400,
-    //         '#92c5de',
-    //         600,
-    //         '#4393c3',
-    //         800,
-    //         '#2166ac',
-    //         1195.65,
-    //         '#053061'
-    //       ],
-    //       'fill-opacity': 0.8
-    //     }
-    //   } as LayerSpecification
-    // },
-    // {
-    //   id: 'length_se_nw',
-    //   label: 'SE-NW',
-    //   unit: 'm',
-    //   info: 'Total length of southeast-northwest oriented streets',
-    //   source: {
-    //     type: 'vector',
-    //     attribution: 'CityTherm Canyon Network Data',
-    //     url: `pmtiles://${baseUrl}/${config.gridFile}`,
-    //     minzoom: 5
-    //   } as VectorSourceSpecification,
-    //   layer: {
-    //     id: 'length_se_nw-layer',
-    //     type: 'fill',
-    //     source: 'length_se_nw',
-    //     'source-layer': config.sourceLayer,
-    //     paint: {
-    //       'fill-color': [
-    //         'interpolate',
-    //         ['linear'],
-    //         ['to-number', ['get', 'Length SE-NW']],
-    //         0,
-    //         '#f7f7f7',
-    //         200,
-    //         '#d1e5f0',
-    //         400,
-    //         '#92c5de',
-    //         600,
-    //         '#4393c3',
-    //         800,
-    //         '#2166ac',
-    //         978.55,
-    //         '#053061'
-    //       ],
-    //       'fill-opacity': 0.8
-    //     }
-    //   } as LayerSpecification
-    // },
-    // {
-    //   id: 'length_e_w',
-    //   label: 'E-W',
-    //   unit: 'm',
-    //   info: 'Total length of east-west oriented streets',
-    //   source: {
-    //     type: 'vector',
-    //     attribution: 'CityTherm Canyon Network Data',
-    //     url: `pmtiles://${baseUrl}/${config.gridFile}`,
-    //     minzoom: 5
-    //   } as VectorSourceSpecification,
-    //   layer: {
-    //     id: 'length_e_w-layer',
-    //     type: 'fill',
-    //     source: 'length_e_w',
-    //     'source-layer': config.sourceLayer,
-    //     paint: {
-    //       'fill-color': [
-    //         'interpolate',
-    //         ['linear'],
-    //         ['to-number', ['get', 'Length E-W']],
-    //         0,
-    //         '#f7f7f7',
-    //         200,
-    //         '#d1e5f0',
-    //         400,
-    //         '#92c5de',
-    //         600,
-    //         '#4393c3',
-    //         800,
-    //         '#2166ac',
-    //         1068.08,
-    //         '#053061'
-    //       ],
-    //       'fill-opacity': 0.8
-    //     }
-    //   } as LayerSpecification
-    // },
     {
       id: 'primary_road_len',
       label: 'Primary road',
@@ -649,7 +497,11 @@ export const canyonLengthLayers = (city: CityKey = 'geneva'): MapLayerConfig[] =
   ]
 }
 
-export const localClimateZoneLayers: MapLayerConfig[] = [
+
+
+export const localClimateZoneLayers = (city: CityKey = 'geneva'): MapLayerConfig[] => {
+  const config = getGridDataConfig(city)
+  return [
   {
     id: 'lcz_typology',
     label: 'Typology',
@@ -658,59 +510,22 @@ export const localClimateZoneLayers: MapLayerConfig[] = [
     source: {
       type: 'vector',
       attribution: 'CityTherm Local Climate Zone Data',
-      url: `pmtiles://${baseUrl}/local_climate_zones.pmtiles`,
+      url: `pmtiles://${baseUrl}/${config.gridFile}`,
       minzoom: 5
     } as VectorSourceSpecification,
     layer: {
       id: 'lcz_typology-layer',
       type: 'fill',
       source: 'lcz_typology',
-      'source-layer': 'local_climate_zones',
+      'source-layer': config.sourceLayer,
       paint: {
-        'fill-color': [
-          'match',
-          ['get', 'lcz_typology'],
-          'LCZ1',
-          '#8b0000', // Compact high-rise
-          'LCZ2',
-          '#cd5c5c', // Compact midrise
-          'LCZ3',
-          '#f4a460', // Compact low-rise
-          'LCZ4',
-          '#daa520', // Open high-rise
-          'LCZ5',
-          '#ffd700', // Open midrise
-          'LCZ6',
-          '#ffff00', // Open low-rise
-          'LCZ7',
-          '#c0c0c0', // Lightweight low-rise
-          'LCZ8',
-          '#696969', // Large low-rise
-          'LCZ9',
-          '#778899', // Sparsely built
-          'LCZ10',
-          '#2f4f4f', // Heavy industry
-          'LCZA',
-          '#228b22', // Dense trees
-          'LCZB',
-          '#90ee90', // Scattered trees
-          'LCZC',
-          '#adff2f', // Bush, scrub
-          'LCZD',
-          '#7cfc00', // Low plants
-          'LCZE',
-          '#000080', // Bare rock or paved
-          'LCZF',
-          '#4169e1', // Bare soil or sand
-          'LCZG',
-          '#0000ff', // Water
-          '#cccccc' // Default
-        ],
+        'fill-color': ['get', 'color'],
         'fill-opacity': 0.8
       }
     } as LayerSpecification
   }
 ]
+}
 
 export const irradianceLayers = (city: CityKey = 'geneva'): MapLayerConfig[] => {
   const config = getGridDataConfig(city)
@@ -806,7 +621,9 @@ export const irradianceLayers = (city: CityKey = 'geneva'): MapLayerConfig[] => 
   ]
 }
 
-export const landSurfaceTemperatureLayers: MapLayerConfig[] = [
+export const landSurfaceTemperatureLayers = (city: CityKey = 'geneva'): MapLayerConfig[] => {
+  const config = getGridDataConfig(city)
+  return [
   {
     id: 'lst_measurement',
     label: 'Measurement',
@@ -816,14 +633,14 @@ export const landSurfaceTemperatureLayers: MapLayerConfig[] = [
     source: {
       type: 'vector',
       attribution: 'CityTherm Land Surface Temperature Data',
-      url: `pmtiles://${baseUrl}/land_surface_temperature.pmtiles`,
+      url: `pmtiles://${baseUrl}/${config.gridFile}`,
       minzoom: 5
     } as VectorSourceSpecification,
     layer: {
       id: 'lst_measurement-layer',
       type: 'fill',
       source: 'lst_measurement',
-      'source-layer': 'land_surface_temperature',
+      'source-layer': config.sourceLayer,
       paint: {
         'fill-color': [
           'interpolate',
@@ -879,6 +696,7 @@ export const landSurfaceTemperatureLayers: MapLayerConfig[] = [
     } as LayerSpecification
   }
 ]
+}
 
 /* ---------------------------------
  *  Layer-group configuration
@@ -889,7 +707,9 @@ export const getLayerGroups = (city: CityKey = 'geneva') => [
     label: 'Urban morphology',
     expanded: true, // open by default (matches mock-up)
     multiple: false, // radio-button style
-    layers: urbanMorphologyLayers(city)
+    layers: [
+      ...urbanMorphologyLayers(city),
+    ]
   },
   {
     id: 'land_cover_fraction',
@@ -913,7 +733,9 @@ export const getLayerGroups = (city: CityKey = 'geneva') => [
     label: 'Local climate zones',
     expanded: false,
     multiple: false,
-    layers: localClimateZoneLayers
+    layers: [
+      ...localClimateZoneLayers(city),
+    ]
   },
   {
     id: 'irradiance',
@@ -927,7 +749,7 @@ export const getLayerGroups = (city: CityKey = 'geneva') => [
     label: 'Land surface temperature',
     expanded: false,
     multiple: true,
-    layers: landSurfaceTemperatureLayers
+    layers: landSurfaceTemperatureLayers(city)
   }
 ]
 
@@ -938,9 +760,9 @@ export const getMapConfig = (city: CityKey = 'geneva') => ({
     ...landCoverFractionLayers(city),
     ...canyonIntersectionLayers(city),
     ...canyonLengthLayers(city),
-    ...localClimateZoneLayers,
+    ...localClimateZoneLayers(city),
     ...irradianceLayers(city),
-    ...landSurfaceTemperatureLayers
+    ...landSurfaceTemperatureLayers(city)
   ] as MapLayerConfig[]
 })
 

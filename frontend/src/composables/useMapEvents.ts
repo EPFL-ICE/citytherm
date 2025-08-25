@@ -22,7 +22,7 @@ const layerGroupProperties: Record<string, string[]> = {
     'Pervious surface cover fraction'
   ],
   canyon_network: ['Length primary road', 'Length secondary road', 'Length highway'],
-  local_climate_zones: ['lcz_typology'],
+  local_climate_zones: ['LCZ', 'lcz_code', 'description', 'color'],
   irradiance: ['solar_summer', 'solar_winter_2'],
   land_surface_temperature: ['lst_measurement']
 }
