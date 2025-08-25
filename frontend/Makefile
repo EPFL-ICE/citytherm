@@ -1,3 +1,5 @@
+.PHONY: help cdn ls sync dev build install
+
 # Date: 2025-05-02
 # Version: 1.0
 # Description: Makefile for lgb-trsc-data
@@ -15,12 +17,14 @@ CITYTHERM_DATA_VERSION = 1.0
 CITYTHERM_DATA_DATE = 2025-05-02
 # Change the version and date accordingly
 # version=1.0
-version=dev
+version=2025-08-25
 bucket=10208-fcd9acb029f419e6493edf97f4592b96
 path=citytherm/${version}
 S3CMD_CONFIG_NAME=.s3cfg_cdn_enac
 data_dir=$(CITYTHERM_PROCESSED_DATA_DIR)
 
+
+# TODO: centralize processing of processed files
 # install:
 # 	$(MAKE) -C $(CITYTHERM_DATA_DIR) install
 # 	$(MAKE) -C $(CITYTHERM_SG_MANON) install
