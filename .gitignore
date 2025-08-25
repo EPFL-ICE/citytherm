@@ -4,3 +4,4 @@ dist
 processing
 frontend/public/geodata
 *local*
+processed_data
