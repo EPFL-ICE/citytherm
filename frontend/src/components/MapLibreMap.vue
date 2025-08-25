@@ -226,17 +226,20 @@ function initMap() {
 
     // Add base style layers from the style specification
     // These are shared across all maps
-    
+
     // Add the specific layer if provided
     if (props.specificLayer) {
       try {
         // Extract source ID from the layer configuration
-        const sourceId = props.specificLayer.layer.source;
+        const sourceId = props.specificLayer.layer.source
         map.value?.addSource(sourceId, props.specificLayer.source)
         map.value?.addLayer(props.specificLayer.layer)
         // Attach popup listeners for the specific layer if it should have them
         if (props.popupLayerIds?.includes(props.specificLayer.layer.id)) {
-          mapEventManager.attachPopupListeners(props.specificLayer.layer.id, props.specificLayer.label ?? '')
+          mapEventManager.attachPopupListeners(
+            props.specificLayer.layer.id,
+            props.specificLayer.label ?? ''
+          )
         }
       } catch (e) {
         // Ignore errors when adding sources/layers
