@@ -215,7 +215,7 @@ const selectedNeighborhoodIds = computed(() => {
         ...relevantProperties.map((propKey) => ({
           title: propKey,
           key: `values.${propKey}`
-        })),
+        }))
         // { title: 'Actions', key: 'actions', sortable: false }
       ]"
       :items="tableData"
@@ -226,9 +226,18 @@ const selectedNeighborhoodIds = computed(() => {
           <td>{{ item.index }}</td>
           <td>{{ item.uid }}</td>
           <td v-for="propKey in relevantProperties" :key="propKey">
-            <span v-if="propKey === 'color'" :style="{ backgroundColor: item.values[propKey], display: 'inline-block', width: '16px', height: '16px', borderRadius: '50%', marginLeft: '8px' }"></span>
+            <span
+              v-if="propKey === 'color'"
+              :style="{
+                backgroundColor: item.values[propKey],
+                display: 'inline-block',
+                width: '16px',
+                height: '16px',
+                borderRadius: '50%',
+                marginLeft: '8px'
+              }"
+            ></span>
             <span v-else>
-
               {{ item.values[propKey] || '-' }}
             </span>
           </td>
