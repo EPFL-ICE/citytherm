@@ -1,5 +1,5 @@
-import type { TableRow } from '@/stores/compare'
 import type { MapLayerConfig } from '@/config/layerTypes'
+import type { TableRow } from '@/stores/compare'
 
 export function toCSV(
   rows: TableRow[],

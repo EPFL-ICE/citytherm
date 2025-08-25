@@ -51,7 +51,7 @@ const isLstLayerVisible = ref<boolean>(true)
 const isLstLayerSelected = computed(() => {
   // Get the current map configuration
   const mapConfig = getMapConfig(cityStore.city)
-  
+
   // Check if any selected layer has hasDatePicker: true
   return layersStore.selectedLayers.some((layerId) => {
     const layerConfig = mapConfig.layers.find((layer: any) => layer.layer.id === layerId)

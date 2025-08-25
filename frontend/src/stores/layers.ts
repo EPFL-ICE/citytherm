@@ -1,7 +1,7 @@
 import { getLayerGroups, getMapConfig } from '@/config/mapConfig'
+import { useCityStore } from '@/stores/city'
 import { defineStore } from 'pinia'
 import { computed, ref, watch } from 'vue'
-import { useCityStore } from '@/stores/city'
 
 export const useLayersStore = defineStore('layers', () => {
   const cityStore = useCityStore()

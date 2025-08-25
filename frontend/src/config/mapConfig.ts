@@ -1,6 +1,6 @@
-import { baseUrlOptions, baseUrl, type MapLayerConfig } from '@/config/layerTypes'
-import type { LayerSpecification, VectorSourceSpecification } from 'maplibre-gl'
+import { baseUrl, baseUrlOptions, type MapLayerConfig } from '@/config/layerTypes'
 import type { CityKey } from '@/stores/city'
+import type { LayerSpecification, VectorSourceSpecification } from 'maplibre-gl'
 
 /* ---------------------------------
  *  Dynamic layer configuration

@@ -64,4 +64,4 @@ const createExpressionAverageFreq = (
   return ['/', summedFrequenciesExpression, ['max', ['coalesce', validCountExpression, 1], 1]]
 }
 
-export { createExpressionAverageSpeed, createExpressionAverageFreq }
+export { createExpressionAverageFreq, createExpressionAverageSpeed }

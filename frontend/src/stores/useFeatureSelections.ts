@@ -1,7 +1,7 @@
-import { defineStore } from 'pinia'
 import centroid from '@turf/centroid'
-import type { Feature, Polygon, MultiPolygon, Point } from 'geojson'
+import type { Feature, MultiPolygon, Point, Polygon } from 'geojson'
 import type { MapGeoJSONFeature } from 'maplibre-gl'
+import { defineStore } from 'pinia'
 import { useCityStore } from './city'
 
 export type SelectedItem = {

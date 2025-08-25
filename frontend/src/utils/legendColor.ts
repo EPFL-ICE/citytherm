@@ -46,4 +46,4 @@ const vehicleTypeColors: LegendColor[] = [
   { label: 'Other', color: '#CCCCCC' }
 ]
 
-export { accelerationColors, speedColors, vehicleTypeColors, densityColors }
+export { accelerationColors, densityColors, speedColors, vehicleTypeColors }
