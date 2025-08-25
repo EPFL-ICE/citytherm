@@ -50,9 +50,10 @@ const items = computed(() => featureSelections.items)
 <template>
   <div class="selections-panel">
     <div class="toolbar">
-      <button @click="featureSelections.clear()" :disabled="!items.length">Clear</button>
+      <button :disabled="!items.length" @click="featureSelections.clear()">Clear</button>
       <button @click="toggleLabelMode">Label Mode: {{ featureSelections.labelMode }}</button>
       <button
+        :disabled="!items.length"
         @click="
           downloadBlob(
             `selected_cells_${new Date().toISOString().slice(0, 16).replace(/[:T]/g, '')}.json`,
@@ -60,11 +61,11 @@ const items = computed(() => featureSelections.items)
             JSON.stringify(items, null, 2)
           )
         "
-        :disabled="!items.length"
       >
         Export JSON
       </button>
       <button
+        :disabled="!items.length"
         @click="
           downloadBlob(
             `selected_cells_${new Date().toISOString().slice(0, 16).replace(/[:T]/g, '')}.csv`,
@@ -72,14 +73,13 @@ const items = computed(() => featureSelections.items)
             toCsv(items)
           )
         "
-        :disabled="!items.length"
       >
         Export CSV
       </button>
       <span class="counter">{{ items.length }} / {{ featureSelections.max }} selected</span>
     </div>
 
-    <table class="sel-table" v-if="items.length">
+    <table v-if="items.length" class="sel-table">
       <thead>
         <tr>
           <th>#</th>
@@ -109,12 +109,7 @@ const items = computed(() => featureSelections.items)
 
 <style scoped>
 .selections-panel {
-  font:
-    14px/1.4 system-ui,
-    -apple-system,
-    Segoe UI,
-    Roboto,
-    sans-serif;
+  font: 14px/1.4 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
   border: 1px solid #ddd;
   padding: 8px;
   background: #fff;

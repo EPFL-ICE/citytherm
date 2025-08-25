@@ -197,8 +197,8 @@ const selectedNeighborhoodIds = computed(() => {
         v-if="hasData"
         color="error"
         prepend-icon="mdi-delete"
-        @click="clearAllNeighborhoods"
         class="mr-2"
+        @click="clearAllNeighborhoods"
       >
         Clear All
       </v-btn>
