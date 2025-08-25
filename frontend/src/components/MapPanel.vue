@@ -16,13 +16,14 @@ const mapComponent = ref<InstanceType<typeof SharedMap> | null>(null)
 
 // Get basic layer info
 const layerInfo = computed(() => {
+  console.log('MapPanel layerId:', props.layerId)
   return layersStore.possibleLayers.find((layer) => layer.id === props.layerId)
 })
 
 // Watch for changes in feature selections and synchronize with compare store
 watch(
   () => featureSelections.items,
-  (newItems, oldItems) => {
+  (newItems) => {
     // Get the current selected neighborhood IDs from the feature selections
     const currentFeatureIds = newItems.map((item) => item.id.toString())
 
