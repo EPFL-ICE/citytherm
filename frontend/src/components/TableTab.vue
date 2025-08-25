@@ -19,19 +19,10 @@ const layerGroupProperties: Record<string, string[]> = {
     'Building cover fraction',
     'Pervious surface cover fraction'
   ],
-  canyon_network: [
-    // 'Intersections',
-    // 'Length N-S',
-    // 'Length NE-SW',
-    // 'Length SE-NW',
-    // 'Length E-W',
-    'Length primary road',
-    'Length secondary road',
-    'Length highway'
-  ],
+  canyon_network: ['Length primary road', 'Length secondary road', 'Length highway'],
   local_climate_zones: ['LCZ', 'lcz_code', 'description', 'color'],
   irradiance: ['solar_summer', 'solar_winter_2'],
-  land_surface_temperature: ['lst_measurement']
+  land_surface_temperature: ['lst_mean']
 }
 
 // Helper function to get layer group ID from layer ID
@@ -60,7 +51,7 @@ function getLayerGroupId(layerId: string): string | null {
     lcz_typology: 'local_climate_zones',
     irr_summer: 'irradiance',
     irr_winter: 'irradiance',
-    lst_measurement: 'land_surface_temperature'
+    lst_mean: 'land_surface_temperature'
   }
 
   return layerToGroupMap[baseLayerId] || null

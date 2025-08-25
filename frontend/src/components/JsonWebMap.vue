@@ -35,7 +35,7 @@ const parameters = shallowRef<Parameters>({
     'lcz_typology-layer',
     'irr_summer-layer',
     'irr_winter-layer',
-    'lst_measurement-layer',
+    'lst_mean-layer',
     'lst_geotiff-layer'
   ]
 })
