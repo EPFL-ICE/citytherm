@@ -1,3 +1,5 @@
+.PHONY: allshp geojson shp upload
+
 allshp:
 	find . -name "*.shp" | nl | while read n f; do \
 		filename=$$(basename "$$f" .shp); \
@@ -22,7 +24,7 @@ geojson:
 		fi; \
 	done
 
-coastlines:
+shp:
 	mkdir -p ../processed_data/
 	find . -name "*.shp" | while read f; do \
 		filename=$$(basename "$$f" .shp); \
