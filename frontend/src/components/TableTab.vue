@@ -29,7 +29,7 @@ const layerGroupProperties: Record<string, string[]> = {
     'Length secondary road',
     'Length highway'
   ],
-  local_climate_zones: ['lcz_typology'],
+  local_climate_zones: ['LCZ', 'lcz_code', 'description', 'color'],
   irradiance: ['solar_summer', 'solar_winter_2'],
   land_surface_temperature: ['lst_measurement']
 }
@@ -215,8 +215,8 @@ const selectedNeighborhoodIds = computed(() => {
         ...relevantProperties.map((propKey) => ({
           title: propKey,
           key: `values.${propKey}`
-        })),
-        { title: 'Actions', key: 'actions', sortable: false }
+        }))
+        // { title: 'Actions', key: 'actions', sortable: false }
       ]"
       :items="tableData"
       class="flex-grow-1"
@@ -226,16 +226,29 @@ const selectedNeighborhoodIds = computed(() => {
           <td>{{ item.index }}</td>
           <td>{{ item.uid }}</td>
           <td v-for="propKey in relevantProperties" :key="propKey">
-            {{ item.values[propKey] || '-' }}
+            <span
+              v-if="propKey === 'color'"
+              :style="{
+                backgroundColor: item.values[propKey],
+                display: 'inline-block',
+                width: '16px',
+                height: '16px',
+                borderRadius: '50%',
+                marginLeft: '8px'
+              }"
+            ></span>
+            <span v-else>
+              {{ item.values[propKey] || '-' }}
+            </span>
           </td>
-          <td>
+          <!-- <td>
             <v-btn
               icon="mdi-delete"
               size="small"
               @click="removeNeighborhood(item.uid)"
               variant="text"
             ></v-btn>
-          </td>
+          </td> -->
         </tr>
       </template>
     </v-data-table>

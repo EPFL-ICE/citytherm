@@ -1,5 +1,10 @@
 import type { LayerSpecification, SourceSpecification } from 'maplibre-gl'
 
+export type LegendColor = {
+  color: string
+  label: string
+}
+
 export type CustomLayerSpecification = LayerSpecification & { groupId: string }
 
 export type LayerGroup = {
@@ -17,10 +22,12 @@ export interface MapLayerConfig {
   source: SourceSpecification
   layer: LayerSpecification
   hasDatePicker?: boolean
+  isCategorical?: boolean
+  legendColors?: LegendColor[]
 }
 
 export const baseUrlOptions = {
-  prod: 'https://enacit4r-cdn.epfl.ch/citytherm/dev/geodata',
+  prod: 'https://enacit4r-cdn.epfl.ch/citytherm/2025-08-25/geodata',
   dev: '/geodata'
 }
 
