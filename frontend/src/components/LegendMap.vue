@@ -23,7 +23,10 @@ const store = useLayersStore()
  * @param config Optional layer configuration with predefined legend colors.
  * @returns An array of LegendColor or null if no color stops are found.
  */
-const generateLegendColors = (layer: LayerSpecification, config?: MapLayerConfig): LegendColor[] | null => {
+const generateLegendColors = (
+  layer: LayerSpecification,
+  config?: MapLayerConfig
+): LegendColor[] | null => {
   // Use predefined legend colors if available
   if (config?.legendColors && config.legendColors.length > 0) {
     return config.legendColors
@@ -109,10 +112,11 @@ const generateOneLayerWithColors = (layer: MapLayerConfig) => {
     null
 
   // Check if the layer is categorical based on paint property expression or override
-  const isCategorical = 
-    layer.isCategorical !== undefined 
-      ? layer.isCategorical 
-      : Array.isArray(paintProperty) && (paintProperty[0] === 'match' || paintProperty[0] === 'case')
+  const isCategorical =
+    layer.isCategorical !== undefined
+      ? layer.isCategorical
+      : Array.isArray(paintProperty) &&
+        (paintProperty[0] === 'match' || paintProperty[0] === 'case')
 
   // Safely extract variable property, checking for existence and structure
   let variable = undefined
