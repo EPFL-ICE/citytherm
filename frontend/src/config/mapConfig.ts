@@ -29,7 +29,7 @@ export const urbanMorphologyLayers = (city: CityKey = 'geneva'): MapLayerConfig[
   return [
     {
       id: 'building_height',
-      label: 'Building height [m]',
+      label: 'Building height',
       unit: 'm',
       info: 'Average height of buildings in each grid cell',
       source: {
@@ -764,7 +764,7 @@ export const getLayerGroups = (city: CityKey = 'geneva') => [
   },
   {
     id: 'irradiance',
-    label: 'Irradiance [kWh/m²]',
+    label: 'Irradiance',
     expanded: false,
     multiple: false,
     layers: irradianceLayers(city)
