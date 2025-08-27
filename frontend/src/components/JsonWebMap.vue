@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import MapLibreMap from '@/components/MapLibreMap.vue'
-import SelectionPanel from '@/components/SelectionPanel.vue'
 import LstDatePicker from '@/components/LstDatePicker.vue'
 import GeoTiffLayer from '@/components/GeoTiffLayer.vue'
 
@@ -143,15 +142,14 @@ const style = ref('style/style.json') // Default style
             <legend-map :layers="layersStore.visibleLayers"></legend-map>
           </template>
         </MapLibreMap>
-        <GeoTiffLayer
+        <!-- <GeoTiffLayer
           v-if="selectedLstFile && isLstLayerSelected"
           :url="`/geodata/lst/${selectedLstFile}`"
           :map="map?.getMap()"
           :visible="isLstLayerVisible"
           @load="onGeoTiffLoad"
           @error="onGeoTiffError"
-        />
-        <SelectionPanel class="map-selections-overlay" />
+        /> -->
       </v-col>
     </v-row>
   </v-container>

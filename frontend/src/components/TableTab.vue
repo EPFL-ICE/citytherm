@@ -3,7 +3,7 @@ import { computed } from 'vue'
 import { useCompareStore } from '@/stores/compare'
 import { useLayersStore } from '@/stores/layers'
 import { useFeatureSelections } from '@/stores/useFeatureSelections'
-import { toCSV } from '@/utils/exportUtils'
+import { useCityStore } from '@/stores/city'
 import type { MapLayerConfig } from '@/config/layerTypes'
 
 const compareStore = useCompareStore()
@@ -110,6 +110,7 @@ const isEmpty = computed(() => {
   return featureSelections.items.length === 0
 })
 
+
 function exportCSV() {
   // Create a custom CSV export for feature selections
   const headers = ['Index', 'ID', ...relevantProperties.value]
@@ -142,7 +143,17 @@ function exportCSV() {
   const blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8;' })
   const a = document.createElement('a')
   a.href = URL.createObjectURL(blob)
-  a.download = `selected_cells_${new Date().toISOString().slice(0, 16).replace(/[-:T]/g, '')}.csv`
+  
+  // Get current city name
+  const cityStore = useCityStore()
+  const cityName = cityStore.city
+  
+  // Format date and time
+  const now = new Date()
+  const date = now.toISOString().split('T')[0]
+  const time = now.toTimeString().split(' ')[0].replace(/:/g, '-')
+  
+  a.download = `citytherm_${cityName}_${date}_${time}.csv`
   a.click()
 }
 
