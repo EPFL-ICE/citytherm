@@ -635,6 +635,43 @@ export const irradianceLayers = (city: CityKey = 'geneva'): MapLayerConfig[] => 
 
 export const landSurfaceTemperatureLayers = (city: CityKey = 'geneva'): MapLayerConfig[] => {
   const config = getGridDataConfig(city)
+  
+  // Define city-specific interpolation values
+  const interpolationValues = {
+    geneva: [
+      22.8,
+      '#313695',
+      25.67,
+      '#4575b4',
+      28.53,
+      '#74add1',
+      31.4,
+      '#abd9e9',
+      34.27,
+      '#e0f3f8',
+      37.13,
+      '#ffffbf',
+      40.04,
+      '#a50026'
+    ],
+    zurich: [
+      27.13,
+      '#313695',
+      29.59,
+      '#4575b4',
+      32.05,
+      '#74add1',
+      34.51,
+      '#abd9e9',
+      36.97,
+      '#e0f3f8',
+      39.43,
+      '#ffffbf',
+      44.69,
+      '#a50026'
+    ]
+  }
+
   return [
     {
       id: 'LST_mean',
@@ -659,20 +696,7 @@ export const landSurfaceTemperatureLayers = (city: CityKey = 'geneva'): MapLayer
             'interpolate',
             ['linear'],
             ['to-number', ['get', 'LST_mean']],
-            290,
-            '#313695',
-            295,
-            '#4575b4',
-            300,
-            '#74add1',
-            305,
-            '#abd9e9',
-            310,
-            '#e0f3f8',
-            315,
-            '#ffffbf',
-            320,
-            '#a50026'
+            ...interpolationValues[city]
           ],
           'fill-opacity': 0.8
         }
