@@ -635,7 +635,7 @@ export const irradianceLayers = (city: CityKey = 'geneva'): MapLayerConfig[] => 
 
 export const landSurfaceTemperatureLayers = (city: CityKey = 'geneva'): MapLayerConfig[] => {
   const config = getGridDataConfig(city)
-  
+
   // Define city-specific interpolation values
   const interpolationValues = {
     geneva: [
@@ -746,8 +746,8 @@ export const getLayerGroups = (city: CityKey = 'geneva') => [
     layers: landCoverFractionLayers(city)
   },
   {
-    id: 'canyon_network',
-    label: 'Canyon network',
+    id: 'roads',
+    label: 'Roads',
     expanded: false,
     multiple: true, // check-box style (lengths + intersections)
     layers: [
