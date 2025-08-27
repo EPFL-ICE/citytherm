@@ -560,7 +560,7 @@ export const irradianceLayers = (city: CityKey = 'geneva'): MapLayerConfig[] => 
           'fill-color': [
             'interpolate',
             ['linear'],
-            ['to-number', ['get', 'solar_summer']],
+            ['to-number', ['get', 'Irradiance_S']],
             700,
             '#ffffcc',
             750,
@@ -604,7 +604,7 @@ export const irradianceLayers = (city: CityKey = 'geneva'): MapLayerConfig[] => 
           'fill-color': [
             'interpolate',
             ['linear'],
-            ['to-number', ['get', 'solar_winter_2']],
+            ['to-number', ['get', 'Irradiance_W']],
             160,
             '#f7fbff',
             180,
@@ -631,34 +631,34 @@ export const irradianceLayers = (city: CityKey = 'geneva'): MapLayerConfig[] => 
   ]
 }
 
-// lst_mean
+// LST_mean
 
 export const landSurfaceTemperatureLayers = (city: CityKey = 'geneva'): MapLayerConfig[] => {
   const config = getGridDataConfig(city)
   return [
     {
-      id: 'lst_mean',
+      id: 'LST_mean',
       label: 'Mean temperature from GeoTIFF',
       unit: '°K',
       info: 'Land surface temperature mean from GeoTIFF files',
       hasDatePicker: true,
       source: {
         type: 'vector',
-        name: 'lst_mean',
+        name: 'LST_mean',
         attribution: 'CityTherm Land Surface Temperature Data',
         url: `pmtiles://${baseUrl}/${config.gridFile}`,
         minzoom: 5
       } as VectorSourceSpecification,
       layer: {
-        id: 'lst_mean-layer',
+        id: 'LST_mean-layer',
         type: 'fill',
-        source: 'lst_mean',
+        source: 'LST_mean',
         'source-layer': config.sourceLayer,
         paint: {
           'fill-color': [
             'interpolate',
             ['linear'],
-            ['to-number', ['get', 'lst_mean']],
+            ['to-number', ['get', 'LST_mean']],
             290,
             '#313695',
             295,

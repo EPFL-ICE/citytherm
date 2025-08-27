@@ -21,8 +21,8 @@ const layerGroupProperties: Record<string, string[]> = {
   ],
   canyon_network: ['Length primary road', 'Length secondary road', 'Length highway'],
   local_climate_zones: ['LCZ', 'lcz_code', 'description', 'color'],
-  irradiance: ['solar_summer', 'solar_winter_2'],
-  land_surface_temperature: ['lst_mean']
+  irradiance: ['Irradiance_S', 'Irradiance_W'],
+  land_surface_temperature: ['LST_mean']
 }
 
 // Helper function to get layer group ID from layer ID
@@ -49,9 +49,9 @@ function getLayerGroupId(layerId: string): string | null {
     secondary_road_len: 'canyon_network',
     highway_len: 'canyon_network',
     lcz_typology: 'local_climate_zones',
-    irr_summer: 'irradiance',
-    irr_winter: 'irradiance',
-    lst_mean: 'land_surface_temperature'
+    Irradiance_S: 'irradiance',
+    Irradiance_W: 'irradiance',
+    LST_mean: 'land_surface_temperature'
   }
 
   return layerToGroupMap[baseLayerId] || null
