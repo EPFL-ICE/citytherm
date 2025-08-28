@@ -55,7 +55,8 @@ const compareStore = useCompareStore()
               !layersStore.selectedLayers.includes(item.id) &&
               layersStore.selectedLayers.length >= compareStore.layerLimit
             "
-            dense
+            :dense="true"
+            :hide-details="true"
           >
             <template #label>
               <h5 class="text-uppercase mb-0">{{ item.label }}</h5>

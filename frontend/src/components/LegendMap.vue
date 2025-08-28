@@ -190,7 +190,7 @@ const show = ref(false)
         @click="show = !show"
       ></v-btn>
     </h5>
-    <div v-if="show" class="my-2 d-flex d-row ga-10 full-width flex-wrap">
+    <div v-if="show" class="my-0 d-flex d-row ga-10 full-width flex-wrap">
       <div
         v-for="layer in generatedLayersWithColors"
         :key="layer?.id"
