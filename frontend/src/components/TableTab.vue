@@ -10,94 +10,50 @@ const compareStore = useCompareStore()
 const layersStore = useLayersStore()
 const featureSelections = useFeatureSelections()
 
-// Mapping of layer groups to their relevant properties
-const layerGroupProperties: Record<string, string[]> = {
-  urban_morphology: ['Building height', 'Sky view factor', 'Frontal area index', 'Aspect ratio'],
-  land_cover_fraction: [
-    'Water cover fraction',
-    'Impervious surface cover fraction',
-    'Building cover fraction',
-    'Pervious surface cover fraction'
-  ],
-  roads: ['Length primary road', 'Length secondary road', 'Length highway'],
-  local_climate_zones: ['LCZ', 'lcz_code', 'description', 'color'],
-  irradiance: ['Irradiance_S', 'Irradiance_W'],
-  land_surface_temperature: ['LST_mean']
-}
+// Define fixed list of properties to display with separate label and unit
+const tableProperties = [
+  { key: 'city', label: 'City', unit: '' },
+  // { key: 'id', label: 'Cell ID', unit: '' },
+  { key: 'lcz_code', label: 'LCZ', unit: '' },
+  { key: 'Building height', label: 'Building height', unit: 'm' },
+  { key: 'Height varability', label: 'Height variability', unit: 'm' },
+  { key: 'Sky view factor', label: 'Sky view factor', unit: '-' },
+  { key: 'Frontal area index', label: 'Frontal area index', unit: '-' },
+  { key: 'Aspect ratio', label: 'Aspect ratio', unit: '-' },
+  { key: 'Building cover fraction', label: 'Building cover fraction', unit: '-' },
+  {
+    key: 'Impervious surface cover fraction',
+    label: 'Impervious surface cover fraction',
+    unit: '-'
+  },
+  { key: 'Pervious surface cover fraction', label: 'Pervious surface cover fraction', unit: '-' },
+  { key: 'Water cover fraction', label: 'Water cover fraction', unit: '-' },
+  { key: 'Intersections', label: 'Road intersections', unit: '-' },
+  { key: 'Length primary road', label: 'Length primary roads', unit: 'km' },
+  { key: 'Length secondary road', label: 'Length secondary roads', unit: 'km' },
+  { key: 'Length highway', label: 'Length highway', unit: 'km' },
+  { key: 'LST_mean', label: 'LST', unit: '^oC' },
+  { key: 'Irradiance_S', label: 'Irradiance_S', unit: 'kWh/m^2' },
+  { key: 'Irradiance_W', label: 'Irradiance_W', unit: 'kWh/m^2' }
+]
 
-// Helper function to get layer group ID from layer ID
-function getLayerGroupId(layerId: string): string | null {
-  // Remove '-layer' suffix if present
-  const baseLayerId = layerId.replace('-layer', '')
-
-  // Map layer IDs to group IDs
-  const layerToGroupMap: Record<string, string> = {
-    building_height: 'urban_morphology',
-    sky_view_factor: 'urban_morphology',
-    frontal_area: 'urban_morphology',
-    aspect_ratio: 'urban_morphology',
-    water_fraction: 'land_cover_fraction',
-    impervious_fraction: 'land_cover_fraction',
-    building_fraction: 'land_cover_fraction',
-    pervious_fraction: 'land_cover_fraction',
-    intersections: 'roads',
-    length_ns: 'roads',
-    length_ne_sw: 'roads',
-    length_se_nw: 'roads',
-    length_e_w: 'roads',
-    primary_road_len: 'roads',
-    secondary_road_len: 'roads',
-    highway_len: 'roads',
-    lcz_typology: 'local_climate_zones',
-    Irradiance_S: 'irradiance',
-    Irradiance_W: 'irradiance',
-    LST_mean: 'land_surface_temperature'
-  }
-
-  return layerToGroupMap[baseLayerId] || null
-}
-
-// Create a map of layer ID to layer config for easy lookup
-const layerMap = computed<Record<string, MapLayerConfig>>(() => {
-  const map: Record<string, MapLayerConfig> = {}
-  layersStore.visibleLayers.forEach((layer) => {
-    map[layer.layer.id] = layer
-  })
-  return map
-})
-
-// Get the selected layer configs
-const selectedLayerConfigs = computed(() => {
-  return compareStore.selectedLayerIds.map((id) => layerMap.value[id]).filter(Boolean)
-})
-
-// Get unique layer group IDs from selected layers
-const selectedLayerGroupIds = computed(() => {
-  const groupIds = layersStore.selectedLayers
-    .map(getLayerGroupId)
-    .filter((id): id is string => id !== null)
-  return [...new Set(groupIds)]
-})
-
-// Get relevant properties for selected layer groups
-const relevantProperties = computed(() => {
-  if (selectedLayerGroupIds.value.length === 0) {
-    // If no groups selected, return all properties from the first item
-    return Object.keys(featureSelections.items[0]?.props || {})
-  }
-
-  // Combine properties from all selected layer groups
-  const properties = new Set<string>()
-  selectedLayerGroupIds.value.forEach((groupId) => {
-    const groupProps = layerGroupProperties[groupId]
-    if (groupProps) {
-      groupProps.forEach((prop) => properties.add(prop))
+// Computed property to generate combined labels (label + unit)
+const combinedLabels = computed(() => {
+  return tableProperties.map((prop) => {
+    if (prop.unit) {
+      // For units with special characters like ^oC, we need to handle them properly
+      if (prop.unit === '^oC') {
+        return `${prop.label} (${String.fromCharCode(176)}C)` // °C
+      }
+      return `${prop.label} (${prop.unit})`
     }
+    return prop.label
   })
+})
 
-  // Convert to array, but only include properties that actually exist in the data
-  const firstItemProps = Object.keys(featureSelections.items[0]?.props || {})
-  return Array.from(properties).filter((prop) => firstItemProps.includes(prop))
+// Get relevant properties keys for easier access
+const relevantPropertyKeys = computed(() => {
+  return tableProperties.map((prop) => prop.key)
 })
 
 // Check if we have data to display
@@ -111,48 +67,43 @@ const isEmpty = computed(() => {
 })
 
 function exportCSV() {
-  // Create a custom CSV export for feature selections
-  const headers = ['Index', 'ID', ...relevantProperties.value]
-
-  // Format property names for headers (similar to popup formatting)
-  const formattedHeaders = headers.map((header) => {
-    if (header === 'Index' || header === 'ID') return header
-    return header
-      .replace(/_/g, ' ')
-      .replace(/([A-Z])/g, ' $1')
-      .toLowerCase()
-      .split(' ')
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ')
-  })
-
-  const lines = [
-    formattedHeaders.join(','),
-    ...featureSelections.items.map((item) =>
-      [
-        item.index.toString(),
-        item.id.toString(),
-        ...relevantProperties.value.map((prop) => item.props[prop] ?? '')
-      ]
-        .map((v) => `"${String(v).replace(/"/g, '""')}"`)
-        .join(',')
-    )
-  ]
-
-  const blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8;' })
-  const a = document.createElement('a')
-  a.href = URL.createObjectURL(blob)
-
   // Get current city name
   const cityStore = useCityStore()
-  const cityName = cityStore.city
+  const cityName = cityStore.current.label
+
+  // Create headers using the combined labels
+  const headers = ['Index', ...combinedLabels.value]
+
+  // Create data rows
+  const rows = featureSelections.items.map((item) => {
+    // For each property, get the corresponding value from item.props
+    const values = tableProperties.map((prop) => {
+      // Special handling for city and id
+      if (prop.key === 'city') return cityName
+      if (prop.key === 'id') return item.id
+
+      // For other properties, get from item.props
+      return item.props[prop.key] ?? ''
+    })
+
+    // Return the row with index and all property values
+    return [item.index.toString(), ...values]
+  })
+
+  // Join headers and rows with tabs
+  const lines = [headers.join('\t'), ...rows.map((row) => row.join('\t'))]
+
+  // Create tab-separated blob
+  const blob = new Blob([lines.join('\n')], { type: 'text/tab-separated-values;charset=utf-8;' })
+  const a = document.createElement('a')
+  a.href = URL.createObjectURL(blob)
 
   // Format date and time
   const now = new Date()
   const date = now.toISOString().split('T')[0]
   const time = now.toTimeString().split(' ')[0].replace(/:/g, '-')
 
-  a.download = `citytherm_${cityName}_${date}_${time}.csv`
+  a.download = `citytherm_${cityName.toLowerCase().replace(/\s+/g, '_')}_${date}_${time}.tsv`
   a.click()
 }
 
@@ -212,12 +163,11 @@ const selectedNeighborhoodIds = computed(() => {
       v-if="hasData"
       :headers="[
         { title: 'Index', key: 'index' },
-        { title: 'ID', key: 'uid' },
-        ...relevantProperties.map((propKey) => ({
-          title: propKey,
-          key: `values.${propKey}`
+        { title: 'Cell ID', key: 'uid' },
+        ...tableProperties.map((prop, index) => ({
+          title: combinedLabels[index],
+          key: `values.${prop.key}`
         }))
-        // { title: 'Actions', key: 'actions', sortable: false }
       ]"
       :items="tableData"
       :hide-default-footer="true"
@@ -228,11 +178,11 @@ const selectedNeighborhoodIds = computed(() => {
         <tr>
           <td>{{ item.index }}</td>
           <td>{{ item.uid }}</td>
-          <td v-for="propKey in relevantProperties" :key="propKey">
+          <td v-for="prop in tableProperties" :key="prop.key">
             <span
-              v-if="propKey === 'color'"
+              v-if="prop.key === 'color'"
               :style="{
-                backgroundColor: item.values[propKey],
+                backgroundColor: item.values[prop.key],
                 display: 'inline-block',
                 width: '16px',
                 height: '16px',
@@ -240,18 +190,13 @@ const selectedNeighborhoodIds = computed(() => {
                 marginLeft: '8px'
               }"
             ></span>
+            <span v-else-if="prop.key === 'city'">
+              {{ useCityStore().current.label }}
+            </span>
             <span v-else>
-              {{ item.values[propKey] || '-' }}
+              {{ item.values[prop.key] || '-' }}
             </span>
           </td>
-          <!-- <td>
-            <v-btn
-              icon="mdi-delete"
-              size="small"
-              @click="removeNeighborhood(item.uid)"
-              variant="text"
-            ></v-btn>
-          </td> -->
         </tr>
       </template>
     </v-data-table>
