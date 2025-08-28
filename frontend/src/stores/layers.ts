@@ -10,7 +10,7 @@ export const useLayersStore = defineStore('layers', () => {
   const layerGroups = computed(() => getLayerGroups(cityStore.city))
 
   // Selected layer IDs
-  const selectedLayers = ref<string[]>([])
+  const selectedLayers = ref<string[]>(['baselayer'])
 
   // Store the filtered categories for each layer
   const filteredCategories = ref<Record<string, Record<string, string[]>>>({})

@@ -218,6 +218,36 @@ export function useMapEvents(
 
     // Only update if we've moved to a different feature
     if (currentFeatureId.value !== featureId) {
+      // Reset the previous hovered feature state
+      if (currentFeatureId.value) {
+        const featureStateParams: any = { source: feature.source }
+        // Add sourceLayer if it exists in the feature
+        if (feature.sourceLayer) {
+          featureStateParams.sourceLayer = feature.sourceLayer
+        }
+        // Add id - using the feature.id if available, otherwise using our generated featureId
+        if (feature.id !== undefined) {
+          featureStateParams.id = feature.id
+        } else {
+          featureStateParams.id = currentFeatureId.value
+        }
+        mapRef.value.setFeatureState(featureStateParams, { hover: false })
+      }
+
+      // Set the new hovered feature state
+      const featureStateParams: any = { source: feature.source }
+      // Add sourceLayer if it exists in the feature
+      if (feature.sourceLayer) {
+        featureStateParams.sourceLayer = feature.sourceLayer
+      }
+      // Add id - using the feature.id if available, otherwise using our generated featureId
+      if (feature.id !== undefined) {
+        featureStateParams.id = feature.id
+      } else {
+        featureStateParams.id = featureId
+      }
+      mapRef.value.setFeatureState(featureStateParams, { hover: true })
+
       currentFeatureId.value = featureId
       hoveredFeature.value = feature.properties
 

@@ -89,7 +89,12 @@ export const urbanMorphologyLayers = (city: CityKey = 'geneva'): MapLayerConfig[
             '#053061'
           ],
           'fill-opacity': 0.8,
-          'fill-outline-color': '#000000'
+          'fill-outline-color': [
+            'case',
+            ['boolean', ['feature-state', 'hover'], false],
+            '#ffffff', // White outline when hovered
+            '#000000' // Black outline normally
+          ]
         }
       } as LayerSpecification
     },
@@ -128,7 +133,12 @@ export const urbanMorphologyLayers = (city: CityKey = 'geneva'): MapLayerConfig[
             '#f7f7f7'
           ],
           'fill-opacity': 0.8,
-          'fill-outline-color': '#000000'
+          'fill-outline-color': [
+            'case',
+            ['boolean', ['feature-state', 'hover'], false],
+            '#ffffff', // White outline when hovered
+            '#000000' // Black outline normally
+          ]
         }
       } as LayerSpecification
     },
@@ -167,7 +177,12 @@ export const urbanMorphologyLayers = (city: CityKey = 'geneva'): MapLayerConfig[
             '#053061'
           ],
           'fill-opacity': 0.8,
-          'fill-outline-color': '#000000'
+          'fill-outline-color': [
+            'case',
+            ['boolean', ['feature-state', 'hover'], false],
+            '#ffffff', // White outline when hovered
+            '#000000' // Black outline normally
+          ]
         }
       } as LayerSpecification
     },
@@ -206,7 +221,12 @@ export const urbanMorphologyLayers = (city: CityKey = 'geneva'): MapLayerConfig[
             '#053061'
           ],
           'fill-opacity': 0.8,
-          'fill-outline-color': '#000000'
+          'fill-outline-color': [
+            'case',
+            ['boolean', ['feature-state', 'hover'], false],
+            '#ffffff', // White outline when hovered
+            '#000000' // Black outline normally
+          ]
         }
       } as LayerSpecification
     }
@@ -251,7 +271,12 @@ export const landCoverFractionLayers = (city: CityKey = 'geneva'): MapLayerConfi
             '#67000d'
           ],
           'fill-opacity': 0.8,
-          'fill-outline-color': '#000000'
+          'fill-outline-color': [
+            'case',
+            ['boolean', ['feature-state', 'hover'], false],
+            '#ffffff', // White outline when hovered
+            '#000000' // Black outline normally
+          ]
         }
       } as LayerSpecification
     },
@@ -290,7 +315,12 @@ export const landCoverFractionLayers = (city: CityKey = 'geneva'): MapLayerConfi
             '#000000'
           ],
           'fill-opacity': 0.8,
-          'fill-outline-color': '#000000'
+          'fill-outline-color': [
+            'case',
+            ['boolean', ['feature-state', 'hover'], false],
+            '#ffffff', // White outline when hovered
+            '#000000' // Black outline normally
+          ]
         }
       } as LayerSpecification
     },
@@ -329,7 +359,12 @@ export const landCoverFractionLayers = (city: CityKey = 'geneva'): MapLayerConfi
             '#253494'
           ],
           'fill-opacity': 0.8,
-          'fill-outline-color': '#000000'
+          'fill-outline-color': [
+            'case',
+            ['boolean', ['feature-state', 'hover'], false],
+            '#ffffff', // White outline when hovered
+            '#000000' // Black outline normally
+          ]
         }
       } as LayerSpecification
     },
@@ -368,7 +403,12 @@ export const landCoverFractionLayers = (city: CityKey = 'geneva'): MapLayerConfi
             '#08306b'
           ],
           'fill-opacity': 0.8,
-          'fill-outline-color': '#000000'
+          'fill-outline-color': [
+            'case',
+            ['boolean', ['feature-state', 'hover'], false],
+            '#ffffff', // White outline when hovered
+            '#000000' // Black outline normally
+          ]
         }
       } as LayerSpecification
     }
@@ -413,7 +453,12 @@ export const canyonIntersectionLayers = (city: CityKey = 'geneva'): MapLayerConf
             '#053061'
           ],
           'fill-opacity': 0.8,
-          'fill-outline-color': '#000000'
+          'fill-outline-color': [
+            'case',
+            ['boolean', ['feature-state', 'hover'], false],
+            '#ffffff', // White outline when hovered
+            '#000000' // Black outline normally
+          ]
         }
       } as LayerSpecification
     }
@@ -458,7 +503,12 @@ export const canyonLengthLayers = (city: CityKey = 'geneva'): MapLayerConfig[] =
             '#053061'
           ],
           'fill-opacity': 0.8,
-          'fill-outline-color': '#000000'
+          'fill-outline-color': [
+            'case',
+            ['boolean', ['feature-state', 'hover'], false],
+            '#ffffff', // White outline when hovered
+            '#000000' // Black outline normally
+          ]
         }
       } as LayerSpecification
     },
@@ -497,7 +547,12 @@ export const canyonLengthLayers = (city: CityKey = 'geneva'): MapLayerConfig[] =
             '#053061'
           ],
           'fill-opacity': 0.8,
-          'fill-outline-color': '#000000'
+          'fill-outline-color': [
+            'case',
+            ['boolean', ['feature-state', 'hover'], false],
+            '#ffffff', // White outline when hovered
+            '#000000' // Black outline normally
+          ]
         }
       } as LayerSpecification
     },
@@ -528,7 +583,12 @@ export const canyonLengthLayers = (city: CityKey = 'geneva'): MapLayerConfig[] =
             '#053061'
           ],
           'fill-opacity': 0.8,
-          'fill-outline-color': '#000000'
+          'fill-outline-color': [
+            'case',
+            ['boolean', ['feature-state', 'hover'], false],
+            '#ffffff', // White outline when hovered
+            '#000000' // Black outline normally
+          ]
         }
       } as LayerSpecification
     }
@@ -568,6 +628,40 @@ export const localClimateZoneLayers = (city: CityKey = 'geneva'): MapLayerConfig
         'source-layer': config.sourceLayer,
         paint: {
           'fill-color': ['get', 'color'],
+          'fill-opacity': 0.8,
+          'fill-outline-color': [
+            'case',
+            ['boolean', ['feature-state', 'hover'], false],
+            '#ffffff', // White outline when hovered
+            '#000000' // Black outline normally
+          ]
+        }
+      } as LayerSpecification
+    }
+  ]
+}
+
+export const defaultGridLayers = (city: CityKey = 'geneva'): MapLayerConfig[] => {
+  const config = getGridDataConfig(city)
+  return [
+    {
+      id: 'baselayer',
+      label: 'Base Layer',
+      unit: 'category',
+      info: 'Base layer for the grid data',
+      source: {
+        type: 'vector',
+        attribution: 'CityTherm Local Climate Zone Data',
+        url: `pmtiles://${baseUrl}/${config.gridFile}`,
+        minzoom: 5
+      } as VectorSourceSpecification,
+      layer: {
+        id: 'baselayer',
+        type: 'fill',
+        source: 'baselayer',
+        'source-layer': config.sourceLayer,
+        paint: {
+          'fill-color': '#FFFFFF',
           'fill-opacity': 0.8,
           'fill-outline-color': '#000000'
         }
@@ -623,7 +717,12 @@ export const irradianceLayers = (city: CityKey = 'geneva'): MapLayerConfig[] => 
             '#800026'
           ],
           'fill-opacity': 0.8,
-          'fill-outline-color': '#000000'
+          'fill-outline-color': [
+            'case',
+            ['boolean', ['feature-state', 'hover'], false],
+            '#ffffff', // White outline when hovered
+            '#000000' // Black outline normally
+          ]
         }
       } as LayerSpecification
     },
@@ -668,7 +767,12 @@ export const irradianceLayers = (city: CityKey = 'geneva'): MapLayerConfig[] => 
             '#08306b'
           ],
           'fill-opacity': 0.8,
-          'fill-outline-color': '#000000'
+          'fill-outline-color': [
+            'case',
+            ['boolean', ['feature-state', 'hover'], false],
+            '#ffffff', // White outline when hovered
+            '#000000' // Black outline normally
+          ]
         }
       } as LayerSpecification
     }
@@ -743,7 +847,12 @@ export const landSurfaceTemperatureLayers = (city: CityKey = 'geneva'): MapLayer
             ...interpolationValues[city]
           ],
           'fill-opacity': 0.8,
-          'fill-outline-color': '#000000'
+          'fill-outline-color': [
+            'case',
+            ['boolean', ['feature-state', 'hover'], false],
+            '#ff0000', // White outline when hovered
+            '#000000' // Black outline normally
+          ]
         }
       } as LayerSpecification
     }
@@ -826,6 +935,7 @@ export const getLayerGroups = (city: CityKey = 'geneva') => [
 export const getMapConfig = (city: CityKey = 'geneva') => ({
   baseUrl: baseUrlOptions,
   layers: [
+    ...defaultGridLayers(city),
     // Urban morphology (place LCZ typology first inside the group)
     ...localClimateZoneLayers(city),
     ...urbanMorphologyLayers(city),
