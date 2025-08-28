@@ -347,16 +347,8 @@ export const landCoverFractionLayers = (city: CityKey = 'geneva'): MapLayerConfi
             ['to-number', ['get', 'Pervious surface cover fraction']],
             0,
             '#f7f7f7',
-            0.2,
-            '#c7e9b4',
-            0.4,
-            '#7fcdbb',
-            0.6,
-            '#41b6c4',
-            0.8,
-            '#2c7fb8',
             0.933,
-            '#253494'
+            '#00550dff'
           ],
           'fill-opacity': 0.8,
           'fill-outline-color': [
@@ -492,7 +484,7 @@ export const canyonLengthLayers = (city: CityKey = 'geneva'): MapLayerConfig[] =
             0,
             '#000000ff',
             2333.49,
-            '#f7f7f7',
+            '#f7f7f7'
           ],
           'fill-opacity': 0.8,
           'fill-outline-color': [
@@ -528,7 +520,7 @@ export const canyonLengthLayers = (city: CityKey = 'geneva'): MapLayerConfig[] =
             0,
             '#000000ff',
             2304.66,
-            '#f7f7f7',
+            '#f7f7f7'
           ],
           'fill-opacity': 0.8,
           'fill-outline-color': [
@@ -564,7 +556,7 @@ export const canyonLengthLayers = (city: CityKey = 'geneva'): MapLayerConfig[] =
             0,
             '#000000ff',
             941,
-            '#f7f7f7',
+            '#f7f7f7'
           ],
           'fill-opacity': 0.8,
           'fill-outline-color': [
