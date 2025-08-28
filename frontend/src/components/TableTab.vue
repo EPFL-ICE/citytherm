@@ -220,7 +220,9 @@ const selectedNeighborhoodIds = computed(() => {
         // { title: 'Actions', key: 'actions', sortable: false }
       ]"
       :items="tableData"
+      :hide-default-footer="true"
       class="flex-grow-1"
+      density="compact"
     >
       <template #item="{ item }">
         <tr>

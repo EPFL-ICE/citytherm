@@ -52,7 +52,6 @@ const compareStore = useCompareStore()
               layersStore.selectedLayers.length >= compareStore.layerLimit
             "
             density="compact"
-            
             :hide-details="true"
           >
             <template #label>
