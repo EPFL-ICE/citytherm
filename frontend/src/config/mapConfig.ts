@@ -21,6 +21,33 @@ function getGridDataConfig(city: CityKey) {
   return configs[city]
 }
 
+
+// URBAN MORPHOLOGY
+// Typology
+// Building height
+// Sky view factor
+// Frontal area index
+// Aspect ratio
+
+// LAND COVER FRACTION
+// Building
+// Impervious
+// Pervious
+// Water
+
+// ROADS
+// Intersections
+// Primary road
+// Secondary road
+// Highway
+
+// CLIMATIC CONDITIONS
+// Irradiance - summer
+// Irradiance -winter
+
+// URBAN ENVIRONMENT
+// Land surface temeprature
+
 /* ---------------------------------
  *  Atomic layer array factories
  * ---------------------------------*/
@@ -187,10 +214,10 @@ export const landCoverFractionLayers = (city: CityKey = 'geneva'): MapLayerConfi
   const config = getGridDataConfig(city)
   return [
     {
-      id: 'water_fraction',
-      label: 'Water',
+      id: 'building_fraction',
+      label: 'Building',
       unit: 'fraction',
-      info: 'Fraction of cell area covered by water bodies',
+      info: 'Fraction of cell area covered by buildings',
       source: {
         type: 'vector',
         attribution: 'CityTherm Land Cover Data',
@@ -198,27 +225,27 @@ export const landCoverFractionLayers = (city: CityKey = 'geneva'): MapLayerConfi
         minzoom: 5
       } as VectorSourceSpecification,
       layer: {
-        id: 'water_fraction-layer',
+        id: 'building_fraction-layer',
         type: 'fill',
-        source: 'water_fraction',
+        source: 'building_fraction',
         'source-layer': config.sourceLayer,
         paint: {
           'fill-color': [
             'interpolate',
             ['linear'],
-            ['to-number', ['get', 'Water cover fraction']],
+            ['to-number', ['get', 'Building cover fraction']],
             0,
             '#f7f7f7',
+            0.1,
+            '#fcae91',
             0.2,
-            '#c6dbef',
+            '#fb6a4a',
+            0.3,
+            '#de2d26',
             0.4,
-            '#6baed6',
-            0.6,
-            '#2171b5',
-            0.8,
-            '#08519c',
-            1,
-            '#08306b'
+            '#a50f15',
+            0.62,
+            '#67000d'
           ],
           'fill-opacity': 0.8
         }
@@ -263,44 +290,6 @@ export const landCoverFractionLayers = (city: CityKey = 'geneva'): MapLayerConfi
       } as LayerSpecification
     },
     {
-      id: 'building_fraction',
-      label: 'Building',
-      unit: 'fraction',
-      info: 'Fraction of cell area covered by buildings',
-      source: {
-        type: 'vector',
-        attribution: 'CityTherm Land Cover Data',
-        url: `pmtiles://${baseUrl}/${config.gridFile}`,
-        minzoom: 5
-      } as VectorSourceSpecification,
-      layer: {
-        id: 'building_fraction-layer',
-        type: 'fill',
-        source: 'building_fraction',
-        'source-layer': config.sourceLayer,
-        paint: {
-          'fill-color': [
-            'interpolate',
-            ['linear'],
-            ['to-number', ['get', 'Building cover fraction']],
-            0,
-            '#f7f7f7',
-            0.1,
-            '#fcae91',
-            0.2,
-            '#fb6a4a',
-            0.3,
-            '#de2d26',
-            0.4,
-            '#a50f15',
-            0.62,
-            '#67000d'
-          ],
-          'fill-opacity': 0.8
-        }
-      } as LayerSpecification
-    },
-    {
       id: 'pervious_fraction',
       label: 'Pervious',
       unit: 'fraction',
@@ -337,6 +326,44 @@ export const landCoverFractionLayers = (city: CityKey = 'geneva'): MapLayerConfi
           'fill-opacity': 0.8
         }
       } as LayerSpecification
+    },
+    {
+      id: 'water_fraction',
+      label: 'Water',
+      unit: 'fraction',
+      info: 'Fraction of cell area covered by water bodies',
+      source: {
+        type: 'vector',
+        attribution: 'CityTherm Land Cover Data',
+        url: `pmtiles://${baseUrl}/${config.gridFile}`,
+        minzoom: 5
+      } as VectorSourceSpecification,
+      layer: {
+        id: 'water_fraction-layer',
+        type: 'fill',
+        source: 'water_fraction',
+        'source-layer': config.sourceLayer,
+        paint: {
+          'fill-color': [
+            'interpolate',
+            ['linear'],
+            ['to-number', ['get', 'Water cover fraction']],
+            0,
+            '#f7f7f7',
+            0.2,
+            '#c6dbef',
+            0.4,
+            '#6baed6',
+            0.6,
+            '#2171b5',
+            0.8,
+            '#08519c',
+            1,
+            '#08306b'
+          ],
+          'fill-opacity': 0.8
+        }
+      } as LayerSpecification
     }
   ]
 }
@@ -346,7 +373,7 @@ export const canyonIntersectionLayers = (city: CityKey = 'geneva'): MapLayerConf
   return [
     {
       id: 'intersections',
-      label: 'Intersections [-]',
+      label: 'Intersections',
       unit: 'count',
       info: 'Number of street intersections per grid cell',
       source: {
@@ -539,10 +566,13 @@ export const localClimateZoneLayers = (city: CityKey = 'geneva'): MapLayerConfig
 
 export const irradianceLayers = (city: CityKey = 'geneva'): MapLayerConfig[] => {
   const config = getGridDataConfig(city)
+  // CLIMATIC CONDITIONS
+  // Irradiance - summer
+  // Irradiance - winter
   return [
     {
       id: 'irr_summer',
-      label: 'Summer',
+      label: 'Irradiance - summer',
       unit: 'kWh/m²',
       info: 'Solar irradiance during summer months',
       source: {
@@ -586,7 +616,7 @@ export const irradianceLayers = (city: CityKey = 'geneva'): MapLayerConfig[] => 
     },
     {
       id: 'irr_winter',
-      label: 'Winter',
+      label: 'Irradiance - winter',
       unit: 'kWh/m²',
       info: 'Solar irradiance during winter months',
       source: {
@@ -675,9 +705,9 @@ export const landSurfaceTemperatureLayers = (city: CityKey = 'geneva'): MapLayer
   return [
     {
       id: 'LST_mean',
-      label: 'Mean temperature from GeoTIFF',
-      unit: '°K',
-      info: 'Land surface temperature mean from GeoTIFF files',
+      label: 'Land surface temperature',
+      unit: '°C',
+      info: 'Land surface temperature',
       hasDatePicker: true,
       source: {
         type: 'vector',
@@ -736,43 +766,43 @@ export const getLayerGroups = (city: CityKey = 'geneva') => [
     label: 'Urban morphology',
     expanded: true, // open by default (matches mock-up)
     multiple: false, // radio-button style
-    layers: [...urbanMorphologyLayers(city)]
+    layers: [
+      // Place Local Climate Zone typology at the top of Urban morphology as requested
+      ...localClimateZoneLayers(city),
+      ...urbanMorphologyLayers(city)
+    ]
   },
   {
     id: 'land_cover_fraction',
     label: 'Land cover fraction',
-    expanded: false,
+    expanded: true,
     multiple: false,
     layers: landCoverFractionLayers(city)
   },
   {
     id: 'roads',
     label: 'Roads',
-    expanded: false,
+    expanded: true,
     multiple: true, // check-box style (lengths + intersections)
     layers: [
-      //  ...canyonIntersectionLayers(city),
+      // Ensure intersections are listed first, followed by road lengths
+      ...canyonIntersectionLayers(city),
       ...canyonLengthLayers(city)
     ]
   },
   {
-    id: 'local_climate_zones',
-    label: 'Local climate zones',
-    expanded: false,
-    multiple: false,
-    layers: [...localClimateZoneLayers(city)]
-  },
-  {
     id: 'irradiance',
-    label: 'Irradiance',
-    expanded: false,
+    label: 'CLIMATIC CONDITIONS',
+    expanded: true,
     multiple: false,
     layers: irradianceLayers(city)
   },
+  // URBAN ENVIRONMENT
+  // Land surface temperature
   {
     id: 'land_surface_temperature',
-    label: 'Land surface temperature',
-    expanded: false,
+    label: 'URBAN ENVIRONMENT',
+    expanded: true,
     multiple: true,
     layers: landSurfaceTemperatureLayers(city)
   }
@@ -781,12 +811,17 @@ export const getLayerGroups = (city: CityKey = 'geneva') => [
 export const getMapConfig = (city: CityKey = 'geneva') => ({
   baseUrl: baseUrlOptions,
   layers: [
+    // Urban morphology (place LCZ typology first inside the group)
+    ...localClimateZoneLayers(city),
     ...urbanMorphologyLayers(city),
+    // Land cover fraction (ordered: Building, Impervious, Pervious, Water)
     ...landCoverFractionLayers(city),
+    // Roads: intersections first, then road lengths
     ...canyonIntersectionLayers(city),
     ...canyonLengthLayers(city),
-    ...localClimateZoneLayers(city),
+    // Climatic conditions: irradiance (summer, winter)
     ...irradianceLayers(city),
+    // Urban environment: land surface temperature
     ...landSurfaceTemperatureLayers(city)
   ] as MapLayerConfig[]
 })
