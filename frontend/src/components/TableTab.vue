@@ -21,7 +21,11 @@ const tableProperties = [
   { key: 'Frontal area index', label: 'Frontal area index', unit: '-' },
   { key: 'Aspect ratio', label: 'Aspect ratio', unit: '-' },
   { key: 'Building cover fraction', label: 'Building cover fraction', unit: '-' },
-  { key: 'Impervious surface cover fraction', label: 'Impervious surface cover fraction', unit: '-' },
+  {
+    key: 'Impervious surface cover fraction',
+    label: 'Impervious surface cover fraction',
+    unit: '-'
+  },
   { key: 'Pervious surface cover fraction', label: 'Pervious surface cover fraction', unit: '-' },
   { key: 'Water cover fraction', label: 'Water cover fraction', unit: '-' },
   { key: 'Intersections', label: 'Road intersections', unit: '-' },
@@ -35,7 +39,7 @@ const tableProperties = [
 
 // Computed property to generate combined labels (label + unit)
 const combinedLabels = computed(() => {
-  return tableProperties.map(prop => {
+  return tableProperties.map((prop) => {
     if (prop.unit) {
       // For units with special characters like ^oC, we need to handle them properly
       if (prop.unit === '^oC') {
@@ -49,7 +53,7 @@ const combinedLabels = computed(() => {
 
 // Get relevant properties keys for easier access
 const relevantPropertyKeys = computed(() => {
-  return tableProperties.map(prop => prop.key)
+  return tableProperties.map((prop) => prop.key)
 })
 
 // Check if we have data to display
@@ -69,7 +73,7 @@ function exportCSV() {
 
   // Create headers using the combined labels
   const headers = ['Index', ...combinedLabels.value]
-  
+
   // Create data rows
   const rows = featureSelections.items.map((item) => {
     // For each property, get the corresponding value from item.props
@@ -77,20 +81,17 @@ function exportCSV() {
       // Special handling for city and id
       if (prop.key === 'city') return cityName
       if (prop.key === 'id') return item.id
-      
+
       // For other properties, get from item.props
       return item.props[prop.key] ?? ''
     })
-    
+
     // Return the row with index and all property values
     return [item.index.toString(), ...values]
   })
 
   // Join headers and rows with tabs
-  const lines = [
-    headers.join('\t'),
-    ...rows.map(row => row.join('\t'))
-  ]
+  const lines = [headers.join('\t'), ...rows.map((row) => row.join('\t'))]
 
   // Create tab-separated blob
   const blob = new Blob([lines.join('\n')], { type: 'text/tab-separated-values;charset=utf-8;' })
