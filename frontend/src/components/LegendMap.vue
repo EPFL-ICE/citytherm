@@ -178,7 +178,12 @@ const show = ref(true)
 <template>
   <div v-if="generatedLayersWithColors.length > 0" class="legend">
     <h5 class="legend-title">
-      LEGEND
+      {{ generatedLayersWithColors[0].label.toUpperCase() }}
+      <span v-if="generatedLayersWithColors[0].unit" class="layer-legend-unit">
+        [{{
+        generatedLayersWithColors[0].unit
+      }}]</span>
+
       <v-btn
         :icon="show ? mdiChevronDown : mdiChevronUp"
         flat
@@ -192,38 +197,13 @@ const show = ref(true)
         :key="layer?.id"
         class="layer-legend d-flex flex-column justify-space-between"
       >
-        <div class="layer-legend-header">
-          <h5 class="layer-legend-title">
-            {{ layer.label.toUpperCase() }}
-          </h5>
-          <div v-if="layer.unit" class="layer-legend-unit">{{ layer.unit }}</div>
-        </div>
         <!-- Categorical Color Display with Checkboxes -->
         <div v-if="layer?.isCategorical" class="categorical-legend">
           <div v-for="item in layer.colors" :key="item.label" class="legend-item">
-            <v-checkbox
-              density="compact"
-              hide-details
-              :model-value="
-                !(
-                  store.filteredCategories[layer.layer.id] &&
-                  store.filteredCategories[layer.layer.id][layer.variable] &&
-                  store.filteredCategories[layer.layer.id][layer.variable]?.includes(item.label)
-                )
-              "
-              class="legend-checkbox"
-              @update:model-value="
-                (selected: boolean | null) =>
-                  toggleCategory(layer.layer.id, layer.variable, item.label, selected)
-              "
-            >
-              <template #label>
-                <div class="d-flex align-center">
-                  <div class="color-box" :style="{ backgroundColor: item.color }"></div>
-                  <div class="label text-body-2">{{ item.label }}</div>
-                </div>
-              </template>
-            </v-checkbox>
+            <div class="d-flex align-center">
+              <div class="color-box" :style="{ backgroundColor: item.color }"></div>
+              <div class="label text-body-2">{{ item.label }}</div>
+            </div>
           </div>
         </div>
         <!-- Continuous Color Ramp -->
