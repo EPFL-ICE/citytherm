@@ -180,9 +180,8 @@ const show = ref(true)
     <h5 class="legend-title">
       {{ generatedLayersWithColors[0].label.toUpperCase() }}
       <span v-if="generatedLayersWithColors[0].unit" class="layer-legend-unit">
-        [{{
-        generatedLayersWithColors[0].unit
-      }}]</span>
+        [{{ generatedLayersWithColors[0].unit }}]</span
+      >
 
       <v-btn
         :icon="show ? mdiChevronDown : mdiChevronUp"
