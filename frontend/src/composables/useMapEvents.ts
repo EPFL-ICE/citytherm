@@ -87,8 +87,6 @@ function formatPopupContent(
       headerContent += ' ('
       const parts = []
       if (id !== undefined) parts.push(`ID: ${id}`)
-      if (colIndex !== undefined) parts.push(`Col: ${colIndex}`)
-      if (rowIndex !== undefined) parts.push(`Row: ${rowIndex}`)
       headerContent += parts.join(', ') + ')'
     }
   }

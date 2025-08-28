@@ -21,7 +21,6 @@ function getGridDataConfig(city: CityKey) {
   return configs[city]
 }
 
-
 // URBAN MORPHOLOGY
 // Typology
 // Building height
