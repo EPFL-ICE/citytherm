@@ -53,25 +53,14 @@ function getGridDataConfig(city: CityKey) {
 export const urbanMorphologyLayers = (city: CityKey = 'geneva'): MapLayerConfig[] => {
   const config = getGridDataConfig(city)
 
-
   // Define city-specific interpolation values
   const interpolationValues = {
     //     min: 0
-// max: 30
-    geneva: [
-      0,
-      '#000000',
-      30.04,
-      '#ffffff'
-    ],
-//     min: 0
-// max: 35.47
-    zurich: [
-      0,
-      '#000000',
-      35.47,
-      '#ffffff'
-    ]
+    // max: 30
+    geneva: [0, '#000000', 30.04, '#ffffff'],
+    //     min: 0
+    // max: 35.47
+    zurich: [0, '#000000', 35.47, '#ffffff']
   }
 
   return [
