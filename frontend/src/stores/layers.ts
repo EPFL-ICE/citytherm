@@ -35,10 +35,9 @@ export const useLayersStore = defineStore('layers', () => {
     { immediate: true }
   )
 
-
-    // maybe not needed since we're using v-model with checkboxes
+  // maybe not needed since we're using v-model with checkboxes
   // need watch on selectedLayers if needed or computed ?
-  watch(selectedLayers, (newSelection) => { 
+  watch(selectedLayers, (newSelection) => {
     console.log('Selected layers updated:', newSelection)
     if (newSelection.length === 0) {
       // clean up filtered categories if no layers are selected
@@ -53,8 +52,7 @@ export const useLayersStore = defineStore('layers', () => {
       // const compareStore = useCompareStore()
       // compareStore.clearSelections()
       const featureSelections = useFeatureSelections()
-      featureSelections.clear();
-      
+      featureSelections.clear()
     }
   })
   // Update selected layers (for checkboxes/multiple selection)
@@ -120,7 +118,6 @@ export const useLayersStore = defineStore('layers', () => {
       }
     }
   }
-
 
   function updateSelectedLayers(newSelection: string[] | null) {
     if (newSelection !== null) {
