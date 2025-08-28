@@ -50,7 +50,7 @@ const cityStore = useCityStore()
         </div>
 
         <!-- Table Container - Fixed height at bottom -->
-        <div class="table-container" style="height: 400px">
+        <div class="table-container" style="height: auto; max-height: 40vh;">
           <TableTab />
         </div>
       </v-col>
