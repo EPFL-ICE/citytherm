@@ -52,6 +52,28 @@ function getGridDataConfig(city: CityKey) {
  * ---------------------------------*/
 export const urbanMorphologyLayers = (city: CityKey = 'geneva'): MapLayerConfig[] => {
   const config = getGridDataConfig(city)
+
+
+  // Define city-specific interpolation values
+  const interpolationValues = {
+    //     min: 0
+// max: 30
+    geneva: [
+      0,
+      '#000000',
+      30.04,
+      '#ffffff'
+    ],
+//     min: 0
+// max: 35.47
+    zurich: [
+      0,
+      '#000000',
+      35.47,
+      '#ffffff'
+    ]
+  }
+
   return [
     {
       id: 'building_height',
@@ -75,18 +97,19 @@ export const urbanMorphologyLayers = (city: CityKey = 'geneva'): MapLayerConfig[
             'interpolate',
             ['linear'],
             ['to-number', ['get', 'Building height']],
-            0,
-            '#f7f7f7',
-            10,
-            '#d1e5f0',
-            20,
-            '#92c5de',
-            30,
-            '#4393c3',
-            40,
-            '#2166ac',
-            50,
-            '#053061'
+            ...interpolationValues[city]
+            // 0,
+            // '#f7f7f7',
+            // 10,
+            // '#d1e5f0',
+            // 20,
+            // '#92c5de',
+            // 30,
+            // '#4393c3',
+            // 40,
+            // '#2166ac',
+            // 50,
+            // '#053061'
           ],
           'fill-opacity': 0.8,
           'fill-outline-color': [
