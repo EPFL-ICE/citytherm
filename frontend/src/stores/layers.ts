@@ -2,6 +2,8 @@ import { getLayerGroups, getMapConfig } from '@/config/mapConfig'
 import { useCityStore } from '@/stores/city'
 import { defineStore } from 'pinia'
 import { computed, ref, watch } from 'vue'
+// import { useCompareStore } from './compare'
+import { useFeatureSelections } from './useFeatureSelections'
 
 export const useLayersStore = defineStore('layers', () => {
   const cityStore = useCityStore()
@@ -33,6 +35,29 @@ export const useLayersStore = defineStore('layers', () => {
     { immediate: true }
   )
 
+
+    // maybe not needed since we're using v-model with checkboxes
+  // need watch on selectedLayers if needed or computed ?
+  watch(selectedLayers, (newSelection) => { 
+    console.log('Selected layers updated:', newSelection)
+    if (newSelection.length === 0) {
+      // clean up filtered categories if no layers are selected
+      // filteredCategories.value = {}
+      // alternatively, clear only categories related to unselected layers
+      Object.keys(filteredCategories.value).forEach((layerId) => {
+        if (!newSelection.includes(layerId)) {
+          delete filteredCategories.value[layerId]
+        }
+      })
+      // clean up table selections if no layers are selected
+      // const compareStore = useCompareStore()
+      // compareStore.clearSelections()
+      const featureSelections = useFeatureSelections()
+      featureSelections.clear();
+      
+    }
+  })
+  // Update selected layers (for checkboxes/multiple selection)
   // Flatten all layers for internal use
   const possibleLayers = computed(() => {
     return layerGroups.value.flatMap((group) =>
@@ -96,7 +121,7 @@ export const useLayersStore = defineStore('layers', () => {
     }
   }
 
-  // Update selected layers (for checkboxes/multiple selection)
+
   function updateSelectedLayers(newSelection: string[] | null) {
     if (newSelection !== null) {
       selectedLayers.value = [...newSelection] // Use spread to ensure reactivity
