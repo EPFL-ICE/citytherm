@@ -135,7 +135,7 @@ const generateOneLayerWithColors = (layer: MapLayerConfig) => {
     variable: variable,
     gradient:
       !isCategorical && colors.length > 0
-        ? `linear-gradient(to bottom, ${colors.map((c) => c.color).join(', ')})`
+        ? `linear-gradient(to right, ${colors.map((c) => c.color).join(', ')})`
         : undefined
   }
 }
@@ -172,13 +172,17 @@ const toggleCategory = (
   }
 }
 
-const show = ref(true)
+const show = ref(false)
 </script>
 
 <template>
   <div v-if="generatedLayersWithColors.length > 0" class="legend">
-    <h5 class="legend-title">
-      LEGEND
+    <h5 class="legend-title" :class="{ 'without-legend': !show }">
+      {{ generatedLayersWithColors[0].label.toUpperCase() }}
+      <span v-if="generatedLayersWithColors[0].unit" class="layer-legend-unit">
+        [{{ generatedLayersWithColors[0].unit }}]</span
+      >
+
       <v-btn
         :icon="show ? mdiChevronDown : mdiChevronUp"
         flat
@@ -186,55 +190,40 @@ const show = ref(true)
         @click="show = !show"
       ></v-btn>
     </h5>
-    <div v-if="show" class="my-2 d-flex d-row ga-10">
+    <div v-if="show" class="my-0 d-flex d-row ga-10 full-width flex-wrap">
       <div
         v-for="layer in generatedLayersWithColors"
         :key="layer?.id"
-        class="layer-legend d-flex flex-column justify-space-between"
+        class="layer-legend d-flex flex-column justify-space-between full-width"
       >
-        <div class="layer-legend-header">
-          <h5 class="layer-legend-title">
-            {{ layer.label.toUpperCase() }}
-          </h5>
-          <div v-if="layer.unit" class="layer-legend-unit">{{ layer.unit }}</div>
-        </div>
         <!-- Categorical Color Display with Checkboxes -->
         <div v-if="layer?.isCategorical" class="categorical-legend">
           <div v-for="item in layer.colors" :key="item.label" class="legend-item">
-            <v-checkbox
-              density="compact"
-              hide-details
-              :model-value="
-                !(
-                  store.filteredCategories[layer.layer.id] &&
-                  store.filteredCategories[layer.layer.id][layer.variable] &&
-                  store.filteredCategories[layer.layer.id][layer.variable]?.includes(item.label)
-                )
-              "
-              class="legend-checkbox"
-              @update:model-value="
-                (selected: boolean | null) =>
-                  toggleCategory(layer.layer.id, layer.variable, item.label, selected)
-              "
-            >
-              <template #label>
-                <div class="d-flex align-center">
-                  <div class="color-box" :style="{ backgroundColor: item.color }"></div>
-                  <div class="label text-body-2">{{ item.label }}</div>
-                </div>
-              </template>
-            </v-checkbox>
+            <div class="d-flex align-center">
+              <div class="color-box" :style="{ backgroundColor: item.color }"></div>
+              <div class="label text-body-2">{{ item.label }}</div>
+            </div>
           </div>
         </div>
         <!-- Continuous Color Ramp -->
-        <div v-else class="gradient-ramp">
+        <div v-else class="gradient-ramp horizontal-gradient">
           <div class="color-ramp" :style="{ background: layer.gradient }"></div>
-          <div class="ramp-labels">
+          <!-- <div class="ramp-labels">
             <span>{{ layer.colors[0].label }}</span>
             <span v-if="layer.colors.length > 2">{{
               layer.colors[~~((layer.colors.length - 1) / 2)].label
             }}</span>
             <span>{{ layer.colors[layer.colors.length - 1].label }}</span>
+          </div> -->
+          <div class="ramp-labels">
+            <span class="label-left">{{ layer.colors[0].label }} {{ layer?.unit }}</span>
+            <!-- <span class="label-center">
+            {{ layer.colors[Math.floor(layer.colors.length / 2)].label }}
+            {{ layer?.unit }}
+          </span> -->
+            <span class="label-right"
+              >{{ layer.colors[layer.colors.length - 1].label }} {{ layer?.unit }}</span
+            >
           </div>
         </div>
       </div>
@@ -252,7 +241,7 @@ const show = ref(true)
   position: absolute;
   bottom: 0.5em;
   background-color: rgb(var(--v-theme-surface));
-  padding: 0.6em 1.4em;
+  padding: 0.4em 0.4em;
   z-index: 1000;
   right: 0.5em;
   display: flex;
@@ -261,20 +250,43 @@ const show = ref(true)
   /* color: rgba(var(--v-theme-on-surface), var(--v-medium-emphasis-opacity)); */
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   /* max-width: 300px; */
-  min-width: 200px;
+  min-width: 140px;
+  max-width: 200px;
+  font-size: xx-small;
 }
 
 .legend-title {
-  margin-bottom: 1em;
+  margin-bottom: 0.1em;
   text-align: right;
-  padding-bottom: 0.5em;
+  padding-bottom: 0.1em;
+  /* margin-left: 0.9em; */
+
   width: 100%;
   border-bottom: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
 }
+.full-width {
+  width: 100%;
+}
 
+h5 {
+  margin: 0; /* Resets all margins */
+  /* Or specifically: */
+  margin-block: 0; /* Resets both block margins */
+}
+
+.legend-title.without-legend {
+  margin-left: 0.5em;
+  font-weight: 400;
+  font-size: 0.85em;
+  color: rgba(var(--v-theme-on-surface), 0.6);
+  border-bottom: 0px;
+  margin-bottom: 0px;
+  padding-bottom: 0px;
+}
+/* 
 .layer-legend {
   min-height: 200px;
-}
+} */
 
 .layer-legend-header {
   margin-bottom: 0.5em;
@@ -345,8 +357,45 @@ const show = ref(true)
   display: flex;
   align-items: center;
   width: 100%;
-  height: 100%;
-  margin-top: 8px;
+}
+
+.horizontal-gradient {
+  display: grid;
+  grid-template-areas:
+    'color-ramp color-ramp color-ramp'
+    'label1 label2 label3';
+  grid-gap: 0.1rem;
+  width: 100%;
+
+  .color-ramp {
+    grid-area: color-ramp;
+    height: 15px;
+    width: 100%;
+  }
+
+  .ramp-labels {
+    display: contents;
+
+    span {
+      font-size: 0.8rem;
+      white-space: nowrap;
+    }
+
+    .label-left {
+      grid-area: label1;
+      text-align: left;
+    }
+
+    .label-center {
+      grid-area: label2;
+      text-align: center;
+    }
+
+    .label-right {
+      grid-area: label3;
+      text-align: right;
+    }
+  }
 }
 
 .color-ramp {

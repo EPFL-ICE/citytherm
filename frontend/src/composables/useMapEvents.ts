@@ -21,10 +21,10 @@ const layerGroupProperties: Record<string, string[]> = {
     'Building cover fraction',
     'Pervious surface cover fraction'
   ],
-  canyon_network: ['Length primary road', 'Length secondary road', 'Length highway'],
+  roads: ['Length primary road', 'Length secondary road', 'Length highway'],
   local_climate_zones: ['LCZ', 'lcz_code', 'description', 'color'],
-  irradiance: ['solar_summer', 'solar_winter_2'],
-  land_surface_temperature: ['lst_mean']
+  irradiance: ['Irradiance_S', 'Irradiance_W'],
+  land_surface_temperature: ['LST_mean']
 }
 
 // Helper function to get layer group ID from layer ID
@@ -42,18 +42,18 @@ function getLayerGroupId(layerId: string): string | null {
     impervious_fraction: 'land_cover_fraction',
     building_fraction: 'land_cover_fraction',
     pervious_fraction: 'land_cover_fraction',
-    // intersections: 'canyon_network',
-    // length_ns: 'canyon_network',
-    // length_ne_sw: 'canyon_network',
-    // length_se_nw: 'canyon_network',
-    // length_e_w: 'canyon_network',
-    primary_road_len: 'canyon_network',
-    secondary_road_len: 'canyon_network',
-    highway_len: 'canyon_network',
+    // intersections: 'roads',
+    // length_ns: 'roads',
+    // length_ne_sw: 'roads',
+    // length_se_nw: 'roads',
+    // length_e_w: 'roads',
+    primary_road_len: 'roads',
+    secondary_road_len: 'roads',
+    highway_len: 'roads',
     lcz_typology: 'local_climate_zones',
     irr_summer: 'irradiance',
     irr_winter: 'irradiance',
-    lst_mean: 'land_surface_temperature'
+    LST_mean: 'land_surface_temperature'
   }
 
   return layerToGroupMap[baseLayerId] || null
@@ -87,8 +87,6 @@ function formatPopupContent(
       headerContent += ' ('
       const parts = []
       if (id !== undefined) parts.push(`ID: ${id}`)
-      if (colIndex !== undefined) parts.push(`Col: ${colIndex}`)
-      if (rowIndex !== undefined) parts.push(`Row: ${rowIndex}`)
       headerContent += parts.join(', ') + ')'
     }
   }
@@ -220,6 +218,36 @@ export function useMapEvents(
 
     // Only update if we've moved to a different feature
     if (currentFeatureId.value !== featureId) {
+      // Reset the previous hovered feature state
+      if (currentFeatureId.value) {
+        const featureStateParams: any = { source: feature.source }
+        // Add sourceLayer if it exists in the feature
+        if (feature.sourceLayer) {
+          featureStateParams.sourceLayer = feature.sourceLayer
+        }
+        // Add id - using the feature.id if available, otherwise using our generated featureId
+        if (feature.id !== undefined) {
+          featureStateParams.id = feature.id
+        } else {
+          featureStateParams.id = currentFeatureId.value
+        }
+        mapRef.value.setFeatureState(featureStateParams, { hover: false })
+      }
+
+      // Set the new hovered feature state
+      const featureStateParams: any = { source: feature.source }
+      // Add sourceLayer if it exists in the feature
+      if (feature.sourceLayer) {
+        featureStateParams.sourceLayer = feature.sourceLayer
+      }
+      // Add id - using the feature.id if available, otherwise using our generated featureId
+      if (feature.id !== undefined) {
+        featureStateParams.id = feature.id
+      } else {
+        featureStateParams.id = featureId
+      }
+      mapRef.value.setFeatureState(featureStateParams, { hover: true })
+
       currentFeatureId.value = featureId
       hoveredFeature.value = feature.properties
 

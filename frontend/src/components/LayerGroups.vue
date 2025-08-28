@@ -11,7 +11,29 @@ const compareStore = useCompareStore()
 
 <template>
   <div>
-    <div v-for="group in layersStore.layerGroups" :key="group.id" class="layer-group mb-3">
+    <div class="layer-group mb-1">
+      <v-checkbox
+        v-model="layersStore.selectedLayers"
+        :value="'baselayer'"
+        :disabled="
+          !layersStore.selectedLayers.includes('baselayer') &&
+          layersStore.selectedLayers.length >= compareStore.layerLimit
+        "
+        density="compact"
+        :hide-details="true"
+      >
+        <template #label>
+          <h5 class="text-uppercase mb-0">Base Layer</h5>
+        </template>
+        <!-- <template #append>
+              <info-tooltip
+                >{{ item.info }}
+                {{ item.attribution ? 'Source: ' + item.attribution : '' }}</info-tooltip
+              >
+            </template> -->
+      </v-checkbox>
+    </div>
+    <div v-for="group in layersStore.layerGroups" :key="group.id" class="layer-group mb-1">
       <!-- Group Header with Toggle -->
       <div class="d-flex align-center justify-space-between">
         <!-- Group Title -->
@@ -39,11 +61,7 @@ const compareStore = useCompareStore()
       </div>
 
       <!-- Group Content (Collapsible) -->
-      <div v-show="layersStore.expandedGroups[group.id]" class="mt-2">
-        <!-- Layer selection with checkboxes for all layers -->
-        <div class="layer-selection-counter mb-2">
-          {{ layersStore.selectedLayers.length }}/{{ compareStore.layerLimit }} selected
-        </div>
+      <div v-show="layersStore.expandedGroups[group.id]" class="mt-0">
         <template
           v-for="item in layersStore.possibleLayers.filter((layer) => layer.groupId === group.id)"
           :key="item.id"
@@ -55,7 +73,8 @@ const compareStore = useCompareStore()
               !layersStore.selectedLayers.includes(item.id) &&
               layersStore.selectedLayers.length >= compareStore.layerLimit
             "
-            dense
+            density="compact"
+            :hide-details="true"
           >
             <template #label>
               <h5 class="text-uppercase mb-0">{{ item.label }}</h5>
