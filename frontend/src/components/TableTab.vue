@@ -5,6 +5,7 @@ import { useLayersStore } from '@/stores/layers'
 import { useFeatureSelections } from '@/stores/useFeatureSelections'
 import { useCityStore } from '@/stores/city'
 import type { MapLayerConfig } from '@/config/layerTypes'
+import { mdiClose, mdiDownload } from '@mdi/js'
 
 const compareStore = useCompareStore()
 const layersStore = useLayersStore()
@@ -14,7 +15,8 @@ const featureSelections = useFeatureSelections()
 const tableProperties = [
   { key: 'city', label: 'City', unit: '' },
   // { key: 'id', label: 'Cell ID', unit: '' },
-  { key: 'lcz_code', label: 'LCZ', unit: '' },
+  { key: 'LCZ', label: 'LCZ', unit: '' },
+  { key: 'description', label: 'Description', unit: '' },
   { key: 'Building height', label: 'Building height', unit: 'm' },
   { key: 'Height varability', label: 'Height variability', unit: 'm' },
   { key: 'Sky view factor', label: 'Sky view factor', unit: '-' },
@@ -144,17 +146,27 @@ const selectedNeighborhoodIds = computed(() => {
 
 <template>
   <div class="table-tab fill-height d-flex flex-column">
-    <div class="controls d-flex justify-end pa-2">
+    <div
+      class="controls d-flex justify-end"
+      :class="{ 'pa-2': hasData, 'pa-4 empty-state': isEmpty }"
+    >
       <v-btn
         v-if="hasData"
         color="error"
-        prepend-icon="mdi-delete"
+        :prepend-icon="mdiClose"
+        density="compact"
         class="mr-2"
         @click="clearAllNeighborhoods"
       >
         Clear All
       </v-btn>
-      <v-btn v-if="hasData" color="primary" prepend-icon="mdi-download" @click="exportCSV">
+      <v-btn
+        v-if="hasData"
+        density="compact"
+        color="primary"
+        :prepend-icon="mdiDownload"
+        @click="exportCSV"
+      >
         Download CSV
       </v-btn>
     </div>
@@ -206,6 +218,7 @@ const selectedNeighborhoodIds = computed(() => {
 <style scoped>
 .table-tab {
   height: 100%;
+  padding-bottom: 1rem;
 }
 
 .controls {

@@ -1,14 +1,21 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { useCompareStore } from '@/stores/compare'
 import { useLayersStore } from '@/stores/layers'
 import LayerGroups from '@/components/LayerGroups.vue'
 import MapGrid from '@/components/MapGrid.vue'
 import TableTab from '@/components/TableTab.vue'
 import { useCityStore } from '@/stores/city'
+import { useFeatureSelections } from '@/stores/useFeatureSelections'
 
 const compareStore = useCompareStore()
 const layersStore = useLayersStore()
 const cityStore = useCityStore()
+const featureSelections = useFeatureSelections()
+
+const hasData = computed(() => {
+  return featureSelections.items.length > 0
+})
 </script>
 
 <template>
@@ -50,7 +57,7 @@ const cityStore = useCityStore()
         </div>
 
         <!-- Table Container - Fixed height at bottom -->
-        <div class="table-container" style="height: auto; max-height: 40vh">
+        <div v-if="hasData" class="table-container" style="height: auto; max-height: 40vh">
           <TableTab />
         </div>
       </v-col>
