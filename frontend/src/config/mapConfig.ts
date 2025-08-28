@@ -88,7 +88,8 @@ export const urbanMorphologyLayers = (city: CityKey = 'geneva'): MapLayerConfig[
             50,
             '#053061'
           ],
-          'fill-opacity': 0.8
+          'fill-opacity': 0.8,
+          'fill-outline-color': '#000000'
         }
       } as LayerSpecification
     },
@@ -126,7 +127,8 @@ export const urbanMorphologyLayers = (city: CityKey = 'geneva'): MapLayerConfig[
             1,
             '#f7f7f7'
           ],
-          'fill-opacity': 0.8
+          'fill-opacity': 0.8,
+          'fill-outline-color': '#000000'
         }
       } as LayerSpecification
     },
@@ -164,7 +166,8 @@ export const urbanMorphologyLayers = (city: CityKey = 'geneva'): MapLayerConfig[
             0.6,
             '#053061'
           ],
-          'fill-opacity': 0.8
+          'fill-opacity': 0.8,
+          'fill-outline-color': '#000000'
         }
       } as LayerSpecification
     },
@@ -202,7 +205,8 @@ export const urbanMorphologyLayers = (city: CityKey = 'geneva'): MapLayerConfig[
             1.356,
             '#053061'
           ],
-          'fill-opacity': 0.8
+          'fill-opacity': 0.8,
+          'fill-outline-color': '#000000'
         }
       } as LayerSpecification
     }
@@ -246,7 +250,8 @@ export const landCoverFractionLayers = (city: CityKey = 'geneva'): MapLayerConfi
             0.62,
             '#67000d'
           ],
-          'fill-opacity': 0.8
+          'fill-opacity': 0.8,
+          'fill-outline-color': '#000000'
         }
       } as LayerSpecification
     },
@@ -284,7 +289,8 @@ export const landCoverFractionLayers = (city: CityKey = 'geneva'): MapLayerConfi
             0.8,
             '#000000'
           ],
-          'fill-opacity': 0.8
+          'fill-opacity': 0.8,
+          'fill-outline-color': '#000000'
         }
       } as LayerSpecification
     },
@@ -322,7 +328,8 @@ export const landCoverFractionLayers = (city: CityKey = 'geneva'): MapLayerConfi
             0.933,
             '#253494'
           ],
-          'fill-opacity': 0.8
+          'fill-opacity': 0.8,
+          'fill-outline-color': '#000000'
         }
       } as LayerSpecification
     },
@@ -360,7 +367,8 @@ export const landCoverFractionLayers = (city: CityKey = 'geneva'): MapLayerConfi
             1,
             '#08306b'
           ],
-          'fill-opacity': 0.8
+          'fill-opacity': 0.8,
+          'fill-outline-color': '#000000'
         }
       } as LayerSpecification
     }
@@ -404,7 +412,8 @@ export const canyonIntersectionLayers = (city: CityKey = 'geneva'): MapLayerConf
             35,
             '#053061'
           ],
-          'fill-opacity': 0.8
+          'fill-opacity': 0.8,
+          'fill-outline-color': '#000000'
         }
       } as LayerSpecification
     }
@@ -448,7 +457,8 @@ export const canyonLengthLayers = (city: CityKey = 'geneva'): MapLayerConfig[] =
             2005.83,
             '#053061'
           ],
-          'fill-opacity': 0.8
+          'fill-opacity': 0.8,
+          'fill-outline-color': '#000000'
         }
       } as LayerSpecification
     },
@@ -486,7 +496,8 @@ export const canyonLengthLayers = (city: CityKey = 'geneva'): MapLayerConfig[] =
             2139.23,
             '#053061'
           ],
-          'fill-opacity': 0.8
+          'fill-opacity': 0.8,
+          'fill-outline-color': '#000000'
         }
       } as LayerSpecification
     },
@@ -516,7 +527,8 @@ export const canyonLengthLayers = (city: CityKey = 'geneva'): MapLayerConfig[] =
             1,
             '#053061'
           ],
-          'fill-opacity': 0.8
+          'fill-opacity': 0.8,
+          'fill-outline-color': '#000000'
         }
       } as LayerSpecification
     }
@@ -556,7 +568,8 @@ export const localClimateZoneLayers = (city: CityKey = 'geneva'): MapLayerConfig
         'source-layer': config.sourceLayer,
         paint: {
           'fill-color': ['get', 'color'],
-          'fill-opacity': 0.8
+          'fill-opacity': 0.8,
+          'fill-outline-color': '#000000'
         }
       } as LayerSpecification
     }
@@ -609,7 +622,8 @@ export const irradianceLayers = (city: CityKey = 'geneva'): MapLayerConfig[] => 
             1075,
             '#800026'
           ],
-          'fill-opacity': 0.8
+          'fill-opacity': 0.8,
+          'fill-outline-color': '#000000'
         }
       } as LayerSpecification
     },
@@ -653,7 +667,8 @@ export const irradianceLayers = (city: CityKey = 'geneva'): MapLayerConfig[] => 
             345,
             '#08306b'
           ],
-          'fill-opacity': 0.8
+          'fill-opacity': 0.8,
+          'fill-outline-color': '#000000'
         }
       } as LayerSpecification
     }
@@ -727,7 +742,8 @@ export const landSurfaceTemperatureLayers = (city: CityKey = 'geneva'): MapLayer
             ['to-number', ['get', 'LST_mean']],
             ...interpolationValues[city]
           ],
-          'fill-opacity': 0.8
+          'fill-opacity': 0.8,
+          'fill-outline-color': '#000000'
         }
       } as LayerSpecification
     }
