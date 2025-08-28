@@ -16,7 +16,7 @@ const cityStore = useCityStore()
     <v-row class="fill-height overflow-y-hidden">
       <v-col xl="2" cols="3" class="params-col border-e-md overflow-y-auto overflow-x-hidden">
         <v-card flat>
-          <v-card-text class="pa-2">
+          <v-card-text class="pa-2 d-flex flex-row align-center ga-2">
             <v-select
               v-model="cityStore.city"
               :items="cityStore.cities"
@@ -27,8 +27,11 @@ const cityStore = useCityStore()
               hide-details
               variant="outlined"
             />
+            <!-- Layer selection with checkboxes for all layers -->
+              <div class="layer-selection-counter mb-2">
+                {{ layersStore.selectedLayers.length }}/{{ compareStore.layerLimit }} selected
+              </div>
           </v-card-text>
-          <v-card-title class="ml-2"> <h4 class="text-center mb-12 mt-6">LAYERS</h4> </v-card-title>
           <v-card-text class="d-flex flex-column">
             <!-- Use the updated LayerGroups component -->
             <LayerGroups />

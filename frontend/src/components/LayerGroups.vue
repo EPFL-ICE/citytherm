@@ -40,10 +40,6 @@ const compareStore = useCompareStore()
 
       <!-- Group Content (Collapsible) -->
       <div v-show="layersStore.expandedGroups[group.id]" class="mt-2">
-        <!-- Layer selection with checkboxes for all layers -->
-        <div class="layer-selection-counter mb-2">
-          {{ layersStore.selectedLayers.length }}/{{ compareStore.layerLimit }} selected
-        </div>
         <template
           v-for="item in layersStore.possibleLayers.filter((layer) => layer.groupId === group.id)"
           :key="item.id"
