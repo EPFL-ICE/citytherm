@@ -11,7 +11,7 @@ const compareStore = useCompareStore()
 
 <template>
   <div>
-    <div v-for="group in layersStore.layerGroups" :key="group.id" class="layer-group mb-3">
+    <div v-for="group in layersStore.layerGroups" :key="group.id" class="layer-group mb-1">
       <!-- Group Header with Toggle -->
       <div class="d-flex align-center justify-space-between">
         <!-- Group Title -->
@@ -39,7 +39,7 @@ const compareStore = useCompareStore()
       </div>
 
       <!-- Group Content (Collapsible) -->
-      <div v-show="layersStore.expandedGroups[group.id]" class="mt-2">
+      <div v-show="layersStore.expandedGroups[group.id]" class="mt-0">
         <template
           v-for="item in layersStore.possibleLayers.filter((layer) => layer.groupId === group.id)"
           :key="item.id"
