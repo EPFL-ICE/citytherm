@@ -28,9 +28,9 @@ const cityStore = useCityStore()
               variant="outlined"
             />
             <!-- Layer selection with checkboxes for all layers -->
-              <div class="layer-selection-counter mb-2">
-                {{ layersStore.selectedLayers.length }}/{{ compareStore.layerLimit }} selected
-              </div>
+            <div class="layer-selection-counter mb-2">
+              {{ layersStore.selectedLayers.length }}/{{ compareStore.layerLimit }} selected
+            </div>
           </v-card-text>
           <v-card-text class="d-flex flex-column">
             <!-- Use the updated LayerGroups component -->
