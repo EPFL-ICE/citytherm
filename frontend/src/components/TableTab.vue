@@ -97,7 +97,9 @@ function exportCSV() {
 function exportFullCSV() {
   //download file from baseUrlOptions.prod + `/full_data_${useCityStore().current.id}.csv`
   const cityStore = useCityStore()
-  const baseUrl = import.meta.env.VITE_BASE_URL_PROD || 'https://enacit4r-cdn.epfl.ch/citytherm/2025-09-08/geodata'
+  const baseUrl =
+    import.meta.env.VITE_BASE_URL_PROD ||
+    'https://enacit4r-cdn.epfl.ch/citytherm/2025-09-08/geodata'
   const url = `${baseUrl}/${cityStore.city}_grid_data.csv`
   const a = document.createElement('a')
   a.href = url
