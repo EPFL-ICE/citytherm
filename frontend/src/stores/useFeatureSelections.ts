@@ -173,16 +173,6 @@ export const useFeatureSelections = defineStore('featureSelections', {
         if (parsed.version === 2 && parsed.citySelections) {
           // New format with city-specific selections
           this.citySelections = parsed.citySelections
-        } else if (parsed.version === 1 && parsed.items && Array.isArray(parsed.items)) {
-          // Old format - migrate to new format with default city (Geneva)
-          this.citySelections = {
-            geneva: parsed.items.map((it: any) => ({
-              id: it.id,
-              index: it.index,
-              centroid: it.centroid,
-              props: it.props ?? {}
-            }))
-          }
         }
       } catch {
         /* ignore */

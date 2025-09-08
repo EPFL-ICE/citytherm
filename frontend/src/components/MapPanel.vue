@@ -52,19 +52,6 @@ watch(
 onMounted(() => {
   // Initialize feature selections for the current city
   featureSelections.hydrate()
-
-  // Set up a watcher to get the map instance when it's available
-  const unwatch = watch(
-    () => mapComponent.value,
-    (newMapComponent) => {
-      if (newMapComponent) {
-        // The useMapEvents composable already handles updating the featureSelections store
-        // We don't need to manually watch selectedFeatureId and update the compare store
-        // The synchronization is handled by the watcher above
-      }
-    },
-    { immediate: true }
-  )
 })
 </script>
 

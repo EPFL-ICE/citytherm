@@ -1,20 +1,17 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useCompareStore } from '@/stores/compare'
-import { useLayersStore } from '@/stores/layers'
 import { useFeatureSelections } from '@/stores/useFeatureSelections'
 import { useCityStore } from '@/stores/city'
-import type { MapLayerConfig } from '@/config/layerTypes'
 import { mdiClose, mdiDownload } from '@mdi/js'
 
 const compareStore = useCompareStore()
-const layersStore = useLayersStore()
 const featureSelections = useFeatureSelections()
 
 // Define fixed list of properties to display with separate label and unit
 const tableProperties = [
   { key: 'city', label: 'City', unit: '' },
-  // { key: 'id', label: 'Cell ID', unit: '' },
+  { key: 'id', label: 'Cell ID', unit: '' },
   { key: 'LCZ', label: 'LCZ', unit: '' },
   { key: 'description', label: 'Description', unit: '' },
   { key: 'Building height', label: 'Building height', unit: 'm' },
@@ -31,9 +28,9 @@ const tableProperties = [
   { key: 'Pervious surface cover fraction', label: 'Pervious surface cover fraction', unit: '-' },
   { key: 'Water cover fraction', label: 'Water cover fraction', unit: '-' },
   { key: 'Intersections', label: 'Road intersections', unit: '-' },
-  { key: 'Length primary road', label: 'Length primary roads', unit: 'km' },
-  { key: 'Length secondary road', label: 'Length secondary roads', unit: 'km' },
-  { key: 'Length highway', label: 'Length highway', unit: 'km' },
+  { key: 'Length primary road', label: 'Length primary roads', unit: 'm' },
+  { key: 'Length secondary road', label: 'Length secondary roads', unit: 'm' },
+  { key: 'Length highway', label: 'Length highway', unit: 'm' },
   { key: 'LST_mean', label: 'LST', unit: '^oC' },
   { key: 'Irradiance_S', label: 'Irradiance_S', unit: 'kWh/m^2' },
   { key: 'Irradiance_W', label: 'Irradiance_W', unit: 'kWh/m^2' }
@@ -51,11 +48,6 @@ const combinedLabels = computed(() => {
     }
     return prop.label
   })
-})
-
-// Get relevant properties keys for easier access
-const relevantPropertyKeys = computed(() => {
-  return tableProperties.map((prop) => prop.key)
 })
 
 // Check if we have data to display
@@ -109,15 +101,6 @@ function exportCSV() {
   a.click()
 }
 
-// Function to remove a neighborhood from both stores
-function removeNeighborhood(uid: string) {
-  // Remove from feature selections store
-  featureSelections.remove(uid)
-  // Remove from compare store
-  compareStore.toggleNeighborhood(uid)
-  // The map will automatically update due to the watcher on featureSelections.featureCollection
-}
-
 // Function to clear all neighborhoods from both stores
 function clearAllNeighborhoods() {
   // Clear feature selections store
@@ -138,10 +121,6 @@ const tableData = computed(() => {
   }))
 })
 
-// Get selected neighborhood IDs from the compare store
-const selectedNeighborhoodIds = computed(() => {
-  return compareStore.selectedNeighborhoodIds
-})
 </script>
 
 <template>
@@ -175,7 +154,6 @@ const selectedNeighborhoodIds = computed(() => {
       v-if="hasData"
       :headers="[
         { title: 'Index', key: 'index' },
-        { title: 'Cell ID', key: 'uid' },
         ...tableProperties.map((prop, index) => ({
           title: combinedLabels[index],
           key: `values.${prop.key}`
@@ -189,7 +167,6 @@ const selectedNeighborhoodIds = computed(() => {
       <template #item="{ item }">
         <tr>
           <td>{{ item.index }}</td>
-          <td>{{ item.uid }}</td>
           <td v-for="prop in tableProperties" :key="prop.key">
             <span
               v-if="prop.key === 'color'"
