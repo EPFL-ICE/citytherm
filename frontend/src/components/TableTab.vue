@@ -94,19 +94,6 @@ function exportCSV() {
   a.click()
 }
 
-function exportFullCSV() {
-  //download file from baseUrlOptions.prod + `/full_data_${useCityStore().current.id}.csv`
-  const cityStore = useCityStore()
-  const baseUrl =
-    import.meta.env.VITE_BASE_URL_PROD ||
-    'https://enacit4r-cdn.epfl.ch/citytherm/2025-09-08/geodata'
-  const url = `${baseUrl}/${cityStore.city}_grid_data.csv`
-  const a = document.createElement('a')
-  a.href = url
-  a.download = `citytherm_full_${cityStore.city}.csv`
-  a.click()
-}
-
 // Function to clear all neighborhoods from both stores
 function clearAllNeighborhoods() {
   // Clear feature selections store
@@ -150,17 +137,7 @@ const tableData = computed(() => {
         :prepend-icon="mdiDownload"
         @click="exportCSV"
       >
-        Download CSV
-      </v-btn>
-
-      <v-btn
-        v-if="hasData"
-        density="compact"
-        color="primary"
-        :prepend-icon="mdiDownload"
-        @click="exportFullCSV"
-      >
-        Download All Data as CSV
+        Download Table
       </v-btn>
     </div>
 

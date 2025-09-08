@@ -1,17 +1,32 @@
 <script setup lang="ts">
 import InfoTooltip from '@/components/InfoTooltip.vue'
+import { mdiDownload } from '@mdi/js'
 import { mdiChevronDown, mdiChevronRight, mdiEyeOutline, mdiEyeOffOutline } from '@mdi/js'
 import { useLayersStore } from '@/stores/layers'
 import { useCompareStore } from '@/stores/compare'
+import { useCityStore } from '@/stores/city'
 
 // Use the stores - now the component gets everything from the stores, no props needed
 const layersStore = useLayersStore()
 const compareStore = useCompareStore()
+const cityStore = useCityStore()
+
+function exportFullCSV() {
+  //download file from baseUrlOptions.prod + `/full_data_${cityStore.current.id}.csv`
+  const baseUrl =
+    import.meta.env.VITE_BASE_URL_PROD ||
+    'https://enacit4r-cdn.epfl.ch/citytherm/2025-09-08/geodata'
+  const url = `${baseUrl}/${cityStore.city}_grid_data.csv`
+  const a = document.createElement('a')
+  a.href = url
+  a.download = `citytherm_full_${cityStore.city}.csv`
+  a.click()
+}
 </script>
 
 <template>
   <div>
-    <div class="layer-group mb-1">
+    <div class="layer-group mb-1 base-layer">
       <v-checkbox
         v-model="layersStore.selectedLayers"
         :value="'baselayer'"
@@ -20,17 +35,22 @@ const compareStore = useCompareStore()
           layersStore.selectedLayers.length >= compareStore.layerLimit
         "
         density="compact"
+        class="w-100"
         :hide-details="true"
       >
         <template #label>
-          <h5 class="text-uppercase mb-0">Base Layer</h5>
+          <div class="d-flex align-center justify-space-between w-100">
+            <h5 class="text-uppercase mb-0">Base Layer</h5>
+            <v-btn
+              density="compact"
+              color="primary"
+              :prepend-icon="mdiDownload"
+              @click="exportFullCSV"
+            >
+              Download City
+            </v-btn>
+          </div>
         </template>
-        <!-- <template #append>
-              <info-tooltip
-                >{{ item.info }}
-                {{ item.attribution ? 'Source: ' + item.attribution : '' }}</info-tooltip
-              >
-            </template> -->
       </v-checkbox>
     </div>
     <div v-for="group in layersStore.layerGroups" :key="group.id" class="layer-group mb-1">
@@ -93,6 +113,9 @@ const compareStore = useCompareStore()
 </template>
 
 <style scoped>
+.base-layer :deep(.v-label) {
+  width: 100%;
+}
 /* Styles remain the same */
 .layer-group {
   border-bottom: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
