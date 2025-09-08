@@ -120,7 +120,6 @@ const tableData = computed(() => {
     values: item.props
   }))
 })
-
 </script>
 
 <template>
