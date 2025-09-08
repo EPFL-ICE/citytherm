@@ -31,24 +31,17 @@ const tableProperties = [
   { key: 'Length primary road', label: 'Length primary roads', unit: 'm' },
   { key: 'Length secondary road', label: 'Length secondary roads', unit: 'm' },
   { key: 'Length highway', label: 'Length highway', unit: 'm' },
-  { key: 'LST_mean', label: 'LST', unit: '^oC' },
+  { key: 'LST_mean', label: 'LST', unit: '°C' },
   { key: 'Irradiance_S', label: 'Irradiance_S', unit: 'kWh/m^2' },
   { key: 'Irradiance_W', label: 'Irradiance_W', unit: 'kWh/m^2' }
 ]
 
 // Computed property to generate combined labels (label + unit)
-const combinedLabels = computed(() => {
-  return tableProperties.map((prop) => {
-    if (prop.unit) {
-      // For units with special characters like ^oC, we need to handle them properly
-      if (prop.unit === '^oC') {
-        return `${prop.label} (${String.fromCharCode(176)}C)` // °C
-      }
-      return `${prop.label} (${prop.unit})`
-    }
-    return prop.label
-  })
-})
+const combinedLabels = computed(() =>
+  tableProperties.map((prop) =>
+    prop.unit && prop.unit !== '' ? `${prop.label} (${prop.unit})` : prop.label
+  )
+)
 
 // Check if we have data to display
 const hasData = computed(() => {
@@ -101,6 +94,17 @@ function exportCSV() {
   a.click()
 }
 
+function exportFullCSV() {
+  //download file from baseUrlOptions.prod + `/full_data_${useCityStore().current.id}.csv`
+  const cityStore = useCityStore()
+  const baseUrl = import.meta.env.VITE_BASE_URL_PROD || 'https://enacit4r-cdn.epfl.ch/citytherm/2025-09-08/geodata'
+  const url = `${baseUrl}/${cityStore.city}_grid_data.csv`
+  const a = document.createElement('a')
+  a.href = url
+  a.download = `citytherm_full_${cityStore.city}.csv`
+  a.click()
+}
+
 // Function to clear all neighborhoods from both stores
 function clearAllNeighborhoods() {
   // Clear feature selections store
@@ -126,14 +130,13 @@ const tableData = computed(() => {
   <div class="table-tab fill-height d-flex flex-column">
     <div
       class="controls d-flex justify-end"
-      :class="{ 'pa-2': hasData, 'pa-4 empty-state': isEmpty }"
+      :class="{ 'pa-2': hasData, 'pa-4 empty-state': isEmpty, 'ga-1': hasData }"
     >
       <v-btn
         v-if="hasData"
         color="error"
         :prepend-icon="mdiClose"
         density="compact"
-        class="mr-2"
         @click="clearAllNeighborhoods"
       >
         Clear All
@@ -146,6 +149,16 @@ const tableData = computed(() => {
         @click="exportCSV"
       >
         Download CSV
+      </v-btn>
+
+      <v-btn
+        v-if="hasData"
+        density="compact"
+        color="primary"
+        :prepend-icon="mdiDownload"
+        @click="exportFullCSV"
+      >
+        Download All Data as CSV
       </v-btn>
     </div>
 

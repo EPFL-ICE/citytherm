@@ -1,5 +1,20 @@
 .PHONY: allshp geojson shp upload
 
+
+NODE := node
+SCRIPT := geojson-to-csv.js
+
+INPUTS := geneva_grid_data.geojson zurich_grid_data.geojson
+OUTPUTS := $(INPUTS:.geojson=.csv)
+
+all: $(OUTPUTS)
+
+%.csv: %.geojson $(SCRIPT)
+	$(NODE) $(SCRIPT) $< $@
+
+clean:
+	rm -f $(OUTPUTS)
+
 allshp:
 	find . -name "*.shp" | nl | while read n f; do \
 		filename=$$(basename "$$f" .shp); \
