@@ -487,9 +487,9 @@ export const canyonLengthLayers = (city: CityKey = 'geneva'): MapLayerConfig[] =
             ['linear'],
             ['to-number', ['get', 'Length primary road']],
             0,
-            '#000000',
+            '#fff',
             2333.49,
-            '#ffffff'
+            '#000'
           ],
           'fill-opacity': 0.8,
           'fill-outline-color': [
@@ -523,9 +523,9 @@ export const canyonLengthLayers = (city: CityKey = 'geneva'): MapLayerConfig[] =
             ['linear'],
             ['to-number', ['get', 'Length secondary road']],
             0,
-            '#000000',
+            '#fff',
             2304.66,
-            '#ffffff'
+            '#000'
           ],
           'fill-opacity': 0.8,
           'fill-outline-color': [
@@ -559,9 +559,9 @@ export const canyonLengthLayers = (city: CityKey = 'geneva'): MapLayerConfig[] =
             ['linear'],
             ['to-number', ['get', 'Length highway']],
             0,
-            '#000000',
+            '#fff',
             941,
-            '#ffffff'
+            '#000'
           ],
           'fill-opacity': 0.8,
           'fill-outline-color': [
@@ -657,7 +657,9 @@ export const irradianceLayers = (city: CityKey = 'geneva'): MapLayerConfig[] => 
   // Irradiance - summer
   // Irradiance - winter
   // Unified color map for both layers with range [100, 1075]
-  const irradianceColorMap = [
+  const irradiationColorMap = [
+    0,
+    '#ffffff',
     100,
     '#ffffcc',
     200,
@@ -704,7 +706,7 @@ export const irradianceLayers = (city: CityKey = 'geneva'): MapLayerConfig[] => 
             'interpolate',
             ['linear'],
             ['to-number', ['get', 'Irradiance_S']],
-            ...irradianceColorMap
+            ...irradiationColorMap
           ],
           'fill-opacity': 0.8,
           'fill-outline-color': [
@@ -737,7 +739,7 @@ export const irradianceLayers = (city: CityKey = 'geneva'): MapLayerConfig[] => 
             'interpolate',
             ['linear'],
             ['to-number', ['get', 'Irradiance_W']],
-            ...irradianceColorMap
+            ...irradiationColorMap
           ],
           'fill-opacity': 0.8,
           'fill-outline-color': [
