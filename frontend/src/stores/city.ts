@@ -9,6 +9,7 @@ interface CityConfig {
   gridFile: string
   sourceLayer: string
   label: string
+  boundingBox: [number, number, number, number]
 }
 
 const cityConfigs: Record<CityKey, CityConfig> = {
@@ -17,14 +18,16 @@ const cityConfigs: Record<CityKey, CityConfig> = {
     zoom: 11,
     gridFile: 'geneva_grid_data.pmtiles',
     sourceLayer: 'geneva_grid_data_reprojected',
-    label: 'Geneva'
+    label: 'Geneva',
+    boundingBox: [6.113384389737242, 46.180419147635035, 6.171997884756156, 46.229665565001255]
   },
   zurich: {
     center: { lat: 47.3769, lng: 8.5417 },
     zoom: 11,
     gridFile: 'zurich_grid_data.pmtiles',
     sourceLayer: 'zurich_grid_data_reprojected',
-    label: 'Zurich'
+    label: 'Zurich',
+    boundingBox: [8.457923700018101, 47.3221556860289, 8.619716714725223, 47.432477509710516]
   }
 }
 

@@ -53,6 +53,9 @@ const props = withDefaults(
     callbackLoaded?: () => void
     // New prop for specific layer to display
     specificLayer?: LayerConfig | null
+    // New prop for fitBounds functionality
+    fitBounds?: boolean
+    padding?: number
   }>(),
   {
     center: undefined,
@@ -67,7 +70,9 @@ const props = withDefaults(
     callbackLoaded: undefined,
     popupLayerIds: () => [],
     areaLayerIds: () => [],
-    specificLayer: null
+    specificLayer: null,
+    fitBounds: false,
+    padding: 20
   }
 )
 
@@ -222,6 +227,14 @@ function initMap() {
       }
     } catch (error) {
       console.warn('Error resizing map:', error)
+    }
+
+    // Apply fitBounds if requested
+    if (props.fitBounds && cityStore.current.boundingBox) {
+      // Use fitBounds to adjust the zoom level to fit the bounding box
+      map.value.fitBounds(cityStore.current.boundingBox, {
+        padding: props.padding
+      })
     }
 
     // Add base style layers from the style specification
@@ -419,6 +432,15 @@ watch(
   }
 )
 
+// Method to programmatically trigger fitBounds
+const fitToBounds = () => {
+  if (map.value && cityStore.current.boundingBox) {
+    map.value.fitBounds(cityStore.current.boundingBox, {
+      padding: props.padding
+    })
+  }
+}
+
 defineExpose({
   getPaintProperty,
   setFilter,
@@ -430,7 +452,8 @@ defineExpose({
   changeSourceTilesUrl,
   setLayerVisibility,
   getSourceTilesUrl,
-  getMap: () => map.value
+  getMap: () => map.value,
+  fitToBounds
 })
 
 watch(

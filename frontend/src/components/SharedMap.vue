@@ -32,6 +32,18 @@ watch(
   { immediate: true }
 )
 
+// Watch for selectedLayers changes and re-apply fitBounds
+watch(
+  () => layersStore.selectedLayers,
+  () => {
+    // Use nextTick to ensure the map is fully rendered
+    setTimeout(() => {
+      map.value?.fitToBounds()
+    }, 100)
+  },
+  { deep: true }
+)
+
 // derive center/zoom from city store
 const mapCenter = computed(() => cityStore.current.center)
 const mapZoom = computed(() => cityStore.current.zoom)
@@ -94,6 +106,7 @@ defineExpose({
       :zoom="mapZoom"
       :max-zoom="20"
       :min-zoom="6"
+      :fit-bounds="true"
       style-spec="style/style.json"
       :callback-loaded="handleMapLoaded"
       :popup-layer-ids="fullLayerConfig ? [fullLayerConfig.layer.id] : []"
