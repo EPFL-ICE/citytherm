@@ -32,8 +32,8 @@ const tableProperties = [
   { key: 'Length secondary road', label: 'Length secondary roads', unit: 'm' },
   { key: 'Length highway', label: 'Length highway', unit: 'm' },
   { key: 'LST_mean', label: 'LST', unit: '°C' },
-  { key: 'Irradiance_S', label: 'Irradiance_S', unit: 'kWh/m^2' },
-  { key: 'Irradiance_W', label: 'Irradiance_W', unit: 'kWh/m^2' }
+  { key: 'Irradiance_S', label: 'Irradiation summer', unit: 'kWh/m^2' },
+  { key: 'Irradiance_W', label: 'Irradiation winter', unit: 'kWh/m^2' }
 ]
 
 // Computed property to generate combined labels (label + unit)

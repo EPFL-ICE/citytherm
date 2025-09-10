@@ -100,10 +100,7 @@ function exportFullCSV() {
               <h5 class="text-uppercase mb-0">{{ item.label }}</h5>
             </template>
             <template #append>
-              <info-tooltip
-                >{{ item.info }}
-                {{ item.attribution ? 'Source: ' + item.attribution : '' }}</info-tooltip
-              >
+              <info-tooltip>{{ item.info }}</info-tooltip>
             </template>
           </v-checkbox>
         </template>

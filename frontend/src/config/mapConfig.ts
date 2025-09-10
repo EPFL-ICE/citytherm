@@ -54,13 +54,14 @@ export const urbanMorphologyLayers = (city: CityKey = 'geneva'): MapLayerConfig[
   const config = getGridDataConfig(city)
 
   // Define city-specific interpolation values
+  // Inverted color scheme: black for maximum height, white for minimum height
   const interpolationValues = {
     //     min: 0
     // max: 30
-    geneva: [0, '#000000', 30.04, '#ffffff'],
+    geneva: [0, '#ffffff', 30.04, '#000000'],
     //     min: 0
     // max: 35.47
-    zurich: [0, '#000000', 35.47, '#ffffff']
+    zurich: [0, '#ffffff', 35.47, '#000000']
   }
 
   return [
@@ -132,17 +133,17 @@ export const urbanMorphologyLayers = (city: CityKey = 'geneva'): MapLayerConfig[
             ['linear'],
             ['to-number', ['get', 'Sky view factor']],
             0.4,
-            '#053061',
+            '#f7f7f7',
             0.5,
-            '#2166ac',
-            0.6,
-            '#4393c3',
-            0.7,
-            '#92c5de',
-            0.8,
             '#d1e5f0',
+            0.6,
+            '#92c5de',
+            0.7,
+            '#4393c3',
+            0.8,
+            '#2166ac',
             1,
-            '#f7f7f7'
+            '#053061'
           ],
           'fill-opacity': 0.8,
           'fill-outline-color': [
@@ -176,17 +177,17 @@ export const urbanMorphologyLayers = (city: CityKey = 'geneva'): MapLayerConfig[
             ['linear'],
             ['to-number', ['get', 'Frontal area index']],
             0,
-            '#f7f7f7',
+            '#ffffff',
             0.1,
-            '#d1e5f0',
+            '#ffe5cc',
             0.2,
-            '#92c5de',
+            '#ffcc99',
             0.3,
-            '#4393c3',
+            '#ffb366',
             0.4,
-            '#2166ac',
+            '#ff9933',
             0.6,
-            '#053061'
+            '#ff8c00'
           ],
           'fill-opacity': 0.8,
           'fill-outline-color': [
@@ -220,17 +221,17 @@ export const urbanMorphologyLayers = (city: CityKey = 'geneva'): MapLayerConfig[
             ['linear'],
             ['to-number', ['get', 'Aspect ratio']],
             0,
-            '#f7f7f7',
+            '#ffffff',
             0.2,
-            '#d1e5f0',
+            '#ffe5cc',
             0.4,
-            '#92c5de',
+            '#ffcc99',
             0.6,
-            '#4393c3',
+            '#ffb366',
             0.8,
-            '#2166ac',
+            '#ff9933',
             1.356,
-            '#053061'
+            '#ff8c00'
           ],
           'fill-opacity': 0.8,
           'fill-outline-color': [
@@ -250,7 +251,7 @@ export const landCoverFractionLayers = (city: CityKey = 'geneva'): MapLayerConfi
   return [
     {
       id: 'building_fraction',
-      label: 'Building',
+      label: 'Buildings',
       unit: 'fraction',
       info: 'Fraction of cell area covered by buildings',
       source: {
@@ -444,17 +445,17 @@ export const canyonIntersectionLayers = (city: CityKey = 'geneva'): MapLayerConf
             ['linear'],
             ['to-number', ['get', 'Intersections']],
             0,
-            '#f7f7f7',
+            '#ffffff',
             5,
-            '#d1e5f0',
+            '#e6ccff',
             10,
-            '#92c5de',
+            '#cc99ff',
             15,
-            '#4393c3',
+            '#b366ff',
             25,
-            '#2166ac',
+            '#9933ff',
             35,
-            '#053061'
+            '#4b0082'
           ],
           'fill-opacity': 0.8,
           'fill-outline-color': [
@@ -494,9 +495,9 @@ export const canyonLengthLayers = (city: CityKey = 'geneva'): MapLayerConfig[] =
             ['linear'],
             ['to-number', ['get', 'Length primary road']],
             0,
-            '#000000ff',
+            '#000000',
             2333.49,
-            '#f7f7f7'
+            '#ffffff'
           ],
           'fill-opacity': 0.8,
           'fill-outline-color': [
@@ -530,9 +531,9 @@ export const canyonLengthLayers = (city: CityKey = 'geneva'): MapLayerConfig[] =
             ['linear'],
             ['to-number', ['get', 'Length secondary road']],
             0,
-            '#000000ff',
+            '#000000',
             2304.66,
-            '#f7f7f7'
+            '#ffffff'
           ],
           'fill-opacity': 0.8,
           'fill-outline-color': [
@@ -566,9 +567,9 @@ export const canyonLengthLayers = (city: CityKey = 'geneva'): MapLayerConfig[] =
             ['linear'],
             ['to-number', ['get', 'Length highway']],
             0,
-            '#000000ff',
+            '#000000',
             941,
-            '#f7f7f7'
+            '#ffffff'
           ],
           'fill-opacity': 0.8,
           'fill-outline-color': [
@@ -650,7 +651,7 @@ export const defaultGridLayers = (city: CityKey = 'geneva'): MapLayerConfig[] =>
         'source-layer': config.sourceLayer,
         paint: {
           'fill-color': '#FFFFFF',
-          'fill-opacity': 0.8,
+          'fill-opacity': 0.5,
           'fill-outline-color': '#000000'
         }
       } as LayerSpecification
@@ -663,12 +664,38 @@ export const irradianceLayers = (city: CityKey = 'geneva'): MapLayerConfig[] => 
   // CLIMATIC CONDITIONS
   // Irradiance - summer
   // Irradiance - winter
+  // Unified color map for both layers with range [100, 1075]
+  const irradianceColorMap = [
+    100,
+    '#ffffcc',
+    200,
+    '#ffeda0',
+    300,
+    '#fed976',
+    400,
+    '#feb24c',
+    500,
+    '#fd8d3c',
+    600,
+    '#fc4e2a',
+    700,
+    '#e31a1c',
+    800,
+    '#bd0026',
+    900,
+    '#800026',
+    1000,
+    '#66001f',
+    1075,
+    '#4d0017'
+  ]
+  
   return [
     {
       id: 'irr_summer',
-      label: 'Irradiance - summer',
+      label: 'Irradiation - summer',
       unit: 'kWh/m²',
-      info: 'Solar irradiance during summer months',
+      info: 'Solar irradiation during summer months',
       source: {
         type: 'vector',
         attribution: 'CityTherm Irradiance Data',
@@ -685,24 +712,7 @@ export const irradianceLayers = (city: CityKey = 'geneva'): MapLayerConfig[] => 
             'interpolate',
             ['linear'],
             ['to-number', ['get', 'Irradiance_S']],
-            600,
-            '#ffffcc',
-            750,
-            '#ffeda0',
-            800,
-            '#fed976',
-            850,
-            '#feb24c',
-            900,
-            '#fd8d3c',
-            950,
-            '#fc4e2a',
-            1000,
-            '#e31a1c',
-            1050,
-            '#bd0026',
-            1075,
-            '#800026'
+            ...irradianceColorMap
           ],
           'fill-opacity': 0.8,
           'fill-outline-color': [
@@ -716,9 +726,9 @@ export const irradianceLayers = (city: CityKey = 'geneva'): MapLayerConfig[] => 
     },
     {
       id: 'irr_winter',
-      label: 'Irradiance - winter',
+      label: 'Irradiation - winter',
       unit: 'kWh/m²',
-      info: 'Solar irradiance during winter months',
+      info: 'Solar irradiation during winter months',
       source: {
         type: 'vector',
         attribution: 'CityTherm Irradiance Data',
@@ -735,24 +745,7 @@ export const irradianceLayers = (city: CityKey = 'geneva'): MapLayerConfig[] => 
             'interpolate',
             ['linear'],
             ['to-number', ['get', 'Irradiance_W']],
-            100,
-            '#ffffcc',
-            130.6,
-            '#ffeda0',
-            161.2,
-            '#fed976',
-            191.8,
-            '#feb24c',
-            222.4,
-            '#fd8d3c',
-            253.0,
-            '#fc4e2a',
-            283.6,
-            '#e31a1c',
-            314.2,
-            '#bd0026',
-            345,
-            '#800026'
+            ...irradianceColorMap
           ],
           'fill-opacity': 0.8,
           'fill-outline-color': [

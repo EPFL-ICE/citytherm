@@ -12,17 +12,51 @@ interface EventListeners {
   }
 }
 
-// Mapping of layer groups to their relevant properties
+// Define table properties (extracted from TableTab.vue)
+const tableProperties = [
+  { key: 'city', label: 'City', unit: '' },
+  { key: 'id', label: 'Cell ID', unit: '' },
+  { key: 'LCZ', label: 'LCZ', unit: '' },
+  { key: 'description', label: 'Description', unit: '' },
+  { key: 'Building height', label: 'Building height', unit: 'm' },
+  { key: 'Height varability', label: 'Height variability', unit: 'm' },
+  { key: 'Sky view factor', label: 'Sky view factor', unit: '-' },
+  { key: 'Frontal area index', label: 'Frontal area index', unit: '-' },
+  { key: 'Aspect ratio', label: 'Aspect ratio', unit: '-' },
+  { key: 'Building cover fraction', label: 'Building cover fraction', unit: '-' },
+  {
+    key: 'Impervious surface cover fraction',
+    label: 'Impervious surface cover fraction',
+    unit: '-'
+  },
+  { key: 'Pervious surface cover fraction', label: 'Pervious surface cover fraction', unit: '-' },
+  { key: 'Water cover fraction', label: 'Water cover fraction', unit: '-' },
+  { key: 'Intersections', label: 'Road intersections', unit: '-' },
+  { key: 'Length primary road', label: 'Length primary roads', unit: 'm' },
+  { key: 'Length secondary road', label: 'Length secondary roads', unit: 'm' },
+  { key: 'Length highway', label: 'Length highway', unit: 'm' },
+  { key: 'LST_mean', label: 'LST', unit: '°C' },
+  { key: 'Irradiance_S', label: 'Irradiation summer', unit: 'kWh/m^2' },
+  { key: 'Irradiance_W', label: 'Irradiation winter', unit: 'kWh/m^2' }
+]
+
+// Create a map for quick lookup of labels
+const propertyLabels: Record<string, string> = {}
+tableProperties.forEach(prop => {
+  propertyLabels[prop.key] = prop.label
+})
+
+// Mapping of layer groups to their relevant properties (using the same keys as tableProperties)
 const layerGroupProperties: Record<string, string[]> = {
   urban_morphology: ['Building height', 'Sky view factor', 'Frontal area index', 'Aspect ratio'],
   land_cover_fraction: [
-    'Water cover fraction',
-    'Impervious surface cover fraction',
     'Building cover fraction',
-    'Pervious surface cover fraction'
+    'Impervious surface cover fraction',
+    'Pervious surface cover fraction',
+    'Water cover fraction'
   ],
-  roads: ['Length primary road', 'Length secondary road', 'Length highway'],
-  local_climate_zones: ['LCZ', 'lcz_code', 'description', 'color'],
+  roads: ['Length primary road', 'Length secondary road', 'Length highway', 'Intersections'],
+  local_climate_zones: ['LCZ', 'description'],
   irradiance: ['Irradiance_S', 'Irradiance_W'],
   land_surface_temperature: ['LST_mean']
 }
@@ -38,13 +72,14 @@ function getLayerGroupId(layerId: string): string | null {
     sky_view_factor: 'urban_morphology',
     frontal_area: 'urban_morphology',
     aspect_ratio: 'urban_morphology',
-    water_fraction: 'land_cover_fraction',
-    impervious_fraction: 'land_cover_fraction',
     building_fraction: 'land_cover_fraction',
+    impervious_fraction: 'land_cover_fraction',
     pervious_fraction: 'land_cover_fraction',
+    water_fraction: 'land_cover_fraction',
     primary_road_len: 'roads',
     secondary_road_len: 'roads',
     highway_len: 'roads',
+    intersections: 'roads',
     lcz_typology: 'local_climate_zones',
     irr_summer: 'irradiance',
     irr_winter: 'irradiance',
@@ -148,8 +183,8 @@ function formatPopupContent(
   propertiesToDisplay
     .filter(([key, value]) => value !== null && value !== undefined && !key.startsWith('_'))
     .forEach(([key, value]) => {
-      // Format the property key to be more readable
-      const formattedKey = key
+      // Use the predefined label from tableProperties, fallback to formatted key if not found
+      const label = propertyLabels[key] || key
         .replace(/_/g, ' ')
         .replace(/([A-Z])/g, ' $1')
         .toLowerCase()
@@ -166,7 +201,7 @@ function formatPopupContent(
 
       content += `
         <tr>
-          <td class="property-name">${formattedKey}</td>
+          <td class="property-name">${label}</td>
           <td class="property-value">${formattedValue}</td>
         </tr>
       `
