@@ -59,26 +59,6 @@ const handleMapLoaded = () => {
   // Map is loaded with its specific layer, no need to sync visibility
   // console.log('Map loaded with specific layer:', props.visibleLayerId)
 }
-
-// Watch for changes in visible layer
-// watch(
-//   () => props.visibleLayerId,
-//   () => {
-//     // Layer change will trigger a map reload due to the key change
-//     console.log('Visible layer changed to:', props.visibleLayerId)
-//   },
-//   { immediate: true }
-// )
-
-// Also watch for city changes
-// watch(
-//   () => cityStore.city,
-//   () => {
-//     // City changed, map will be reloaded
-//   },
-//   { immediate: false }
-// )
-
 // Sync view changes
 const handleMove = () => {
   if (map.value && props.onViewChange) {

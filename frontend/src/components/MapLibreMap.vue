@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import 'maplibre-gl/dist/maplibre-gl.css'
-import LoadingCircle from '@/components/LoadingCircle.vue'
 import { getMapConfig } from '@/config/mapConfig'
 import { useMapEvents } from '@/composables/useMapEvents'
 
@@ -24,9 +23,6 @@ import { Protocol } from 'pmtiles'
 import { cogProtocol } from '@geomatico/maplibre-cog-protocol'
 import { useLayersStore } from '@/stores/layers'
 import { useCityStore } from '@/stores/city'
-// import GeoRaster from 'georaster'
-// import GeoRasterLayer from 'georaster-layer-for-leaflet'
-// import * as L from 'leaflet'
 
 const layersStore = useLayersStore()
 const cityStore = useCityStore()

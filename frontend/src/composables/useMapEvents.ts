@@ -42,11 +42,6 @@ function getLayerGroupId(layerId: string): string | null {
     impervious_fraction: 'land_cover_fraction',
     building_fraction: 'land_cover_fraction',
     pervious_fraction: 'land_cover_fraction',
-    // intersections: 'roads',
-    // length_ns: 'roads',
-    // length_ne_sw: 'roads',
-    // length_se_nw: 'roads',
-    // length_e_w: 'roads',
     primary_road_len: 'roads',
     secondary_road_len: 'roads',
     highway_len: 'roads',
@@ -59,7 +54,54 @@ function getLayerGroupId(layerId: string): string | null {
   return layerToGroupMap[baseLayerId] || null
 }
 
-// Helper function to format popup content
+/**
+ * Formats the content for a map popup based on feature properties.
+ * 
+ * This function generates HTML content for a popup that displays feature properties
+ * in a structured way. It filters properties based on layer groups, formats property
+ * names for readability, and applies numeric formatting.
+ * 
+ * The function works by:
+ * 1. Identifying the layer group based on the layer ID
+ * 2. Filtering properties to show only those relevant to the layer group
+ * 3. Creating a header with the layer label and feature ID/coordinates
+ * 4. Generating an HTML table with formatted property names and values
+ * 
+ * Special behavior: If no layer group is found for the layerId (e.g., for Map base layer),
+ * only the title/header is displayed without any property table.
+ * 
+ * @param properties - The feature properties from MapLibre, or null if no properties exist
+ * @param label - A human-readable label for the layer (e.g., "Building height")
+ * @param layerId - The technical ID of the layer (e.g., "building_height-layer")
+ * 
+ * @returns A string containing HTML markup for the popup content
+ * 
+ * @example
+ * ```typescript
+ * const popupContent = formatPopupContent(
+ *   { "Building height": 15.5, "id": 123, "col_index": 10, "row_index": 5 },
+ *   "Building height",
+ *   "building_height-layer"
+ * );
+ * ```
+ * 
+ * @remarks
+ * Layer groups and their relevant properties:
+ * - urban_morphology: Building height, Sky view factor, Frontal area index, Aspect ratio
+ * - land_cover_fraction: Water cover fraction, Impervious surface cover fraction, etc.
+ * - roads: Length primary road, Length secondary road, Length highway
+ * - local_climate_zones: LCZ, lcz_code, description, color
+ * - irradiance: Irradiance_S, Irradiance_W
+ * - land_surface_temperature: LST_mean
+ * 
+ * The function automatically formats:
+ * - Property names: Converts snake_case/camelCase to Title Case
+ * - Numeric values: Rounds to 2 decimal places
+ * 
+ * Header properties (id, col_index, row_index) are displayed in the header rather than the table.
+ * 
+ * If no layer group mapping is found for a layerId, only the header/title is displayed.
+ */
 function formatPopupContent(
   properties: Record<string, any> | null,
   label: string,
@@ -70,36 +112,37 @@ function formatPopupContent(
   // Get the layer group ID
   const layerGroupId = getLayerGroupId(layerId)
 
-  // Get relevant properties for this layer group, or all properties if no group found
-  const relevantProperties = layerGroupId ? layerGroupProperties[layerGroupId] : null
-
-  // Always include these specific properties in the header
-  const headerProperties = ['id', 'col_index', 'row_index']
-
   // Create header content with ID and coordinates
   let headerContent = `${label}`
-  if (properties) {
-    const id = properties['id']
-    const colIndex = properties['col_index']
-    const rowIndex = properties['row_index']
+  const id = properties['id']
+  const colIndex = properties['col_index']
+  const rowIndex = properties['row_index']
 
-    if (id !== undefined || colIndex !== undefined || rowIndex !== undefined) {
-      headerContent += ' ('
-      const parts = []
-      if (id !== undefined) parts.push(`ID: ${id}`)
-      headerContent += parts.join(', ') + ')'
-    }
+  if (id !== undefined || colIndex !== undefined || rowIndex !== undefined) {
+    headerContent += ' ('
+    const parts = []
+    if (id !== undefined) parts.push(`ID: ${id}`)
+    headerContent += parts.join(', ') + ')'
   }
+
+  // If no layer group is found, only display the header
+  if (!layerGroupId) {
+    return `<div class="popup-content"><h3>${headerContent}</h3></div>`
+  }
+
+  // Get relevant properties for this layer group
+  const relevantProperties = layerGroupProperties[layerGroupId]
+
+  // Always exclude these specific properties as they're shown in the header
+  const headerProperties = ['id', 'col_index', 'row_index']
 
   // Create HTML table to display properties
   let content = `<div class="popup-content"><h3>${headerContent}</h3><table class="popup-table">`
 
   // Get properties to display - only relevant properties, excluding header properties
-  const propertiesToDisplay = relevantProperties
-    ? Object.entries(properties).filter(
-        ([key]) => relevantProperties.includes(key) && !headerProperties.includes(key)
-      )
-    : Object.entries(properties).filter(([key]) => !headerProperties.includes(key))
+  const propertiesToDisplay = Object.entries(properties).filter(
+    ([key]) => relevantProperties.includes(key) && !headerProperties.includes(key)
+  )
 
   // Filter out null/undefined values and internal properties
   propertiesToDisplay

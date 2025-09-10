@@ -40,7 +40,7 @@ function exportFullCSV() {
       >
         <template #label>
           <div class="d-flex align-center justify-space-between w-100">
-            <h5 class="text-uppercase mb-0">Base Layer</h5>
+            <h5 class="text-uppercase mb-0">Map</h5>
             <v-btn
               density="compact"
               color="primary"

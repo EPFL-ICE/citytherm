@@ -634,9 +634,9 @@ export const defaultGridLayers = (city: CityKey = 'geneva'): MapLayerConfig[] =>
   return [
     {
       id: 'baselayer',
-      label: 'Base Layer',
+      label: 'Map',
       unit: 'category',
-      info: 'Base layer for the grid data',
+      info: 'Map for the grid data',
       source: {
         type: 'vector',
         attribution: 'CityTherm Local Climate Zone Data',
