@@ -133,17 +133,9 @@ export const urbanMorphologyLayers = (city: CityKey = 'geneva'): MapLayerConfig[
             ['linear'],
             ['to-number', ['get', 'Sky view factor']],
             0.4,
-            '#f7f7f7',
-            0.5,
-            '#d1e5f0',
-            0.6,
-            '#92c5de',
-            0.7,
-            '#4393c3',
-            0.8,
-            '#2166ac',
+            '#000',
             1,
-            '#053061'
+            '#ffffff'
           ],
           'fill-opacity': 0.8,
           'fill-outline-color': [
@@ -689,7 +681,7 @@ export const irradianceLayers = (city: CityKey = 'geneva'): MapLayerConfig[] => 
     1075,
     '#4d0017'
   ]
-  
+
   return [
     {
       id: 'irr_summer',

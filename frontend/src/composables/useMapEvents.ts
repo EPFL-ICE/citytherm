@@ -42,7 +42,7 @@ const tableProperties = [
 
 // Create a map for quick lookup of labels
 const propertyLabels: Record<string, string> = {}
-tableProperties.forEach(prop => {
+tableProperties.forEach((prop) => {
   propertyLabels[prop.key] = prop.label
 })
 
@@ -184,13 +184,15 @@ function formatPopupContent(
     .filter(([key, value]) => value !== null && value !== undefined && !key.startsWith('_'))
     .forEach(([key, value]) => {
       // Use the predefined label from tableProperties, fallback to formatted key if not found
-      const label = propertyLabels[key] || key
-        .replace(/_/g, ' ')
-        .replace(/([A-Z])/g, ' $1')
-        .toLowerCase()
-        .split(' ')
-        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(' ')
+      const label =
+        propertyLabels[key] ||
+        key
+          .replace(/_/g, ' ')
+          .replace(/([A-Z])/g, ' $1')
+          .toLowerCase()
+          .split(' ')
+          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(' ')
 
       // Format the value based on its type
       let formattedValue = value
