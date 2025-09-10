@@ -56,26 +56,26 @@ function getLayerGroupId(layerId: string): string | null {
 
 /**
  * Formats the content for a map popup based on feature properties.
- * 
+ *
  * This function generates HTML content for a popup that displays feature properties
  * in a structured way. It filters properties based on layer groups, formats property
  * names for readability, and applies numeric formatting.
- * 
+ *
  * The function works by:
  * 1. Identifying the layer group based on the layer ID
  * 2. Filtering properties to show only those relevant to the layer group
  * 3. Creating a header with the layer label and feature ID/coordinates
  * 4. Generating an HTML table with formatted property names and values
- * 
+ *
  * Special behavior: If no layer group is found for the layerId (e.g., for Map base layer),
  * only the title/header is displayed without any property table.
- * 
+ *
  * @param properties - The feature properties from MapLibre, or null if no properties exist
  * @param label - A human-readable label for the layer (e.g., "Building height")
  * @param layerId - The technical ID of the layer (e.g., "building_height-layer")
- * 
+ *
  * @returns A string containing HTML markup for the popup content
- * 
+ *
  * @example
  * ```typescript
  * const popupContent = formatPopupContent(
@@ -84,7 +84,7 @@ function getLayerGroupId(layerId: string): string | null {
  *   "building_height-layer"
  * );
  * ```
- * 
+ *
  * @remarks
  * Layer groups and their relevant properties:
  * - urban_morphology: Building height, Sky view factor, Frontal area index, Aspect ratio
@@ -93,13 +93,13 @@ function getLayerGroupId(layerId: string): string | null {
  * - local_climate_zones: LCZ, lcz_code, description, color
  * - irradiance: Irradiance_S, Irradiance_W
  * - land_surface_temperature: LST_mean
- * 
+ *
  * The function automatically formats:
  * - Property names: Converts snake_case/camelCase to Title Case
  * - Numeric values: Rounds to 2 decimal places
- * 
+ *
  * Header properties (id, col_index, row_index) are displayed in the header rather than the table.
- * 
+ *
  * If no layer group mapping is found for a layerId, only the header/title is displayed.
  */
 function formatPopupContent(
