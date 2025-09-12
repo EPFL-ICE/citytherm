@@ -17,7 +17,7 @@ CITYTHERM_DATA_VERSION = 1.0
 CITYTHERM_DATA_DATE = 2025-05-02
 # Change the version and date accordingly
 # version=1.0
-version=2025-09-08
+version=2025-09-12
 bucket=10208-fcd9acb029f419e6493edf97f4592b96
 path=citytherm/${version}
 S3CMD_CONFIG_NAME=.s3cfg_cdn_enac
