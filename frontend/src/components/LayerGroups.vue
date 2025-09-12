@@ -25,7 +25,7 @@ const globalInfo = `The aggregated data at a 250 m × 250 m grid size, visualize
 
 <template>
   <div>
-    <div class="layer-group  base-layer">
+    <div class="layer-group base-layer">
       <v-checkbox
         v-model="layersStore.selectedLayers"
         :value="'baselayer'"
