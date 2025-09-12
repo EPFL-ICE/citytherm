@@ -97,7 +97,7 @@ function exportFullCSV() {
               <h5 class="text-uppercase mb-0">{{ item.label }}</h5>
             </template>
             <template #append>
-              <info-tooltip>{{ item.info }}</info-tooltip>
+              <info-tooltip :content="item.info" />
             </template>
           </v-checkbox>
         </template>

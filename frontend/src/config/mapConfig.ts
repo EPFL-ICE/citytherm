@@ -69,10 +69,10 @@ export const urbanMorphologyLayers = (city: CityKey = 'geneva'): MapLayerConfig[
       id: 'building_height',
       label: 'Building height',
       unit: 'm',
-      info: 'Average height of buildings in each grid cell',
+      info: 'Building height - area-weighted average height of buildings within each grid cell. Building height variability - standard deviation value of the individual building heights within each grid cell. Data source: Swiss Federal Office of Statistics, <a href="https://opendata.swiss/en/dataset/arealstatistik-nach-bodenbedeckungsnomenklatur-nolc04" target="_blank">https://opendata.swiss/en/dataset/arealstatistik-nach-bodenbedeckungsnomenklatur-nolc04</a>',
       source: {
         type: 'vector',
-        attribution: 'CityTherm Urban Morphology Data',
+        attribution: 'Swiss Federal Office of Statistics. Arealstatistik nach Bodenbedeckungsnomenklatur (NOLC04). <a href="https://opendata.swiss/en/dataset/arealstatistik-nach-bodenbedeckungsnomenklatur-nolc04" target="_blank">https://opendata.swiss/en/dataset/arealstatistik-nach-bodenbedeckungsnomenklatur-nolc04</a>',
         // url: `pmtiles://${baseUrl}/urban_morphology.pmtiles`,
         url: `pmtiles://${baseUrl}/${config.gridFile}`,
         minzoom: 5
@@ -115,10 +115,10 @@ export const urbanMorphologyLayers = (city: CityKey = 'geneva'): MapLayerConfig[
       id: 'sky_view_factor',
       label: 'Sky view factor',
       unit: 'ratio',
-      info: 'Fraction of sky visible from ground level',
+      info: 'SVF - ratio of the sky hemisphere visible from the ground. Source: Calculated using Urban Multi-scale Environmental Predictor (UMEP, Lindberg et al., 2018), at the 0.5 m resolution and averaged to the grid resolution at 250 m.',
       source: {
         type: 'vector',
-        attribution: 'CityTherm Urban Morphology Data',
+        attribution: 'Lindberg, F., Jonsson, P., & Honjo, T. (2018). Urban Multi-scale Environmental Predictor (UMEP) [Computer software]. <a href="https://umep-docs.readthedocs.io/" target="_blank">https://umep-docs.readthedocs.io/</a>',
         url: `pmtiles://${baseUrl}/${config.gridFile}`,
         minzoom: 5
       } as VectorSourceSpecification,
@@ -151,10 +151,10 @@ export const urbanMorphologyLayers = (city: CityKey = 'geneva'): MapLayerConfig[
       id: 'frontal_area',
       label: 'Frontal area index',
       unit: 'ratio',
-      info: 'Frontal area index of buildings facing the wind',
+      info: 'FAI - the ratio of the frontal area of a building relative to the wind direction to the total site area. Source: The FAI values for all directions at a 30° interval were calculated and averaged based on each grid cell using a Multi-scale Environmental Predictor (UMEP, Lindberg et al., 2018).',
       source: {
         type: 'vector',
-        attribution: 'CityTherm Urban Morphology Data',
+        attribution: 'Lindberg, F., Jonsson, P., & Honjo, T. (2018). Urban Multi-scale Environmental Predictor (UMEP) [Computer software]. <a href="https://umep-docs.readthedocs.io/" target="_blank">https://umep-docs.readthedocs.io/</a>',
         url: `pmtiles://${baseUrl}/${config.gridFile}`,
         minzoom: 5
       } as VectorSourceSpecification,
@@ -195,7 +195,7 @@ export const urbanMorphologyLayers = (city: CityKey = 'geneva'): MapLayerConfig[
       id: 'aspect_ratio',
       label: 'CANYON ASPECT RATIO',
       unit: 'ratio',
-      info: 'Ratio of building height to street width',
+      info: 'The ratio of the area-weighted building height and average street width.',
       source: {
         type: 'vector',
         attribution: 'CityTherm Urban Morphology Data',
@@ -245,10 +245,10 @@ export const landCoverFractionLayers = (city: CityKey = 'geneva'): MapLayerConfi
       id: 'building_fraction',
       label: 'Buildings',
       unit: 'fraction',
-      info: 'Fraction of cell area covered by buildings',
+      info: 'Fraction of the cell area covered by buildings. Data source: Swiss Federal Office of Statistics, <a href="https://opendata.swiss/en/dataset/arealstatistik-nach-bodenbedeckungsnomenklatur-nolc04" target="_blank">https://opendata.swiss/en/dataset/arealstatistik-nach-bodenbedeckungsnomenklatur-nolc04</a>',
       source: {
         type: 'vector',
-        attribution: 'CityTherm Land Cover Data',
+        attribution: 'Swiss Federal Office of Statistics. Arealstatistik nach Bodenbedeckungsnomenklatur (NOLC04). <a href="https://opendata.swiss/en/dataset/arealstatistik-nach-bodenbedeckungsnomenklatur-nolc04" target="_blank">https://opendata.swiss/en/dataset/arealstatistik-nach-bodenbedeckungsnomenklatur-nolc04</a>',
         url: `pmtiles://${baseUrl}/${config.gridFile}`,
         minzoom: 5
       } as VectorSourceSpecification,
@@ -289,10 +289,10 @@ export const landCoverFractionLayers = (city: CityKey = 'geneva'): MapLayerConfi
       id: 'impervious_fraction',
       label: 'Impervious',
       unit: 'fraction',
-      info: 'Fraction of cell area covered by impervious surfaces',
+      info: 'Fraction of the cell area covered by impervious surfaces (e.g., concrete, asphalt, etc.). Data source: Swiss Federal Office of Statistics, <a href="https://opendata.swiss/en/dataset/arealstatistik-nach-bodenbedeckungsnomenklatur-nolc04" target="_blank">https://opendata.swiss/en/dataset/arealstatistik-nach-bodenbedeckungsnomenklatur-nolc04</a>',
       source: {
         type: 'vector',
-        attribution: 'CityTherm Land Cover Data',
+        attribution: 'Swiss Federal Office of Statistics. Arealstatistik nach Bodenbedeckungsnomenklatur (NOLC04). <a href="https://opendata.swiss/en/dataset/arealstatistik-nach-bodenbedeckungsnomenklatur-nolc04" target="_blank">https://opendata.swiss/en/dataset/arealstatistik-nach-bodenbedeckungsnomenklatur-nolc04</a>',
         url: `pmtiles://${baseUrl}/${config.gridFile}`,
         minzoom: 5
       } as VectorSourceSpecification,
@@ -333,10 +333,10 @@ export const landCoverFractionLayers = (city: CityKey = 'geneva'): MapLayerConfi
       id: 'pervious_fraction',
       label: 'Pervious',
       unit: 'fraction',
-      info: 'Fraction of cell area covered by pervious surfaces',
+      info: 'Fraction of the cell area covered by pervious surfaces (e.g., vegetated areas and natural soil). Data source: Swiss Federal Office of Statistics, <a href="https://opendata.swiss/en/dataset/arealstatistik-nach-bodenbedeckungsnomenklatur-nolc04" target="_blank">https://opendata.swiss/en/dataset/arealstatistik-nach-bodenbedeckungsnomenklatur-nolc04</a>',
       source: {
         type: 'vector',
-        attribution: 'CityTherm Land Cover Data',
+        attribution: 'Swiss Federal Office of Statistics. Arealstatistik nach Bodenbedeckungsnomenklatur (NOLC04). <a href="https://opendata.swiss/en/dataset/arealstatistik-nach-bodenbedeckungsnomenklatur-nolc04" target="_blank">https://opendata.swiss/en/dataset/arealstatistik-nach-bodenbedeckungsnomenklatur-nolc04</a>',
         url: `pmtiles://${baseUrl}/${config.gridFile}`,
         minzoom: 5
       } as VectorSourceSpecification,
@@ -369,10 +369,10 @@ export const landCoverFractionLayers = (city: CityKey = 'geneva'): MapLayerConfi
       id: 'water_fraction',
       label: 'Water',
       unit: 'fraction',
-      info: 'Fraction of cell area covered by water bodies',
+      info: 'Fraction of the cell area covered by water bodies (e.g., lake, river, pond). Data source: Swiss Federal Office of Statistics, <a href="https://opendata.swiss/en/dataset/arealstatistik-nach-bodenbedeckungsnomenklatur-nolc04" target="_blank">https://opendata.swiss/en/dataset/arealstatistik-nach-bodenbedeckungsnomenklatur-nolc04</a>',
       source: {
         type: 'vector',
-        attribution: 'CityTherm Land Cover Data',
+        attribution: 'Swiss Federal Office of Statistics. Arealstatistik nach Bodenbedeckungsnomenklatur (NOLC04). <a href="https://opendata.swiss/en/dataset/arealstatistik-nach-bodenbedeckungsnomenklatur-nolc04" target="_blank">https://opendata.swiss/en/dataset/arealstatistik-nach-bodenbedeckungsnomenklatur-nolc04</a>',
         url: `pmtiles://${baseUrl}/${config.gridFile}`,
         minzoom: 5
       } as VectorSourceSpecification,
@@ -583,7 +583,7 @@ export const localClimateZoneLayers = (city: CityKey = 'geneva'): MapLayerConfig
       id: 'lcz_typology',
       label: 'LCZ TYPOLOGY',
       unit: 'category',
-      info: 'Local Climate Zone classification based on urban morphology',
+      info: 'Local Climate Zone classification. LCZs are "regions of uniform surface cover, structure, material, and human activity that span hundreds of meters to several kilometers in horizontal scale" (Stewart & Oke, 2012)',
       isCategorical: true,
       legendColors: [
         { color: '#D9081C', label: 'LCZ 2 - Compact midrise' },
@@ -598,7 +598,7 @@ export const localClimateZoneLayers = (city: CityKey = 'geneva'): MapLayerConfig
       ],
       source: {
         type: 'vector',
-        attribution: 'CityTherm Local Climate Zone Data',
+        attribution: 'Stewart, I. D., & Oke, T. R. (2012). Local climate zones for urban temperature studies. Bulletin of the American Meteorological Society, 93(12), 1879-1900.',
         url: `pmtiles://${baseUrl}/${config.gridFile}`,
         minzoom: 5
       } as VectorSourceSpecification,
@@ -689,10 +689,10 @@ export const irradianceLayers = (city: CityKey = 'geneva'): MapLayerConfig[] => 
       id: 'irr_summer',
       label: 'Irradiation - summer',
       unit: 'kWh/m²',
-      info: 'Solar irradiation during summer months',
+      info: 'Direct solar radiation in summer (1st June to 1st September) during the period of 2001-2020. Data source: Meteonorm, <a href="https://meteonorm.com/" target="_blank">https://meteonorm.com/</a>',
       source: {
         type: 'vector',
-        attribution: 'CityTherm Irradiance Data',
+        attribution: 'Meteonorm. <a href="https://meteonorm.com/" target="_blank">https://meteonorm.com/</a>',
         url: `pmtiles://${baseUrl}/${config.gridFile}`,
         minzoom: 5
       } as VectorSourceSpecification,
@@ -722,10 +722,10 @@ export const irradianceLayers = (city: CityKey = 'geneva'): MapLayerConfig[] => 
       id: 'irr_winter',
       label: 'Irradiation - winter',
       unit: 'kWh/m²',
-      info: 'Solar irradiation during winter months',
+      info: 'Direct solar radiation in winter (1st December to 1st February) during the period of 2001-2020. Data source: Meteonorm, <a href="https://meteonorm.com/" target="_blank">https://meteonorm.com/</a>',
       source: {
         type: 'vector',
-        attribution: 'CityTherm Irradiance Data',
+        attribution: 'Meteonorm. <a href="https://meteonorm.com/" target="_blank">https://meteonorm.com/</a>',
         url: `pmtiles://${baseUrl}/${config.gridFile}`,
         minzoom: 5
       } as VectorSourceSpecification,
@@ -800,12 +800,12 @@ export const landSurfaceTemperatureLayers = (city: CityKey = 'geneva'): MapLayer
       id: 'LST_mean',
       label: 'Land surface temperature',
       unit: '°C',
-      info: 'Land surface temperature',
+      info: 'Land surface temperature at 10:15 AM on 11 August 2023 for Geneva and on 19 July 2024 for Zurich. Data source: Landsat 8 satellite equipped with Operational Land Imager (OLI) and Thermal Infrared Sensor (TIRS). More about the satellite: <a href="https://landsat.gsfc.nasa.gov/satellites/landsat-8/" target="_blank">https://landsat.gsfc.nasa.gov/satellites/landsat-8/</a>',
       hasDatePicker: true,
       source: {
         type: 'vector',
         name: 'LST_mean',
-        attribution: 'CityTherm Land Surface Temperature Data',
+        attribution: 'Landsat 8 satellite. <a href="https://landsat.gsfc.nasa.gov/satellites/landsat-8/" target="_blank">https://landsat.gsfc.nasa.gov/satellites/landsat-8/</a>',
         url: `pmtiles://${baseUrl}/${config.gridFile}`,
         minzoom: 5
       } as VectorSourceSpecification,
