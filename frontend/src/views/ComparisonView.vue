@@ -22,15 +22,15 @@ const hasData = computed(() => {
   <v-container class="fill-height pa-0 overflow-hidden" fluid>
     <v-row class="fill-height overflow-y-hidden">
       <v-col xl="2" cols="3" class="params-col border-e-md overflow-y-auto overflow-x-hidden">
-        <v-card flat>
-          <v-card-text class="pa-2 d-flex flex-row align-center ga-2">
+        <v-card flat density="compact">
+          <v-card-text class="d-flex flex-row align-center ga-2">
             <v-select
               v-model="cityStore.city"
               :items="cityStore.cities"
               item-value="value"
               item-title="label"
               label="City"
-              density="comfortable"
+              density="compact"
               hide-details
               variant="outlined"
             />
@@ -68,5 +68,8 @@ const hasData = computed(() => {
 <style scoped>
 .params-col {
   max-height: 100vh;
+}
+:deep(.v-card-text) {
+  padding: 0.3rem;
 }
 </style>

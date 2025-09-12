@@ -25,7 +25,7 @@ const globalInfo = `The aggregated data at a 250 m × 250 m grid size, visualize
 
 <template>
   <div>
-    <div class="layer-group mb-1 base-layer">
+    <div class="layer-group  base-layer">
       <v-checkbox
         v-model="layersStore.selectedLayers"
         :value="'baselayer'"
@@ -53,7 +53,7 @@ const globalInfo = `The aggregated data at a 250 m × 250 m grid size, visualize
       </v-checkbox>
       <info-tooltip :content="globalInfo" @click.stop="" />
     </div>
-    <div v-for="group in layersStore.layerGroups" :key="group.id" class="layer-group mb-1">
+    <div v-for="group in layersStore.layerGroups" :key="group.id" class="layer-group">
       <!-- Group Header with Toggle -->
       <div class="d-flex align-center justify-space-between">
         <!-- Group Title -->
