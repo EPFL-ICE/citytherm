@@ -66,7 +66,13 @@ onUnmounted(() => {
 
 <template>
   <div ref="tooltipElement">
-    <v-tooltip v-model="tooltipVisible" left max-width="312" :open-on-hover="false":persistent="true">
+    <v-tooltip
+      v-model="tooltipVisible"
+      left
+      max-width="312"
+      :open-on-hover="false"
+      :persistent="true"
+    >
       <template #activator="{ props }">
         <v-icon
           size="small"
@@ -77,9 +83,11 @@ onUnmounted(() => {
         />
       </template>
       <div class="tooltip-content">
-        <div v-html="content"  @click.capture="handleLinkClick"></div>
+        <div v-html="content" @click.capture="handleLinkClick"></div>
         <div class="d-flex justify-end mt-2">
-          <v-btn class="close-tooltip" variant="tonal" size="small" @click="hideTooltip"> Close </v-btn>
+          <v-btn class="close-tooltip" variant="tonal" size="small" @click="hideTooltip">
+            Close
+          </v-btn>
         </div>
       </div>
     </v-tooltip>
@@ -87,7 +95,6 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
-
 .close-tooltip {
   cursor: pointer;
 }

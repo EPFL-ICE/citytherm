@@ -8,7 +8,7 @@ class TooltipManager {
     if (this.openTooltip && this.openTooltip !== closeFunction) {
       this.openTooltip()
     }
-    
+
     // Register this tooltip as the open one
     this.openTooltip = closeFunction
   }
