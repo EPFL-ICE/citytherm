@@ -19,6 +19,8 @@ function exportFullCSV() {
   a.download = `citytherm_${cityStore.city}.csv`
   a.click()
 }
+
+const globalInfo = `The aggregated data at a 250 m × 250 m grid size, visualized in CityTherm, is based on the data used in the publication: Lyu K., Licina D., Wienold J., Khodaei Tehrani H., Khovalyg D. (2025) A Multidomain Approach to Neighbourhood Typology for Urban Environmental Studies, Sustainable Cities and Society 128, 106378, <a href="https://doi.org/10.1016/j.scs.2025.106378" target="_blank">https://doi.org/10.1016/j.scs.2025.106378</a>.`
 </script>
 
 <template>
@@ -37,18 +39,21 @@ function exportFullCSV() {
       >
         <template #label>
           <div class="d-flex align-center justify-space-between w-100">
-            <h5 class="text-uppercase mb-0">Map</h5>
+            <h5 class="text-uppercase mb-0">Map
+              
+            </h5>
             <v-btn
-              density="compact"
-              color="primary"
-              :prepend-icon="mdiDownload"
-              @click="exportFullCSV"
+            density="compact"
+            color="primary"
+            :prepend-icon="mdiDownload"
+            @click="exportFullCSV"
             >
-              Download City
-            </v-btn>
+            Download City
+          </v-btn>
           </div>
         </template>
       </v-checkbox>
+      <info-tooltip :content="globalInfo" @click.stop=""/>
     </div>
     <div v-for="group in layersStore.layerGroups" :key="group.id" class="layer-group mb-1">
       <!-- Group Header with Toggle -->
@@ -109,6 +114,12 @@ function exportFullCSV() {
 <style scoped>
 .base-layer :deep(.v-label) {
   width: 100%;
+}
+.base-layer {
+
+  display: flex;
+    justify-content: center;
+    align-items: center;
 }
 /* Styles remain the same */
 .layer-group {
