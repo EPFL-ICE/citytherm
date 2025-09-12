@@ -39,21 +39,19 @@ const globalInfo = `The aggregated data at a 250 m × 250 m grid size, visualize
       >
         <template #label>
           <div class="d-flex align-center justify-space-between w-100">
-            <h5 class="text-uppercase mb-0">Map
-              
-            </h5>
+            <h5 class="text-uppercase mb-0">Map</h5>
             <v-btn
-            density="compact"
-            color="primary"
-            :prepend-icon="mdiDownload"
-            @click="exportFullCSV"
+              density="compact"
+              color="primary"
+              :prepend-icon="mdiDownload"
+              @click="exportFullCSV"
             >
-            Download City
-          </v-btn>
+              Download City
+            </v-btn>
           </div>
         </template>
       </v-checkbox>
-      <info-tooltip :content="globalInfo" @click.stop=""/>
+      <info-tooltip :content="globalInfo" @click.stop="" />
     </div>
     <div v-for="group in layersStore.layerGroups" :key="group.id" class="layer-group mb-1">
       <!-- Group Header with Toggle -->
@@ -116,10 +114,9 @@ const globalInfo = `The aggregated data at a 250 m × 250 m grid size, visualize
   width: 100%;
 }
 .base-layer {
-
   display: flex;
-    justify-content: center;
-    align-items: center;
+  justify-content: center;
+  align-items: center;
 }
 /* Styles remain the same */
 .layer-group {
