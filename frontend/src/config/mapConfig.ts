@@ -193,7 +193,7 @@ export const urbanMorphologyLayers = (city: CityKey = 'geneva'): MapLayerConfig[
     },
     {
       id: 'aspect_ratio',
-      label: 'Aspect ratio',
+      label: 'CANYON ASPECT RATIO',
       unit: 'ratio',
       info: 'Ratio of building height to street width',
       source: {
@@ -581,7 +581,7 @@ export const localClimateZoneLayers = (city: CityKey = 'geneva'): MapLayerConfig
   return [
     {
       id: 'lcz_typology',
-      label: 'Typology',
+      label: 'LCZ TYPOLOGY',
       unit: 'category',
       info: 'Local Climate Zone classification based on urban morphology',
       isCategorical: true,
