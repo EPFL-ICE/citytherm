@@ -10,16 +10,13 @@ import { useCityStore } from '@/stores/city'
 const layersStore = useLayersStore()
 const compareStore = useCompareStore()
 const cityStore = useCityStore()
-
+import { baseUrl } from '@/config/layerTypes'
 function exportFullCSV() {
-  //download file from baseUrlOptions.prod + `/full_data_${cityStore.current.id}.csv`
-  const baseUrl =
-    import.meta.env.VITE_BASE_URL_PROD ||
-    'https://enacit4r-cdn.epfl.ch/citytherm/2025-09-08/geodata'
-  const url = `${baseUrl}/${cityStore.city}_grid_data.csv`
+  const url = `${baseUrl}/citytherm_${cityStore.city}.csv`
+  // should be citytherm_[city name].csv
   const a = document.createElement('a')
   a.href = url
-  a.download = `citytherm_full_${cityStore.city}.csv`
+  a.download = `citytherm_${cityStore.city}.csv`
   a.click()
 }
 </script>

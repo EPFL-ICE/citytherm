@@ -31,9 +31,9 @@ const tableProperties = [
   { key: 'Length primary road', label: 'Length primary roads', unit: 'm' },
   { key: 'Length secondary road', label: 'Length secondary roads', unit: 'm' },
   { key: 'Length highway', label: 'Length highway', unit: 'm' },
-  { key: 'LST_mean', label: 'LST', unit: '°C' },
   { key: 'Irradiance_S', label: 'Irradiation summer', unit: 'kWh/m^2' },
-  { key: 'Irradiance_W', label: 'Irradiation winter', unit: 'kWh/m^2' }
+  { key: 'Irradiance_W', label: 'Irradiation winter', unit: 'kWh/m^2' },
+  { key: 'LST_mean', label: 'LST', unit: '°C' },
 ]
 
 // Computed property to generate combined labels (label + unit)
@@ -77,11 +77,11 @@ function exportCSV() {
     return [item.index.toString(), ...values]
   })
 
-  // Join headers and rows with tabs
-  const lines = [headers.join('\t'), ...rows.map((row) => row.join('\t'))]
+  // Join headers and rows with commas for CSV format
+  const lines = [headers.join(','), ...rows.map((row) => row.join(','))]
 
-  // Create tab-separated blob
-  const blob = new Blob([lines.join('\n')], { type: 'text/tab-separated-values;charset=utf-8;' })
+  // Create CSV blob
+  const blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8;' })
   const a = document.createElement('a')
   a.href = URL.createObjectURL(blob)
 
@@ -90,7 +90,7 @@ function exportCSV() {
   const date = now.toISOString().split('T')[0]
   const time = now.toTimeString().split(' ')[0].replace(/:/g, '-')
 
-  a.download = `citytherm_${cityName.toLowerCase().replace(/\s+/g, '_')}_${date}_${time}.tsv`
+  a.download = `citytherm_${cityName.toLowerCase().replace(/\s+/g, '_')}_${date}_${time}.csv`
   a.click()
 }
 

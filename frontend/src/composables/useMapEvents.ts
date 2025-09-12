@@ -35,9 +35,9 @@ const tableProperties = [
   { key: 'Length primary road', label: 'Length primary roads', unit: 'm' },
   { key: 'Length secondary road', label: 'Length secondary roads', unit: 'm' },
   { key: 'Length highway', label: 'Length highway', unit: 'm' },
-  { key: 'LST_mean', label: 'LST', unit: '°C' },
   { key: 'Irradiance_S', label: 'Irradiation summer', unit: 'kWh/m^2' },
-  { key: 'Irradiance_W', label: 'Irradiation winter', unit: 'kWh/m^2' }
+  { key: 'Irradiance_W', label: 'Irradiation winter', unit: 'kWh/m^2' },
+  { key: 'LST_mean', label: 'LST', unit: '°C' },
 ]
 
 // Create a map for quick lookup of labels
