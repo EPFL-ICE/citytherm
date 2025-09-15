@@ -467,9 +467,7 @@ watch(
 
 <template>
   <v-container class="pa-0 position-relative fill-height" fluid>
-    <div ref="container" class="map fill-height">
-      <loading-circle :loading="loading" />
-    </div>
+    <div ref="container" class="map fill-height"></div>
     <slot name="legend"></slot>
   </v-container>
 </template>

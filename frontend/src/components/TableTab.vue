@@ -81,17 +81,35 @@ function exportCSV() {
   const lines = [headers.join(','), ...rows.map((row) => row.join(','))]
 
   // Create CSV blob
+
+  // Create blob with explicit CSV content-type and UTF-8 encoding
   const blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8;' })
-  const a = document.createElement('a')
-  a.href = URL.createObjectURL(blob)
 
-  // Format date and time
-  const now = new Date()
-  const date = now.toISOString().split('T')[0]
-  const time = now.toTimeString().split(' ')[0].replace(/:/g, '-')
+  // Create object URL
+  const downloadUrl = URL.createObjectURL(blob)
+  try {
+    // Format date and time
+    const now = new Date()
+    const date = now.toISOString().split('T')[0]
+    const time = now.toTimeString().split(' ')[0].replace(/:/g, '-')
+    // Create and trigger download
+    const a = document.createElement('a')
+    a.href = downloadUrl
+    a.target = '_blank'
+    a.download = `citytherm_${cityName.toLowerCase().replace(/\s+/g, '_')}_${date}_${time}.csv`
+    a.style.display = 'none'
 
-  a.download = `citytherm_${cityName.toLowerCase().replace(/\s+/g, '_')}_${date}_${time}.csv`
-  a.click()
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+
+    // Clean up
+    setTimeout(() => URL.revokeObjectURL(downloadUrl), 100)
+  } catch (error) {
+    console.error('Download failed:', error)
+    // Fallback to window.open
+    window.open(downloadUrl, '_blank')
+  }
 }
 
 // Function to clear all neighborhoods from both stores

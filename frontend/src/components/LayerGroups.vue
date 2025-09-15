@@ -11,13 +11,37 @@ const layersStore = useLayersStore()
 const compareStore = useCompareStore()
 const cityStore = useCityStore()
 import { baseUrl } from '@/config/layerTypes'
-function exportFullCSV() {
-  const url = `${baseUrl}/citytherm_${cityStore.city}.csv`
-  // should be citytherm_[city name].csv
-  const a = document.createElement('a')
-  a.href = url
-  a.download = `citytherm_${cityStore.city}.csv`
-  a.click()
+
+async function exportFullCSV() {
+  try {
+    const url = `${baseUrl}/citytherm_${cityStore.city}.csv`
+    const response = await fetch(url)
+
+    // Create blob with explicit CSV content-type and UTF-8 encoding
+    const blob = new Blob([await response.arrayBuffer()], {
+      type: 'text/csv;charset=utf-8'
+    })
+
+    // Create object URL
+    const downloadUrl = URL.createObjectURL(blob)
+
+    // Create and trigger download
+    const a = document.createElement('a')
+    a.href = downloadUrl
+    a.download = `citytherm_${cityStore.city}.csv`
+    a.style.display = 'none'
+
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+
+    // Clean up
+    setTimeout(() => URL.revokeObjectURL(downloadUrl), 100)
+  } catch (error) {
+    console.error('Download failed:', error)
+    // Fallback to window.open
+    window.open(`${baseUrl}/citytherm_${cityStore.city}.csv`, '_blank')
+  }
 }
 
 const globalInfo = `The aggregated data at a 250 m × 250 m grid size, visualized in CityTherm, is based on the data used in the publication: Lyu K., Licina D., Wienold J., Khodaei Tehrani H., Khovalyg D. (2025) A Multidomain Approach to Neighbourhood Typology for Urban Environmental Studies, Sustainable Cities and Society 128, 106378, <a href="https://doi.org/10.1016/j.scs.2025.106378" target="_blank">https://doi.org/10.1016/j.scs.2025.106378</a>.`
@@ -135,9 +159,7 @@ const globalInfo = `The aggregated data at a 250 m × 250 m grid size, visualize
 
 .visibility-toggle {
   opacity: 0.6;
-  transition:
-    opacity 0.2s ease,
-    transform 0.2s ease;
+  transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
 .visibility-toggle:hover {
