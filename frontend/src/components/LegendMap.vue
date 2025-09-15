@@ -172,7 +172,7 @@ const toggleCategory = (
   }
 }
 
-const show = ref(false)
+const show = ref(true)
 </script>
 
 <template>
