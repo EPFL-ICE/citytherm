@@ -27,7 +27,7 @@ export interface MapLayerConfig {
 }
 
 export const baseUrlOptions = {
-  prod: 'https://enacit4r-cdn.epfl.ch/citytherm/2025-09-12/geodata',
+  prod: 'https://enacit4r-cdn.epfl.ch/citytherm/2025-09-16/geodata',
   dev: '/geodata'
 }
 
