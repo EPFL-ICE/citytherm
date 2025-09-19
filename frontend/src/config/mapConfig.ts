@@ -697,7 +697,7 @@ export const irradianceLayers = (city: CityKey = 'geneva'): MapLayerConfig[] => 
       id: 'irr_summer',
       label: 'Irradiation - summer',
       unit: 'kWh/m²',
-      info: 'Direct solar radiation in summer (1st June to 1st September) during the period of 2001-2020.<br/>Data source: Meteonorm, <a href="https://meteonorm.com/" target="_blank">https://meteonorm.com/</a>',
+      info: 'Direct solar radiation onto vertical facades in summer (1st June to 1st September) during the period of 2001-2020.<br/>Data source: Meteonorm, <a href="https://meteonorm.com/" target="_blank">https://meteonorm.com/</a>',
       source: {
         type: 'vector',
         attribution:
@@ -731,7 +731,7 @@ export const irradianceLayers = (city: CityKey = 'geneva'): MapLayerConfig[] => 
       id: 'irr_winter',
       label: 'Irradiation - winter',
       unit: 'kWh/m²',
-      info: 'Direct solar radiation in winter (1st December to 1st February) during the period of 2001-2020.<br/>Data source: Meteonorm, <a href="https://meteonorm.com/" target="_blank">https://meteonorm.com/</a>',
+      info: 'Direct solar radiation onto vertical facades in winter (1st December to 1st February) during the period of 2001-2020.<br/>Data source: Meteonorm, <a href="https://meteonorm.com/" target="_blank">https://meteonorm.com/</a>',
       source: {
         type: 'vector',
         attribution:
