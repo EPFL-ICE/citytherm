@@ -11,11 +11,11 @@ function getGridDataConfig(city: CityKey) {
   const configs = {
     geneva: {
       gridFile: 'geneva_grid_data.pmtiles',
-      sourceLayer: 'geneva_grid_data_reprojected'
+      sourceLayer: 'geneva_grid_data'
     },
     zurich: {
       gridFile: 'zurich_grid_data.pmtiles',
-      sourceLayer: 'zurich_grid_data_reprojected'
+      sourceLayer: 'zurich_grid_data'
     }
   }
   return configs[city]
