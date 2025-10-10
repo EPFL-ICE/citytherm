@@ -34,7 +34,6 @@ help:
 
 processing:
 	# should create geosjon and csv files in ../frontend/public/geodata
-	$(MAKE) -C ../processing geojson
 	$(MAKE) -C ../processing
 
 cdn:
