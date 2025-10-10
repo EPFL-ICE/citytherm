@@ -7,28 +7,37 @@ SCRIPT := geojson-to-csv.js
 INPUTS := geneva_grid_data.geojson zurich_grid_data.geojson
 OUTPUTS := $(INPUTS:.geojson=.csv)
 
-all: $(OUTPUTS)
+all: $(OUTPUTS) $(OUTPUTS:.csv=.pmtiles) clean
 
 %.csv: %.geojson $(SCRIPT)
 	$(NODE) $(SCRIPT) $< $@
+	mkdir -p ../frontend/public/geodata
+	mv $@ ../frontend/public/geodata/
+
+# Rule to reproject all geojson files to WGS84 (EPSG:4326) in reprojected subdirectory
+reprojected/%.geojson: %.geojson
+	mkdir -p reprojected
+	echo "Reprojecting $< to WGS84..."
+	ogr2ogr -f GeoJSON -t_srs EPSG:4326 "reprojected/$*.geojson" $<
+
+# Rule to generate PMTiles from reprojected geojson files
+%.pmtiles: reprojected/%.geojson
+	mkdir -p ../frontend/public/geodata
+	echo "Converting reprojected $< to PMTiles..."
+	tippecanoe --force -z12 --read-parallel -o "../frontend/public/geodata/$*.pmtiles" $<
+
+# Generate all reprojected files
+reprojected: $(INPUTS:%.geojson=reprojected/%.geojson)
+
+# Generate all PMTiles files
+pmtiles: $(OUTPUTS:.csv=.pmtiles)
 
 clean:
-	rm -f $(OUTPUTS)
-
+	rm -f $(OUTPUTS) $(OUTPUTS:.csv=.pmtiles)
+	rm -rf reprojected
 
 geojson:
-	mkdir -p ../frontend/public/geodata
-	# Convert all shapefiles in the current directory to GeoJSON and reproject to W
-	find . -maxdepth 1 -name "*.geojson" | while read f; do \
-		filename=$$(basename "$$f" .geojson); \
-		output_dir="../frontend/public/geodata"; \
-		echo "Converting $$f to GeoJSON (reprojecting to WGS84)..."; \
-		rm -f "$$output_dir/$${filename}_reprojected.geojson"; \
-		ogr2ogr -f GeoJSON -t_srs EPSG:4326 "$$output_dir/$${filename}_reprojected.geojson" "$$f"; \
-		if [ -f "$$output_dir/$${filename}_reprojected.geojson" ] && [ -s "$$output_dir/$${filename}_reprojected.geojson" ]; then \
-			echo "Converting $$output_dir/$${filename}_reprojected.geojson to PMTiles..."; \
-			tippecanoe --force -z12 --read-parallel -o "$$output_dir/$${filename}.pmtiles" "$$output_dir/$${filename}_reprojected.geojson"; \
-		else \
-			echo "Warning: Failed to create valid GeoJSON for $$f"; \
-		fi; \
-	done
+	@echo "Use pattern rules instead:"
+	@echo "  make reprojected  - Reproject all geojson files"
+	@echo "  make pmtiles      - Generate PMTiles from reprojected files"
+	@echo "  make all          - Generate both CSV and PMTiles"
