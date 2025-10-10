@@ -6,6 +6,8 @@ help:
 	@echo "  install    - Install dependencies and set up git hooks"
 	@echo "  clean      - Clean node_modules and package-lock.json"
 	@echo "  uninstall  - Remove git hooks and clean dependencies"
+	@echo "  lint       - Run the code linter"
+	@echo "  format     - Format the codebase"
 	@echo "  help       - Show this help message"
 
 
@@ -15,6 +17,9 @@ install:
 	npm install
 	@echo "Installing git hooks with lefthook..."
 	npx lefthook install
+	@echo "Install frontend"
+	# run make install in frontend
+	$(MAKE) -C frontend install
 	@echo "Installing frontend dependencies..."
 	npm install --prefix frontend
 	@echo "Setup complete!"
