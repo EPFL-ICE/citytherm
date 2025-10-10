@@ -19,20 +19,6 @@
 ### Frontend
 
 - [Vue.js 3](https://vuejs.org/) - Progressive JavaScript Framework
-- [Quasar](https://quasar.dev/) - Vue.js Framework
-- [OpenLayers](https://openlayers.org/) - Mapping Library
-- [ECharts](https://echarts.apache.org/) - Data Visualization
-- [nginx](https://nginx.org/) - Web Server
-
-### Backend
-
-- [Python](https://www.python.org/) with FastAPI
-- [PostgreSQL](https://www.postgresql.org/) - Database
-
-### Infrastructure
-
-- [Docker](https://www.docker.com/) - Containerization
-- [Traefik](https://traefik.io/) - Edge Router
 
 _Note: Update this section with your actual tech stack_
 
@@ -71,36 +57,13 @@ The correct version will be automatically selected when you enter the project di
 You can use Make with the following commands:
 
 ```bash
-make install
-make clean
-make uninstall
-make lint
-make format
+make  install    - Install dependencies and set up git hooks
+make  clean      - Clean node_modules and package-lock.json
+make  uninstall  - Remove git hooks and clean dependencies
+make  help       - Show this help message
 ```
 
 _Note: Update these commands based on your project's actual build system_
-
-### Development Environment
-
-The development environment includes:
-
-- Frontend at http://localhost:9000
-- Backend API at https://localhost:8060
-- Traefik Dashboard at http://localhost:8080
-
-## Data Management
-
-Data for the platform is organized the following way:
-
-### Application Data
-
-- Location: `./`
-- Contains:
-  - Application-specific data
-
-Data is version-controlled and regularly updated to reflect the latest research findings
-
-The platform supports multiple languages including English, French, and Arabic. Translations are managed through i18n files located in `frontend/src/i18n/`. based on `frontend/src/assets/i18n`
 
 ## Contributing
 
@@ -115,27 +78,6 @@ Under active development. [Report bugs here](https://github.com/EPFL-ENAC/cityth
 This project is licensed under the [GNU General Public License v3.0](LICENSE) - see the LICENSE file for details.
 
 This is free software: you can redistribute it and/or modify it under the terms of the GPL-3.0 as published by the Free Software Foundation.
-
-# Setup Checklist Completed
-
-The following items from the original setup checklist have been automatically completed:
-
-- [x] Replace `{ YOUR-REPO-NAME }` in all files by the name of your repo
-- [x] Replace `{ YOUR-LAB-NAME }` in all files by the name of your lab
-- [x] Replace `{ DESCRIPTION }` with project description
-- [x] Replace assignees: githubusernameassignee by the github handle of your assignee
-- [x] Handle CITATION.cff file (kept/removed based on preference)
-- [x] Handle release-please workflow (kept/removed based on preference)
-- [x] Configure project-specific settings
-
-## Remaining Manual Tasks
-
-Please complete these tasks manually:
-
-- [ ] Check if you need all the labels: https://github.com/EPFL-ENAC/citytherm/labels
-- [ ] Create your first milestone: https://github.com/EPFL-ENAC/citytherm/milestones
-- [ ] Protect your branch if you're a pro user: https://github.com/EPFL-ENAC/citytherm/settings/branches
-- [ ] [Activate discussion](https://github.com/EPFL-ENAC/citytherm/settings)
 
 ## Helpful links
 
