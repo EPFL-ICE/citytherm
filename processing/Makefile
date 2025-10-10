@@ -1,43 +1,38 @@
-.PHONY: allshp geojson shp upload
-
+.PHONY: all clean reprojected pmtiles csv
 
 NODE := node
 SCRIPT := geojson-to-csv.js
 
 INPUTS := geneva_grid_data.geojson zurich_grid_data.geojson
-OUTPUTS := $(INPUTS:.geojson=.csv)
+REPROJECTED := $(INPUTS:%.geojson=reprojected/%.geojson)
+PMTILES := $(INPUTS:%.geojson=../frontend/public/geodata/%.pmtiles)
+CSVS := $(INPUTS:%.geojson=../frontend/public/geodata/%.csv)
 
-all: $(OUTPUTS) $(OUTPUTS:.csv=.pmtiles) clean
+# Full pipeline
+all: $(CSVS) $(REPROJECTED) $(PMTILES)
 
-%.csv: %.geojson $(SCRIPT)
-	$(NODE) $(SCRIPT) $< $@
+# 1. GeoJSON -> CSV
+../frontend/public/geodata/%.csv: %.geojson $(SCRIPT)
 	mkdir -p ../frontend/public/geodata
-	mv $@ ../frontend/public/geodata/
+	$(NODE) $(SCRIPT) $< $@
 
-# Rule to reproject all geojson files to WGS84 (EPSG:4326) in reprojected subdirectory
+# 2. Reproject GeoJSON -> reprojected GeoJSON
 reprojected/%.geojson: %.geojson
 	mkdir -p reprojected
 	echo "Reprojecting $< to WGS84..."
-	ogr2ogr -f GeoJSON -t_srs EPSG:4326 "reprojected/$*.geojson" $<
+	ogr2ogr -f GeoJSON -t_srs EPSG:4326 $@ $<
 
-# Rule to generate PMTiles from reprojected geojson files
-%.pmtiles: reprojected/%.geojson
+# 3. Reprojected GeoJSON -> PMTiles
+../frontend/public/geodata/%.pmtiles: reprojected/%.geojson
 	mkdir -p ../frontend/public/geodata
-	echo "Converting reprojected $< to PMTiles..."
-	tippecanoe --force -z12 --read-parallel -o "../frontend/public/geodata/$*.pmtiles" $<
+	echo "Converting $< to PMTiles..."
+	tippecanoe --force -z12 --read-parallel -o $@ $<
 
-# Generate all reprojected files
-reprojected: $(INPUTS:%.geojson=reprojected/%.geojson)
-
-# Generate all PMTiles files
-pmtiles: $(OUTPUTS:.csv=.pmtiles)
+# Convenience targets
+csv: $(CSVS)
+reprojected: $(REPROJECTED)
+pmtiles: $(PMTILES)
 
 clean:
-	rm -f $(OUTPUTS) $(OUTPUTS:.csv=.pmtiles)
 	rm -rf reprojected
-
-geojson:
-	@echo "Use pattern rules instead:"
-	@echo "  make reprojected  - Reproject all geojson files"
-	@echo "  make pmtiles      - Generate PMTiles from reprojected files"
-	@echo "  make all          - Generate both CSV and PMTiles"
+	rm -f ../frontend/public/geodata/*.csv ../frontend/public/geodata/*.pmtiles
