@@ -60,6 +60,8 @@ You can use Make with the following commands:
 make  install    - Install dependencies and set up git hooks
 make  clean      - Clean node_modules and package-lock.json
 make  uninstall  - Remove git hooks and clean dependencies
+make  lint       - Run the code linter
+make  format     - Format the codebase
 make  help       - Show this help message
 ```
 
