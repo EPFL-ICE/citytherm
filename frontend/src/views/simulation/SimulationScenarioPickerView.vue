@@ -1,4 +1,20 @@
 <script setup lang="ts">
+import { useScenariosStore, type Scenario } from '@/stores/scenarios'
+import ScenarioPreview from '@/components/ScenarioPreview.vue'
+import { ref } from 'vue'
+
+const scenarioStore = useScenariosStore()
+
+const firstScenario = ref<Scenario | null>(null)
+scenarioStore
+  .getScenario('S0_Baseline_Scenario')
+  .then((scenario) => {
+    console.log('Fetched scenario:', scenario)
+    firstScenario.value = scenario
+  })
+  .catch((err) => {
+    console.error('Error fetching scenario:', err)
+  })
 </script>
 
 <template>
@@ -16,7 +32,9 @@
         </v-card>
       </v-col>
       <v-col>
-        <h3>Scenario preview</h3>
+        <div v-if="firstScenario" style="height: 100%">
+          <scenario-preview :scenario="firstScenario"></scenario-preview>
+        </div>
       </v-col>
     </v-row>
   </v-container>
