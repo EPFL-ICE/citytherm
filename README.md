@@ -31,6 +31,11 @@ _Note: Update this section with your actual tech stack_
 - Python 3
 - Docker
 
+The following command line programs need to be installed :
+- ogr2ogr (`brew install gdal` on mac)
+- tippecanoe (`brew install tippecanoe`)
+- s3cmd (`brew install s3cmd`)
+
 ### Setup & Usage
 
 #### Node.js Version Management
