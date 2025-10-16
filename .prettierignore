@@ -42,3 +42,7 @@ commitlint.config.js
 
 # CITATION files
 CITATION.cff
+
+# python
+*.py
+.python-version

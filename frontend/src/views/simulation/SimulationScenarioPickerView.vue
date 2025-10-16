@@ -3,90 +3,113 @@ import { useScenariosStore, type ScenarioDescription } from '@/stores/scenarios'
 import ScenarioPreview from '@/components/ScenarioPreview.vue'
 import { computed, onMounted, ref, shallowRef } from 'vue'
 
-const scenariosList = ref<ScenarioDescription[] | null>(null);
+const scenariosList = ref<ScenarioDescription[] | null>(null)
 
-const scenarioStore = useScenariosStore();
+const scenarioStore = useScenariosStore()
 
 onMounted(async () => {
-  scenariosList.value = await scenarioStore.getScenarioDescriptions();
-});
+  scenariosList.value = await scenarioStore.getScenarioDescriptions()
+})
 
-let selectedScenariosSlug = ref<string[]>([]);
+let selectedScenariosSlug = ref<string[]>([])
 
 interface SimulationPlane {
-  rotationX: number; // in radians
-  position: { x?: number; y?: number; z?: number };
+  rotationX: number // in radians
+  position: { x?: number; y?: number; z?: number }
 }
 
 interface SimulationPlaneOption {
-  name: string;
-  description: string;
-  plane: SimulationPlane;
+  slug: string
+  name: string
+  description: string
+  plane: SimulationPlane
 }
 
-type SimulationPlanePreset = "Horizontal_Ground" | "Horizontal_HumanHeight" | "Horizontal_BuildingCanopy" | "Vertical_MidCanyon" | "Vertical_MidBuilding";
+type SimulationPlanePreset =
+  | 'Horizontal_Ground'
+  | 'Horizontal_HumanHeight'
+  | 'Horizontal_BuildingCanopy'
+  | 'Vertical_MidCanyon'
+  | 'Vertical_MidBuilding'
 const availablePlanes = computed<{ [key in SimulationPlanePreset]: SimulationPlaneOption }>(() => {
-  const buildingCaanopyHeight = selectedScenariosSlug.value.includes("S1_1") ? 30 : 16;
+  const buildingCanopyHeight = selectedScenariosSlug.value.includes('S1_1') ? 30 : 16
+  const midBuildingZ = selectedScenariosSlug.value.includes('S1_2') ? 25 : 19
   return {
-    "Horizontal_Ground": {
-      name: "Horizontal - Ground",
-      description: "A horizontal plane at ground level (0.2m), useful for assessing surface temperatures.",
+    Horizontal_Ground: {
+      slug: 'Horizontal_Ground',
+      name: 'Horizontal - Ground',
+      description:
+        'A horizontal plane at ground level (0.2m), useful for assessing surface temperatures.',
       plane: { rotationX: -Math.PI / 2, position: { x: 0, y: 0.2, z: 0 } }
     },
-    "Horizontal_HumanHeight": {
-      name: "Horizontal - Human Height",
-      description: "A horizontal plane at approximately 1.4 meters above ground, representing human height.",
+    Horizontal_HumanHeight: {
+      slug: 'Horizontal_HumanHeight',
+      name: 'Horizontal - Human Height',
+      description:
+        'A horizontal plane at approximately 1.4 meters above ground, representing human height.',
       plane: { rotationX: -Math.PI / 2, position: { x: 0, y: 1.4, z: 0 } }
     },
-    "Horizontal_BuildingCanopy": {
-      name: "Horizontal - Building Canopy",
-      description: `A horizontal plane one meter above the average building height (${buildingCaanopyHeight + 1}m).`,
-      plane: { rotationX: -Math.PI / 2, position: { x: 0, y: buildingCaanopyHeight + 1, z: 0 } }
+    Horizontal_BuildingCanopy: {
+      slug: 'Horizontal_BuildingCanopy',
+      name: 'Horizontal - Building Canopy',
+      description: `A horizontal plane one meter above the average building height (${buildingCanopyHeight + 1}m).`,
+      plane: { rotationX: -Math.PI / 2, position: { x: 0, y: buildingCanopyHeight + 1, z: 0 } }
     },
-    "Vertical_MidCanyon": {
-      name: "Vertical - Mid Street Canyon",
-      description: "A vertical plane cutting through the middle of a street canyon.",
+    Vertical_MidCanyon: {
+      slug: 'Vertical_MidCanyon',
+      name: 'Vertical - Mid Street Canyon',
+      description: 'A vertical plane cutting through the middle of a street canyon.',
       plane: { rotationX: 0, position: { x: 0, y: 0, z: 0 } }
     },
-    "Vertical_MidBuilding": {
-      name: "Vertical - Mid Building",
-      description: "A vertical plane cutting through the middle of a building.",
-      plane: { rotationX: 0, position: { x: 0, y: 0, z: 20 } }
+    Vertical_MidBuilding: {
+      slug: 'Vertical_MidBuilding',
+      name: 'Vertical - Mid Building',
+      description: `A vertical plane cutting through the middle of a building (${midBuildingZ}m from center).`,
+      plane: { rotationX: 0, position: { x: 0, y: 0, z: midBuildingZ } }
     }
-  };
-});
+  }
+})
 
-const planesSelectOptions = computed(() => Object.values(availablePlanes.value));
-let selectedPlane = shallowRef<SimulationPlane | null>(null);
-
+const planesSelectOptions = computed(() => Object.values(availablePlanes.value))
+let selectedPlaneSlug = ref<SimulationPlanePreset | null>(null)
+let selectedPlane = computed<SimulationPlane | null>(() => {
+  if (!selectedPlaneSlug.value) return null
+  return availablePlanes.value[selectedPlaneSlug.value].plane
+})
 </script>
 
 <template>
   <div class="scaffold">
     <v-sheet class="left-bar" elevation="12">
       <v-card class="d-flex flex-column h-100" flat>
-        <v-card-text class="d-flex flex-row align-center ga-2">
+        <v-card-text class="flex-grow-0">
           <h2>Scenario picker {{ selectedScenariosSlug }}</h2>
         </v-card-text>
-        <v-card-text class="d-flex flex-1-1-100 flex-column justify-space-between">
-          <v-list two-line v-model:selected="selectedScenariosSlug">
-            <v-list-item v-for="scenario in scenariosList" :key="scenario.id" :value="scenario.slug"
-              :title="`${scenario.id} - ${scenario.scenario}`" :subtitle="scenario.description" />
+        <v-card-text class="selector">
+          <v-list two-line v-model:selected="selectedScenariosSlug" class="pt-0">
+            <v-list-item
+              v-for="scenario in scenariosList"
+              :key="scenario.id"
+              :value="scenario.slug"
+              :title="`${scenario.id} - ${scenario.scenario}`"
+              :subtitle="scenario.description"
+            />
           </v-list>
 
           <div>
             <v-select
-              v-model="selectedPlane"
+              v-model="selectedPlaneSlug"
               :items="planesSelectOptions"
-              :item-props="(item) => ({ title: item.name, subtitle: item.description, value: item.plane })"
+              :item-props="
+                (item) => ({ title: item.name, subtitle: item.description, value: item.slug })
+              "
               label="Select a simulation plane"
               single-line
+              :disabled="!selectedPlaneSlug || selectedScenariosSlug.length === 0"
             />
           </div>
 
-          <v-btn color="primary" :disabled="!selectedScenariosSlug">
-            Load Scenario
-          </v-btn>
+          <v-btn color="primary" :disabled="!selectedScenariosSlug"> Load Scenario </v-btn>
         </v-card-text>
       </v-card>
     </v-sheet>
@@ -107,8 +130,7 @@ let selectedPlane = shallowRef<SimulationPlane | null>(null);
 .scaffold {
   --left-bar-width: min(max(300px, 25vw), 400px);
   display: grid;
-  grid-template-areas:
-    "left-bar preview";
+  grid-template-areas: 'left-bar preview';
   grid-template-columns: var(--left-bar-width) calc(100vw - var(--left-bar-width));
   grid-template-rows: 1fr;
 }
@@ -125,5 +147,12 @@ let selectedPlane = shallowRef<SimulationPlane | null>(null);
   grid-area: preview;
   height: 100dvh;
   position: relative;
+}
+
+.selector {
+  flex: 1;
+  display: grid;
+  grid-template-rows: 1fr auto min-content;
+  overflow-y: auto;
 }
 </style>
