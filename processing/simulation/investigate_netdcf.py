@@ -2,7 +2,7 @@ import xarray as xr
 import json
 from pathlib import Path
 
-scenario = "S2_Wide_Canyon"
+scenario = "S0_Baseline_Scenario"
 
 file_path = f"./raw_data/{scenario}.nc"
 ds = xr.open_dataset(file_path)
