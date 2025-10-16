@@ -3,86 +3,99 @@ import { defineProps, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useScenariosStore, type BuildingPart, type Scenario } from '@/stores/scenarios'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
-import { createBuildingMaterial, createOscillatingPlaneMaterial, createSoilMaterial, simulationSoilTypeCodeToColor } from '@/lib/3d/materials';
-import { createBuildingInstancedMesh, createSoilGeometry } from '@/lib/3d/scenarioPreviewBuilders';
+import {
+  createBuildingMaterial,
+  createOscillatingPlaneMaterial,
+  createSoilMaterial,
+  simulationSoilTypeCodeToColor
+} from '@/lib/3d/materials'
+import { createBuildingInstancedMesh, createSoilGeometry } from '@/lib/3d/scenarioPreviewBuilders'
 
 const props = defineProps<{
   scenarioId: string
   plane: { rotationX: number; position: { x?: number; y?: number; z?: number } } | null
 }>()
 
-const scenarioStore = useScenariosStore();
+const scenarioStore = useScenariosStore()
 
 const container = ref<HTMLDivElement | null>(null)
 
-const sceneSize = { x: 200, y: 200 }; // in meters
+const sceneSize = { x: 200, y: 200 } // in meters
 
-let scene: THREE.Scene;
-let camera: THREE.PerspectiveCamera;
-let renderer: THREE.WebGLRenderer;
-let controls: OrbitControls;
-let scenario: Scenario | null = null;
-let buildings: THREE.InstancedMesh | null = null;
-let soil: THREE.Mesh | null = null;
-let plane: THREE.Mesh | null = null;
-let loading = ref(true);
+let scene: THREE.Scene
+let camera: THREE.PerspectiveCamera
+let renderer: THREE.WebGLRenderer
+let controls: OrbitControls
+let scenario: Scenario | null = null
+let buildings: THREE.InstancedMesh | null = null
+let soil: THREE.Mesh | null = null
+let plane: THREE.Mesh | null = null
+let loading = ref(true)
 
-watch(() => props.scenarioId, async (newId, oldId) => {
-  if (newId === oldId) return;
+watch(
+  () => props.scenarioId,
+  async (newId, oldId) => {
+    if (newId === oldId) return
 
-  loading.value = true;
+    loading.value = true
 
-  scenario = await scenarioStore.getScenario(newId);
+    scenario = await scenarioStore.getScenario(newId)
 
-  createSoil();
-  createBuildings();
+    createSoil()
+    createBuildings()
 
-  loading.value = false;
-}, { immediate: true });
+    loading.value = false
+  },
+  { immediate: true }
+)
 
-watch(() => props.plane, (newPlane, oldPlane) => {
-  if (newPlane === oldPlane) return;
+watch(
+  () => props.plane,
+  (newPlane, oldPlane) => {
+    if (newPlane === oldPlane) return
 
-  createPlane();
-}, { immediate: true });
+    createPlane()
+  },
+  { immediate: true }
+)
 
 function createPlane() {
-  if (!props.plane) return;
-  if (plane) scene.remove(plane);
+  if (!props.plane) return
+  if (plane) scene.remove(plane)
 
-  const geometry = new THREE.PlaneGeometry(200, 200);
-  const material = createOscillatingPlaneMaterial();
-  const mesh = new THREE.Mesh(geometry, material);
-  mesh.rotateX(props.plane.rotationX);
-  if (props.plane.position.x) mesh.position.x = props.plane.position.x;
-  if (props.plane.position.y) mesh.position.y = props.plane.position.y;
-  if (props.plane.position.z) mesh.position.z = props.plane.position.z;
-  scene.add(mesh);
+  const geometry = new THREE.PlaneGeometry(200, 200)
+  const material = createOscillatingPlaneMaterial()
+  const mesh = new THREE.Mesh(geometry, material)
+  mesh.rotateX(props.plane.rotationX)
+  if (props.plane.position.x) mesh.position.x = props.plane.position.x
+  if (props.plane.position.y) mesh.position.y = props.plane.position.y
+  if (props.plane.position.z) mesh.position.z = props.plane.position.z
+  scene.add(mesh)
 
-  plane = mesh;
+  plane = mesh
 }
 
 function createSoil() {
-  if (!scenario?.soil) return;
-  if (soil) scene.remove(soil);
+  if (!scenario?.soil) return
+  if (soil) scene.remove(soil)
 
-  const geometry = createSoilGeometry(sceneSize, 2, scenario.soil);
+  const geometry = createSoilGeometry(sceneSize, 2, scenario.soil)
 
-  const mesh = new THREE.Mesh(geometry, createSoilMaterial());
-  mesh.rotateX(-Math.PI / 2);
-  scene.add(mesh);
+  const mesh = new THREE.Mesh(geometry, createSoilMaterial())
+  mesh.rotateX(-Math.PI / 2)
+  scene.add(mesh)
 
-  soil = mesh;
+  soil = mesh
 }
 
 // Create or update buildings
 function createBuildings() {
-  if (!scenario?.buildings) return;
+  if (!scenario?.buildings) return
 
-  if (buildings) scene.remove(buildings);
+  if (buildings) scene.remove(buildings)
 
-  buildings = createBuildingInstancedMesh(scenario.buildings, sceneSize);
-  scene.add(buildings);
+  buildings = createBuildingInstancedMesh(scenario.buildings, sceneSize)
+  scene.add(buildings)
 }
 
 onMounted(() => {
@@ -126,23 +139,23 @@ onMounted(() => {
 
   // 💡 Handle resize
   window.addEventListener('resize', onResize)
-});
+})
 
 function onResize() {
-  if (!container.value) return;
+  if (!container.value) return
 
-  const width = container.value.clientWidth;
-  const height = container.value.clientHeight;
-  camera.aspect = width / height;
-  camera.updateProjectionMatrix();
-  renderer.setSize(width, height);
+  const width = container.value.clientWidth
+  const height = container.value.clientHeight
+  camera.aspect = width / height
+  camera.updateProjectionMatrix()
+  renderer.setSize(width, height)
 }
 
 onBeforeUnmount(() => {
-  window.removeEventListener('resize', onResize);
-  renderer.dispose();
-  buildings?.geometry.dispose();
-  soil?.geometry.dispose();
+  window.removeEventListener('resize', onResize)
+  renderer.dispose()
+  buildings?.geometry.dispose()
+  soil?.geometry.dispose()
 })
 </script>
 

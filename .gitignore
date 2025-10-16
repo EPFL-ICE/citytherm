@@ -1,7 +1,9 @@
 node_modules
 .DS_Store
 dist
-processing
+processing/simulation/raw_data
+processing/simulation/processed_data
+processing/*.geojson
 frontend/public/geodata
 *local*
 processed_data

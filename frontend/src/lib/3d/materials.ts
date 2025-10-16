@@ -2,7 +2,7 @@ import * as THREE from 'three'
 
 export function createBuildingMaterial(): THREE.MeshStandardMaterial {
   // Custom shader material that picks color based on face normal
-  const baseMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff, flatShading: true });
+  const baseMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff, flatShading: true })
 
   baseMaterial.onBeforeCompile = (shader) => {
     // Existing vertex: add world position
@@ -17,7 +17,7 @@ export function createBuildingMaterial(): THREE.MeshStandardMaterial {
       varying vec3 vNormalW;
       varying vec3 vWorldPos;
     `
-    );
+    )
 
     shader.vertexShader = shader.vertexShader.replace(
       '#include <begin_vertex>',
@@ -28,7 +28,8 @@ export function createBuildingMaterial(): THREE.MeshStandardMaterial {
       vNormalW = normalize(mat3(modelMatrix) * normal);
       vec4 worldPos = modelMatrix * vec4(position, 1.0);
       vWorldPos = worldPos.xyz;
-    `);
+    `
+    )
 
     // FRAGMENT SHADER
     shader.fragmentShader = shader.fragmentShader.replace(
@@ -39,7 +40,8 @@ export function createBuildingMaterial(): THREE.MeshStandardMaterial {
       varying vec3 vSideColor;
       varying vec3 vNormalW;
       varying vec3 vWorldPos;
-    `);
+    `
+    )
 
     shader.fragmentShader = shader.fragmentShader.replace(
       '#include <color_fragment>',
@@ -79,10 +81,11 @@ export function createBuildingMaterial(): THREE.MeshStandardMaterial {
       }
 
       diffuseColor.rgb *= baseColor;
-    `);
-  };
+    `
+    )
+  }
 
-  return baseMaterial;
+  return baseMaterial
 }
 
 export function createSoilMaterial(): THREE.ShaderMaterial {
@@ -102,18 +105,18 @@ export function createSoilMaterial(): THREE.ShaderMaterial {
     }
   `,
     vertexColors: true,
-    side: THREE.DoubleSide,
-  });
+    side: THREE.DoubleSide
+  })
 }
 
-const errorColor = new THREE.Color().setRGB(1, 0.3, 0.7); // Pinkish color for error
+const errorColor = new THREE.Color().setRGB(1, 0.3, 0.7) // Pinkish color for error
 const codeToColor: { [key: number]: THREE.Color } = {
   2007: new THREE.Color().setRGB(0.25, 0.25, 0.25),
   2045: new THREE.Color().setRGB(0.6, 0.6, 0.6)
-} as const;
+} as const
 
 export function simulationSoilTypeCodeToColor(code: number): THREE.Color {
-  return codeToColor[code] ?? errorColor;
+  return codeToColor[code] ?? errorColor
 }
 
 export function createOscillatingPlaneMaterial(
@@ -128,7 +131,7 @@ export function createOscillatingPlaneMaterial(
       vUv = uv;
       gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
     }
-  `;
+  `
 
   const fragmentShader = `
     uniform float uTime;
@@ -143,7 +146,7 @@ export function createOscillatingPlaneMaterial(
       float opacity = mid + amplitude * sin(uTime * uSpeed);
       gl_FragColor = vec4(uColor, opacity);
     }
-  `;
+  `
 
   const material = new THREE.ShaderMaterial({
     uniforms: {
@@ -151,35 +154,28 @@ export function createOscillatingPlaneMaterial(
       uColor: { value: new THREE.Color(color) },
       uMinOpacity: { value: minOpacity },
       uMaxOpacity: { value: maxOpacity },
-      uSpeed: { value: speed },
+      uSpeed: { value: speed }
     },
     vertexShader,
     fragmentShader,
     transparent: true,
-    side: THREE.DoubleSide,
-  });
+    side: THREE.DoubleSide
+  })
 
   // Automatically update uTime each frame without manual animation loop code
   material.onBeforeCompile = (shader) => {
-    shader.uniforms.uTime = material.uniforms.uTime;
-    const clock = new THREE.Clock();
+    shader.uniforms.uTime = material.uniforms.uTime
+    const clock = new THREE.Clock()
 
     // Hook into WebGLRenderer’s per-frame update
-    const originalOnBeforeRender = material.onBeforeRender;
+    const originalOnBeforeRender = material.onBeforeRender
     material.onBeforeRender = (renderer, scene, camera, geometry, object, group) => {
-      material.uniforms.uTime.value = clock.getElapsedTime();
+      material.uniforms.uTime.value = clock.getElapsedTime()
       if (originalOnBeforeRender) {
-        originalOnBeforeRender(
-          renderer,
-          scene,
-          camera,
-          geometry,
-          object,
-          group
-        );
+        originalOnBeforeRender(renderer, scene, camera, geometry, object, group)
       }
-    };
-  };
+    }
+  }
 
-  return material;
+  return material
 }
