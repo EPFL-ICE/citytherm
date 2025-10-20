@@ -1,13 +1,146 @@
 import xarray as xr
+import pandas as pd
+import numpy as np
 import json
 from pathlib import Path
+import math
 
 scenario = "S0_Baseline_Scenario"
 
 file_path = f"./raw_data/{scenario}.nc"
 ds = xr.open_dataset(file_path)
 print(ds.data_vars)
-print(ds.data_vars["SurfaceColors"])
+print(ds.data_vars["T"])
+print(ds.data_vars["RelHum"])
+print(ds.data_vars["WindSpd"])
+
+var_keys = ["T", "RelHum", "WindSpd"]
+
+def prettify_unit(unit: str) -> str:
+    unit_mappings = {
+        "degree Celsius": "°C",
+        "m s-1": "m/s",
+    }
+    return unit_mappings.get(unit, unit)
+
+def get_variable_attributes_in_dict(ds, variable_name):
+    variable = ds.data_vars[variable_name]
+    attrs = variable.attrs
+    return {k: prettify_unit(attrs[k]) for k in attrs}
+
+def export_variable_attributes(variable_names=var_keys):
+    vars = {}
+    for variable_name in variable_names:
+        attrs_dict = get_variable_attributes_in_dict(ds, variable_name)
+        vars[variable_name] = attrs_dict
+
+    save_json_for_scenario(to_json_compatible(vars), scenario, "", "variable_attributes")
+
+
+
+
+def get_variable_at_time(ds, variable_name, time_index=0):
+    variable = ds.data_vars[variable_name]
+    time_slice = variable.isel(Time=time_index)
+    df = time_slice.to_dataframe().reset_index().drop(columns=["Time"]).rename(columns={"GridsI": "x", "GridsJ": "y", "GridsK": "z", variable_name: "value"})
+    return df
+
+def slice_xy_plane_at_z(df, z_value):
+    return df[df["z"] == z_value]
+
+def slice_yz_plane_at_x(df, x_value):
+    return df[df["x"] == x_value]
+
+def get_plane_slicers_for_scenario(scenario: str):
+    return [
+        {
+            "slug": "horizontal_ground",
+            "slicer": lambda df: slice_xy_plane_at_z(df, 0.2),
+        },
+        {
+            "slug": "horizontal_human_height",
+            "slicer": lambda df: slice_xy_plane_at_z(df, 1.4000000953674316),
+        },
+        {
+            "slug": "horizontal_building_canopy",
+            "slicer": lambda df: slice_xy_plane_at_z(df, 31.0 if scenario == "S1_Tall_Canyon_Scenario" else 17.0),
+        },
+        {
+            "slug": "vertical_mid_canyon",
+            "slicer": lambda df: slice_yz_plane_at_x(df, 99.0),
+            "index_column": "y",
+            "columns": "z",
+        },
+        {
+            "slug": "vertical_mid_building",
+            "slicer": lambda df: slice_yz_plane_at_x(df, 73.0 if scenario == "S2_Wide_Canyon" else 79.0),
+            "index_column": "y",
+            "columns": "z",
+        },
+    ]
+
+
+def to_json_compatible(value):
+    """Recursively convert numpy types and arrays to JSON-compatible types."""
+    if isinstance(value, (np.floating,)):
+        return float(value)
+    elif isinstance(value, (np.integer,)):
+        return int(value)
+    elif isinstance(value, (np.ndarray, list, tuple)):
+        return [to_json_compatible(v) for v in value]
+    elif isinstance(value, dict):
+        return {k: to_json_compatible(v) for k, v in value.items()}
+    elif isinstance(value, float):
+        if math.isnan(value) or math.isinf(value):
+            return None
+        else:
+            return value
+    else:
+        return value
+
+def clean_nans(obj):
+    """Recursively replace NaN or inf with None for JSON safety."""
+    if isinstance(obj, list):
+        return [clean_nans(x) for x in obj]
+    if isinstance(obj, float):
+        if math.isnan(obj):
+            return None
+    return obj
+
+def slice_to_array_of_arrays(df, index_column="y", columns="x", value_column="value"):
+    to_2d = df.pivot(index=index_column, columns=columns, values=value_column)
+    return to_2d.where(pd.notna(to_2d), None).values.tolist()
+
+def save_plane_slices_for_var_at_time(variable_name="T", time_index=0):
+    variable_at_time = get_variable_at_time(ds, variable_name, time_index)
+    slicers = get_plane_slicers_for_scenario(scenario)
+
+    for slicer in slicers:
+        # print(f"--- {slicer['slug']} ---")
+        sliced = slicer["slicer"](variable_at_time)
+        # print(sliced)
+        array_2d = slice_to_array_of_arrays(df=sliced, index_column=slicer.get("index_column", "y"), columns=slicer.get("columns", "x"), value_column="value")
+        dict = {
+            "data": clean_nans(array_2d),
+        }
+        save_slice_to_json(scenario, "potential_air_temperature", 0, slicer["slug"], dict)
+
+def save_json_for_scenario(dict, scenario, dir_path, filename):
+    output_dir = Path(f"./processed_data/{scenario}/{dir_path}")
+    output_dir.mkdir(parents=True, exist_ok=True)
+    output_path = output_dir / f"{filename}.json"
+    with open(output_path, "w") as f:
+        json.dump(dict, f, allow_nan=False, separators=(',', ':'))
+
+def save_slice_to_json(scenario, variable_name, time_index, slicer_slug, dict):
+    save_json_for_scenario(dict, scenario, f"{variable_name}/time_{time_index}", slicer_slug)
+
+def save_plane_slices_for_multiple_vars_at_multiple_times(variable_names=["T", "RH", "WS", "WD"], time_indices=[0, 6, 12, 18]):
+    for variable_name in variable_names:
+        for time_index in time_indices:
+            save_plane_slices_for_var_at_time(variable_name, time_index)
+
+# save_plane_slices_for_var_at_time()
 
 def hardcoded_side_color():
     if scenario == "S2_Wide_Canyon":
@@ -17,7 +150,6 @@ def hardcoded_side_color():
 # The building Height seems to be stored in the BuildingHeight variable
 building_heights = ds.data_vars["BuildingHeight"]
 soil_profile_type = ds.data_vars["SoilProfileType"]
-print(soil_profile_type.values)
 
 def cleanedup_building_height():
     first_time_slice = building_heights.isel(Time=0)
@@ -77,23 +209,9 @@ def export_dataframe_to_formats(df, base_path, base_filename):
     df.to_json(json_path, orient="records")
     df.to_json(json_pretty_path, orient="records", indent=4)
 
-# export_dataframe_to_formats(cleanedup_building_height(), "./processed_data/S0_Baseline_Scenario", "building_heights")
-save_json(cleanedup_building_height(), f"./processed_data/{scenario}/buildingMap.json", pretty=False)
-save_json(cleanedup_soiltype(), f"./processed_data/{scenario}/soilMap.json", pretty=False)
 
 
-
-
-
-
-
-
-
-
-
-
-
-
+export_variable_attributes()
 
 # Check if building heights are constant over time
 def check_constant_over_time():
