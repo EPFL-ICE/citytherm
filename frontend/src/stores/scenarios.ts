@@ -92,7 +92,9 @@ export const useScenariosStore = defineStore('scenarios', () => {
     fetchScenarioDescriptions
   )
   const scenariosCache = new KeyedCache<Scenario, Error>(fetchScenario)
-  const scenarioTimeSeriesCache = new KeyedCache<TimeSeriesPoint[], Error>(fetchScenarioTimeSeriesPoints)
+  const scenarioTimeSeriesCache = new KeyedCache<TimeSeriesPoint[], Error>(
+    fetchScenarioTimeSeriesPoints
+  )
 
   async function getScenarioDescriptions(): Promise<ScenarioDescription[]> {
     return scenarioDescriptionsCache.get('all') // TODO: make cache without key ?
@@ -104,7 +106,7 @@ export const useScenariosStore = defineStore('scenarios', () => {
 
   async function getScenarioBySlug(slug: string) {
     const scenarios = await getScenarioDescriptions()
-    const scenario = scenarios.find(s => s.slug === slug)
+    const scenario = scenarios.find((s) => s.slug === slug)
     if (!scenario) {
       throw new Error(`Scenario with slug ${slug} not found`)
     }

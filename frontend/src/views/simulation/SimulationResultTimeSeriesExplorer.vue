@@ -8,11 +8,13 @@ import SimulationResultTimeSeriesChart from '@/components/SimulationResultTimeSe
 
 const route = useRoute()
 
-const scenarioASlug = computed(() => route.params.scenarioA as string);
-const scenarioBSlug = computed(() => route.params.scenarioB === '_' ? null : route.params.scenarioB as string);
-const pointSlug = computed(() => route.params.point as string);
+const scenarioASlug = computed(() => route.params.scenarioA as string)
+const scenarioBSlug = computed(() =>
+  route.params.scenarioB === '_' ? null : (route.params.scenarioB as string)
+)
+const pointSlug = computed(() => route.params.point as string)
 
-const selectedVariables = shallowRef<string[]>([]);
+const selectedVariables = shallowRef<string[]>([])
 </script>
 
 <template>
