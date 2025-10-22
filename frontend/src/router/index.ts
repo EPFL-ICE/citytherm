@@ -26,7 +26,7 @@ const router = createRouter({
       path: '/simulation/timeSeries/:scenarioA/:scenarioB/:point',
       name: 'simulation result time series explorer',
       component: SimulationResultTimeSeriesExplorer
-    },
+    }
   ]
 })
 
