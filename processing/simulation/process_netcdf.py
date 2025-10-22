@@ -6,6 +6,8 @@ import pandas as pd
 import numpy as np
 import math
 
+human_height = 1.4000000953674316
+
 def process_netcdf(scenario_name: str, input_directory: str, output_directory: str):
     print(f"========= Processing scenario: {scenario_name} =========")
 
@@ -26,8 +28,17 @@ def process_netcdf(scenario_name: str, input_directory: str, output_directory: s
     print("Done exporting variable attributes.", end="\n\n")
 
     print("Processing simulation results slices...")
-    save_plane_slices_for_multiple_vars_at_multiple_times(scenario_name, ds, output_directory, variable_names=var_keys, time_indices=[0, 6, 12, 18])
+    save_plane_slices_for_multiple_vars_at_multiple_times(scenario_name, ds, output_directory, variable_names=var_keys, time_indices=[0, 4, 8, 12, 16, 20])
     print("Done processing simulation results slices.", end="\n\n")
+
+    print("Exporting time series points list...")
+    export_time_series_points_list(scenario_name, var_keys, output_directory)
+    print("Done exporting time series points list.", end="\n\n")
+
+    print("Exporting time series points...")
+    points = get_time_series_points_list(scenario_name, var_keys)
+    export_time_series_points(scenario_name, ds, points, output_directory)
+    print("Done exporting time series points.", end="\n\n")
 
     print("Done !", end="\n\n\n\n")
 
@@ -107,7 +118,7 @@ def export_variable_attributes(variable_names, ds, output_directory):
         attrs_dict = get_variable_attributes_in_dict(ds, variable_name)
         vars[variable_name] = attrs_dict
 
-    save_json(to_json_compatible(vars), f"{output_directory}/variable_attributes.json")
+    save_json(to_json_compatible(vars), f"{output_directory}/variablesAttributes.json")
 
 
 def get_variable_attributes_in_dict(ds, variable_name):
@@ -119,7 +130,7 @@ def get_variable_attributes_in_dict(ds, variable_name):
 
 # Save plane slices for multiple variables at multiple times
 
-def save_plane_slices_for_multiple_vars_at_multiple_times(scenario: str, ds, output_directory: str, variable_names=["T", "RH", "WS", "WD"], time_indices=[0, 6, 12, 18]):
+def save_plane_slices_for_multiple_vars_at_multiple_times(scenario: str, ds, output_directory: str, variable_names=["T", "RH", "WS", "WD"], time_indices=[0, 4, 8, 12, 16, 20]):
     for variable_name in variable_names:
         for time_index in time_indices:
             print(f"Processing slices for variable '{variable_name}' at time index {time_index}...")
@@ -166,7 +177,7 @@ def get_plane_slicers_for_scenario(scenario: str):
         },
         {
             "slug": "horizontal_human_height",
-            "slicer": lambda df: slice_xy_plane_at_z(df, 1.4000000953674316),
+            "slicer": lambda df: slice_xy_plane_at_z(df, human_height),
         },
         {
             "slug": "horizontal_building_canopy",
@@ -187,7 +198,69 @@ def get_plane_slicers_for_scenario(scenario: str):
     ]
 
 
+# Export time series points list
+
+def make_time_series_point(coords: list[float], available_variables: list[str], corresponding_plane: str):
+    return {
+        "c": coords,
+        "v": available_variables,
+        "p": corresponding_plane
+    }
+
+def make_horizontal_time_series_points(variable_names: list[str]):
+    height_per_plane = [
+        {
+            "plane": "horizontal_ground",
+            "height": 0.2
+        },
+        {
+            "plane": "horizontal_human_height",
+            "height": human_height
+        }
+    ]
+
+    x = y = 99.0
+
+    return [
+        make_time_series_point([x, y, plane["height"]], variable_names, plane["plane"])
+        for plane in height_per_plane
+    ]
+
+def get_time_series_points_list(scenario: str, variables: list[str]):
+    points = make_horizontal_time_series_points(variables)
+    return points
+
+def export_time_series_points_list(scenario: str, variables: list[str], output_directory: str = "processed_data"):
+    points = get_time_series_points_list(scenario, variables)
+    save_json_for_scenario(points, output_directory, scenario, "", "timeSeriesPoints")
+
+
+# Export time series points
+
+def export_time_series_points(scenario: str, ds, points, output_directory: str):
+    for point in points:
+        coords = point["c"]
+        variable_names = point["v"]
+        for variable_name in variable_names:
+            print(f"Exporting time series for {variable_name} at {coords}")
+
+            time_series = get_single_time_series_point_for_var_and_coords_dataframe(ds, variable_name, coords)
+            save_json_for_scenario(to_json_compatible(time_series.to_dict(orient="records")), output_directory, scenario, f"{variable_name}/timeSeries", f"{number_for_filename(coords[0])}-{number_for_filename(coords[1])}-{number_for_filename(coords[2])}")
+
+def get_single_time_series_point_for_var_and_coords_dataframe(ds, variable_name: str, coords: list[float]):
+    variable = ds.data_vars[variable_name]
+    point_data = variable.sel(GridsI=coords[0], GridsJ=coords[1], GridsK=coords[2], method="nearest")
+
+    df = point_data.to_dataframe().reset_index().rename(columns={variable_name: "v"}).drop(columns=["GridsI", "GridsJ", "GridsK"])
+    df["t"] = df["Time"].dt.strftime('%H:%M:%S')
+    df.drop(columns=["Time"], inplace=True)
+
+    return df
+
 # Utility functions
+
+def number_for_filename(n):
+    return f"{n}".replace(".", "_")
 
 def prettify_unit(unit: str) -> str:
     unit_mappings = {
