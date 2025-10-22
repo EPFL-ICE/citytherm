@@ -8,7 +8,7 @@ const props = defineProps<{
 
 <template>
   <div class="scaffold">
-    <v-sheet class="left-bar" elevation="12">
+    <v-sheet class="left-bar relative" elevation="12">
       <v-card class="d-flex flex-column h-100" flat>
         <v-card-text class="flex-grow-0">
           <h2>{{ props.title }}</h2>
@@ -36,7 +36,6 @@ const props = defineProps<{
 .left-bar {
   grid-area: left-bar;
   height: 100dvh;
-  overflow-y: auto;
   position: relative;
   z-index: 1;
 }

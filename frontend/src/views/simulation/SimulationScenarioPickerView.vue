@@ -16,8 +16,8 @@ onMounted(async () => {
 let selectedScenariosSlug = ref<string[]>([]);
 
 const availablePlanes = computed<SimulationPlanePresetsMap>(() => {
-  const buildingCanopyHeight = selectedScenariosSlug.value.includes('S1_1') ? 30 : 16;
-  const midBuildingZ = selectedScenariosSlug.value.includes('S1_2') ? 25 : 19;
+  const buildingCanopyHeight = selectedScenariosSlug.value.includes('S1') ? 30 : 16;
+  const midBuildingZ = selectedScenariosSlug.value.includes('S2') ? 25 : 19;
   
   return getSimulationPlanePresetsForParameters(buildingCanopyHeight, midBuildingZ);
 })
@@ -29,6 +29,12 @@ let selectedPlane = computed<SimulationPlane | null>(() => {
   if (!selectedPlaneSlug.value) return null;
 
   return availablePlanes.value[selectedPlaneSlug.value].plane;
+});
+
+const sliceExplorerUrl = computed(() => {
+  if (selectedScenariosSlug.value.length === 0 || !selectedPlaneSlug.value) return null;
+
+  return `/simulation/plane/${selectedScenariosSlug.value[0] || '_'}/_/${selectedPlaneSlug.value || '_'}/time_12`;
 });
 </script>
 
@@ -52,11 +58,11 @@ let selectedPlane = computed<SimulationPlane | null>(() => {
           :item-props="(item) => ({ title: item.name, subtitle: item.description, value: item.slug })"
           label="Select a simulation plane"
           single-line
-          :disabled="!selectedPlaneSlug || selectedScenariosSlug.length === 0"
+          :disabled="selectedScenariosSlug.length === 0 || planesSelectOptions.length === 0"
         />
       </div>
 
-      <v-btn color="primary" :disabled="!selectedScenariosSlug"> Load Scenario </v-btn>
+      <v-btn color="primary" :disabled="!sliceExplorerUrl" :to="sliceExplorerUrl!"> Load Scenario </v-btn>
     </template>
 
     <template #default>
