@@ -11,8 +11,8 @@
     "relevant_lectures": ["L5: Building-Environment", "L6: Ground-Environment"]
   },
   {
-    "id": "S1.1",
-    "slug": "S1_1",
+    "id": "S1",
+    "slug": "S1",
     "scenario": "Tall Canyon",
     "description": "Building Height: 16m -> 30m",
     "key_variables_changed": "Building height",
@@ -22,8 +22,8 @@
     "relevant_lectures": ["L5: Building-Environment"]
   },
   {
-    "id": "S1.2",
-    "slug": "S1_2",
+    "id": "S2",
+    "slug": "S2",
     "scenario": "Wide Canyon",
     "description": "Street Width: 16m -> 30m",
     "key_variables_changed": "Street width",
@@ -32,8 +32,8 @@
     "relevant_lectures": ["L5: Building-Environment"]
   },
   {
-    "id": "S1.3",
-    "slug": "S1_3",
+    "id": "S3",
+    "slug": "S3",
     "scenario": "Staggered Layout",
     "description": "Building Alignment: Aligned grid -> Staggered grid",
     "key_variables_changed": "Building alignment",
@@ -42,8 +42,8 @@
     "relevant_lectures": ["L5: Building-Environment"]
   },
   {
-    "id": "S2.1",
-    "slug": "S2_1",
+    "id": "S4",
+    "slug": "S4",
     "scenario": "Cool Pavement",
     "description": "Street Material: Asphalt -> High-albedo concrete",
     "key_variables_changed": "Street material (albedo)",
@@ -52,8 +52,8 @@
     "relevant_lectures": ["L6: Ground-Environment"]
   },
   {
-    "id": "S2.2",
-    "slug": "S2_2",
+    "id": "S5",
+    "slug": "S5",
     "scenario": "Green Street",
     "description": "Street Material: Asphalt -> Mix of concrete pavement, grass verges, and soil areas.",
     "key_variables_changed": "Street material (albedo and evapotranspiration)",
@@ -63,8 +63,8 @@
     "relevant_lectures": ["L6: Ground-Environment", "L8: Vegetation-Environment"]
   },
   {
-    "id": "S3.1",
-    "slug": "S3_1",
+    "id": "S6",
+    "slug": "S6",
     "scenario": "Green Facades",
     "description": "Building Walls: Add green walls to all building facades.",
     "key_variables_changed": "Building wall greening",
@@ -73,8 +73,8 @@
     "relevant_lectures": ["L5: Building-Environment", "L8: Vegetation-Environment"]
   },
   {
-    "id": "S3.2",
-    "slug": "S3_2",
+    "id": "S7",
+    "slug": "S7",
     "scenario": "Green Roofs",
     "description": "Building Roofs: Convert all roofs to extensive green roofs.",
     "key_variables_changed": "Roof greening",
@@ -83,8 +83,8 @@
     "relevant_lectures": ["L5: Building-Environment", "L8: Vegetation-Environment"]
   },
   {
-    "id": "S4.1",
-    "slug": "S4_1",
+    "id": "S8",
+    "slug": "S8",
     "scenario": "Deciduous Trees",
     "description": "Vegetation: Add deciduous trees, simulated for leaf-off (winter) conditions.",
     "key_variables_changed": "Tree vegetation type (deciduous, leaf-off)",
@@ -93,8 +93,8 @@
     "relevant_lectures": ["L8: Vegetation-Environment"]
   },
   {
-    "id": "S4.2",
-    "slug": "S4_2",
+    "id": "S9",
+    "slug": "S9",
     "scenario": "Evergreen Trees",
     "description": "Vegetation: Add a row of evergreen trees along the streets.",
     "key_variables_changed": "Tree vegetation type (evergreen)",
@@ -103,8 +103,8 @@
     "relevant_lectures": ["L8: Vegetation-Environment"]
   },
   {
-    "id": "S5.1",
-    "slug": "S5_1",
+    "id": "S10",
+    "slug": "S10",
     "scenario": "Misting System",
     "description": "Water Body: Add an active misting/spray system in the central plaza.",
     "key_variables_changed": "Artificial water cooling (misting)",
@@ -113,8 +113,8 @@
     "relevant_lectures": ["L7: Water Bodies-Environment"]
   },
   {
-    "id": "S5.2",
-    "slug": "S5_2",
+    "id": "S11",
+    "slug": "S11",
     "scenario": "Urban Pond",
     "description": "Water Body: Add a shallow water pond in the central plaza.",
     "key_variables_changed": "Water surface presence",
@@ -123,8 +123,8 @@
     "relevant_lectures": ["L7: Water Bodies-Environment"]
   },
   {
-    "id": "S6.1",
-    "slug": "S6_1",
+    "id": "S12",
+    "slug": "S12",
     "scenario": "Combination: Green Infrastructure",
     "description": "Combines S2.2 (Green Street), S3.2 (Green Roofs), and S4.2 (Evergreen Trees).",
     "key_variables_changed": "Multiple green infrastructure components",
@@ -133,8 +133,8 @@
     "relevant_lectures": ["L5", "L6", "L8"]
   },
   {
-    "id": "S6.2",
-    "slug": "S6_2",
+    "id": "S13",
+    "slug": "S13",
     "scenario": "Combination: Cool Tech",
     "description": "Combines S2.1 (Cool Pavement) and S5.1 (Misting System).",
     "key_variables_changed": "Technology-based cooling strategies",
@@ -143,8 +143,8 @@
     "relevant_lectures": ["L6", "L7"]
   },
   {
-    "id": "S6.3",
-    "slug": "S6_3",
+    "id": "S14",
+    "slug": "S14",
     "scenario": "Combination: Holistic Design",
     "description": "Combines S1.3 (Staggered Layout), S2.2 (Green Street), and S4.2 (Evergreen Trees).",
     "key_variables_changed": "Integrated design and vegetation configuration",
