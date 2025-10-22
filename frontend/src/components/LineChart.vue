@@ -1,29 +1,29 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
-import VChart from "vue-echarts";
-import * as echarts from "echarts/core";
-import { LineChart } from "echarts/charts";
+import { computed, ref } from 'vue'
+import VChart from 'vue-echarts'
+import * as echarts from 'echarts/core'
+import { LineChart } from 'echarts/charts'
 import {
   TitleComponent,
   TooltipComponent,
   VisualMapComponent,
-  GridComponent,
-} from "echarts/components";
-import { CanvasRenderer } from "echarts/renderers";
-import type { EChartsOption } from "echarts/types/dist/shared";
+  GridComponent
+} from 'echarts/components'
+import { CanvasRenderer } from 'echarts/renderers'
+import type { EChartsOption } from 'echarts/types/dist/shared'
 
 interface Series {
-  name: string;
-  data: number[];
+  name: string
+  data: number[]
 }
 
 const props = defineProps<{
   axisX: {
-    name: string;
+    name: string
     slots: {
-      name: string;
+      name: string
     }[]
-  },
+  }
   series: Series[]
 }>()
 
@@ -33,43 +33,43 @@ echarts.use([
   VisualMapComponent,
   GridComponent,
   LineChart,
-  CanvasRenderer,
-]);
+  CanvasRenderer
+])
 
 const chartOptions = computed<EChartsOption>(() => {
   return {
     tooltip: {
-      formatter: (p: any) => `<b>${p.seriesName}</b><br/>Time: ${p.name}<br/>Value: ${p.data}`,
+      formatter: (p: any) => `<b>${p.seriesName}</b><br/>Time: ${p.name}<br/>Value: ${p.data}`
     },
     grid: {
       left: 50,
       right: 50,
       bottom: 50,
-      top: 70,
+      top: 70
     },
     xAxis: {
-      type: "category",
+      type: 'category',
       name: props.axisX.name,
-      data: props.axisX.slots.map(slot => slot.name),
-      nameLocation: "middle",
-      nameGap: 30,
+      data: props.axisX.slots.map((slot) => slot.name),
+      nameLocation: 'middle',
+      nameGap: 30
     },
     yAxis: {
-      type: "value",
+      type: 'value'
     },
     series: props.series.map((series, index) => ({
-      type: "line",
+      type: 'line',
       data: series.data,
       emphasis: {
         itemStyle: {
           shadowBlur: 10,
-          shadowColor: "rgba(0, 0, 0, 0.5)",
-        },
+          shadowColor: 'rgba(0, 0, 0, 0.5)'
+        }
       },
-      name: series.name,
+      name: series.name
     }))
-  } as unknown as EChartsOption;
-});
+  } as unknown as EChartsOption
+})
 </script>
 
 <template>

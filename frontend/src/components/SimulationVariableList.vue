@@ -1,15 +1,19 @@
 <script lang="ts" setup>
-import { useSimulationResultVariablesStore, type SluggedSimulationResultVariable } from '@/stores/simulationResultVariables';
-import { onMounted, ref } from 'vue';
+import {
+  useSimulationResultVariablesStore,
+  type SluggedSimulationResultVariable
+} from '@/stores/simulationResultVariables'
+import { onMounted, ref } from 'vue'
 
-const model = defineModel();
+const model = defineModel()
 
-const simulationResultsVariablesStore = useSimulationResultVariablesStore();
-const simulationResultsVariables = ref<SluggedSimulationResultVariable[]>([]);
+const simulationResultsVariablesStore = useSimulationResultVariablesStore()
+const simulationResultsVariables = ref<SluggedSimulationResultVariable[]>([])
 
 onMounted(async () => {
-  simulationResultsVariables.value = await simulationResultsVariablesStore.getSimulationResultVariablesList();
-});
+  simulationResultsVariables.value =
+    await simulationResultsVariablesStore.getSimulationResultVariablesList()
+})
 </script>
 
 <template>

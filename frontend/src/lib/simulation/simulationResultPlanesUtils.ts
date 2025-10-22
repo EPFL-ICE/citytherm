@@ -17,9 +17,12 @@ export type SimulationPlanePreset =
   | 'vertical_mid_canyon'
   | 'vertical_mid_building'
 
-export type SimulationPlanePresetsMap = Record<SimulationPlanePreset, SimulationPlaneOption>;
+export type SimulationPlanePresetsMap = Record<SimulationPlanePreset, SimulationPlaneOption>
 
-export function getSimulationPlanePresetsForParameters(buildingCanopyHeight: number, midBuildingZ: number): SimulationPlanePresetsMap {
+export function getSimulationPlanePresetsForParameters(
+  buildingCanopyHeight: number,
+  midBuildingZ: number
+): SimulationPlanePresetsMap {
   return {
     horizontal_ground: {
       slug: 'horizontal_ground',

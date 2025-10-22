@@ -1,4 +1,4 @@
-import type { SimulationResultVariable } from "@/stores/simulationResultVariables"
+import type { SimulationResultVariable } from '@/stores/simulationResultVariables'
 
 export interface GraphAxis {
   unit: string
@@ -14,21 +14,24 @@ export interface GraphAxes {
   y: GraphAxis
 }
 
-const verticalPlaneYAxisOverride = [0.2, 0.6, 1.0, 1.4, 1.8, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31, 33, 35, 37, 39, 41, 43, 45, 47, 49, 51, 53, 55, 57, 59, 61, 63, 65, 67, 69, 71, 73, 75];
+const verticalPlaneYAxisOverride = [
+  0.2, 0.6, 1.0, 1.4, 1.8, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31, 33, 35, 37, 39,
+  41, 43, 45, 47, 49, 51, 53, 55, 57, 59, 61, 63, 65, 67, 69, 71, 73, 75
+]
 
 export function getGraphAxesForPlane(planeSlug: string): GraphAxes {
-  if (planeSlug.startsWith("vertical")) {
+  if (planeSlug.startsWith('vertical')) {
     return {
       x: {
-        name: "Y",
-        unit: "m",
+        name: 'Y',
+        unit: 'm',
         cellSize: 2,
         min: 0,
         max: 100
       },
       y: {
-        name: "Z",
-        unit: "m",
+        name: 'Z',
+        unit: 'm',
         cellSize: 2,
         min: 0,
         max: 41,
@@ -39,15 +42,15 @@ export function getGraphAxesForPlane(planeSlug: string): GraphAxes {
 
   return {
     x: {
-      name: "X",
-      unit: "m",
+      name: 'X',
+      unit: 'm',
       cellSize: 2,
       min: 0,
       max: 100
     },
     y: {
-      name: "Y",
-      unit: "m",
+      name: 'Y',
+      unit: 'm',
       cellSize: 2,
       min: 0,
       max: 100
@@ -60,16 +63,19 @@ export interface ExpectedValueRange {
   max: number
 }
 
-export function getExpectedValueRangeForVariable(variable: SimulationResultVariable, difference: boolean): ExpectedValueRange {
+export function getExpectedValueRangeForVariable(
+  variable: SimulationResultVariable,
+  difference: boolean
+): ExpectedValueRange {
   if (difference) {
     return {
       min: variable.valid_min - variable.valid_max,
       max: variable.valid_max - variable.valid_min
-    };
+    }
   }
 
   return {
     min: variable.valid_min,
     max: variable.valid_max
-  };
+  }
 }
