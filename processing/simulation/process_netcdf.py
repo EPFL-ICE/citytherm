@@ -124,9 +124,20 @@ def export_variable_attributes(variable_names, ds, output_directory):
 def get_variable_attributes_in_dict(ds, variable_name):
     variable = ds.data_vars[variable_name]
     attrs = variable.attrs
-    return {k: prettify_unit(attrs[k]) for k in attrs}
+    return {k: prettify_unit(hardcoded_overrides(k, attrs[k])) for k in attrs}
 
-
+def hardcoded_overrides(variable_name: str, attrs: dict):
+    if variable_name == "T":
+        attrs["valid_min"] = 10
+        attrs["valid_max"] = 50
+    elif variable_name == "RelHum":
+        attrs["valid_min"] = 20
+        attrs["valid_max"] = 80
+    elif variable_name == "WindSpd":
+        attrs["valid_min"] = 0
+        attrs["valid_max"] = 20
+    
+    return attrs
 
 # Save plane slices for multiple variables at multiple times
 

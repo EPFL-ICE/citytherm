@@ -1,7 +1,7 @@
 import { KeyedCache } from '@/lib/utils/cache'
 import { defineStore } from 'pinia'
 
-export type SimulationResultPlaneAtomicData = number[][]
+export type SimulationResultPlaneAtomicData = (number | null)[][]
 
 export type SimulationResultPlaneData = {
   data: SimulationResultPlaneAtomicData
@@ -33,7 +33,14 @@ function getDifferenceData(
   for (let i = 0; i < w; i++) {
     diff[i] = []
     for (let j = 0; j < h; j++) {
-      diff[i][j] = a[i][j] - b[i][j]
+      const va = a[i][j]
+      const vb = b[i][j]
+      
+      if (va === null || va === undefined || vb === null || vb === undefined) {
+        diff[i][j] = null
+      } else {
+        diff[i][j] = va - vb
+      }
     }
   }
   return diff
