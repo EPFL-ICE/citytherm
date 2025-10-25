@@ -41,7 +41,9 @@ export function getSimulationPlanePresetsForParameters(
     horizontal_building_canopy: {
       slug: 'horizontal_building_canopy',
       name: 'Horizontal - Building Canopy',
-      description: `A horizontal plane one meter above the average building height (${buildingCanopyHeight + 1}m).`,
+      description: `A horizontal plane one meter above the average building height (${
+        buildingCanopyHeight + 1
+      }m).`,
       plane: { rotationX: -Math.PI / 2, position: { x: 0, y: buildingCanopyHeight + 1, z: 0 } }
     },
     vertical_mid_canyon: {

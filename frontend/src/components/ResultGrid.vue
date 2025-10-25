@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { computed, nextTick, ref, watch } from 'vue';
+import { computed, nextTick, ref, watch } from 'vue'
 
 const props = defineProps<{
-  numColumns: number;
-  rerenderOnColumnsChange?: boolean;
+  numColumns: number
+  rerenderOnColumnsChange?: boolean
 }>()
 
 // Echarts children don't resize properly if they are not given the right width to work with from the start. That's an issue because the number of columns is dynamic.
@@ -12,8 +12,8 @@ const renderKey = ref(0)
 watch(
   () => props.numColumns,
   async () => {
-    if (!props.rerenderOnColumnsChange) return;
-    
+    if (!props.rerenderOnColumnsChange) return
+
     // Step 1: remove slot content
     renderKey.value = 0
     // Step 2: wait for DOM reflow
@@ -27,7 +27,6 @@ watch(
 const gridStyle = computed(() => ({
   gridTemplateColumns: `repeat(${props.numColumns}, 1fr)`
 }))
-
 </script>
 
 <template>

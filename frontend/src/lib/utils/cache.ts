@@ -45,3 +45,11 @@ export class KeyedCache<T, E> {
     }
   }
 }
+
+export function makeCompositeKey(parts: (string | null)[]) {
+  return parts.map((v) => v ?? '_').join(';')
+}
+
+export function parseCompositeKey(key: string): (string | null)[] {
+  return key.split(';').map((v) => (v === '_' ? null : v))
+}

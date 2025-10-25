@@ -117,7 +117,6 @@ onMounted(() => {
   controls.dampingFactor = 0.05
   controls.enablePan = true
   controls.minDistance = 5
-  // controls.autoRotate = true
   controls.autoRotateSpeed = 0.4
   controls.maxDistance = 400
 

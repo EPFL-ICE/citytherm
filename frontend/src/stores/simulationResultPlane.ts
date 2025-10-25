@@ -1,4 +1,4 @@
-import { KeyedCache } from '@/lib/utils/cache'
+import { KeyedCache, makeCompositeKey, parseCompositeKey } from '@/lib/utils/cache'
 import { defineStore } from 'pinia'
 
 export type SimulationResultPlaneAtomicData = (number | null)[][]
@@ -35,7 +35,7 @@ function getDifferenceData(
     for (let j = 0; j < h; j++) {
       const va = a[i][j]
       const vb = b[i][j]
-      
+
       if (va === null || va === undefined || vb === null || vb === undefined) {
         diff[i][j] = null
       } else {
@@ -67,7 +67,7 @@ function makeSlugForSingleScenario(
   timeSliceSlug: string,
   variableSlug: string
 ): string {
-  return `${scenarioSlug}-${planeSlug}-${timeSliceSlug}-${variableSlug}`
+  return makeCompositeKey([scenarioSlug, planeSlug, timeSliceSlug, variableSlug])
 }
 
 function makeSlugForComparisonScenario(
@@ -77,14 +77,12 @@ function makeSlugForComparisonScenario(
   timeSliceSlug: string,
   variableSlug: string
 ): string {
-  return `${scenarioASlug}-${scenarioBSlug ?? '_'}-${planeSlug}-${timeSliceSlug}-${variableSlug}`
+  return makeCompositeKey([scenarioASlug, scenarioBSlug, planeSlug, timeSliceSlug, variableSlug])
 }
 
-// key is in the form `${scenarioSlug}-${variableSlug}-${timeSliceSlug}-${planeSlug}`
+// key is in the form `${scenarioSlug};${variableSlug};${timeSliceSlug};${planeSlug}`
 async function fetchSimulationResultPlaneData(key: string): Promise<SimulationResultPlaneData> {
-  const [scenarioASlug, variableSlug, timeSliceSlug, planeSlug] = key
-    .split('-')
-    .map((s) => (s === '_' || s === 'null' ? null : s))
+  const [scenarioASlug, variableSlug, timeSliceSlug, planeSlug] = parseCompositeKey(key)
   return fetchSimulationResultForScenarioPlaneTimeAndVariable(
     scenarioASlug!,
     planeSlug!,
@@ -99,11 +97,10 @@ export const useSimulationResultPlaneStore = defineStore('simulationResultPlane'
   )
 
   const simulationResultPlaneCache = new KeyedCache<SimulationResultPlaneValues, Error>(
-    // key is in the form `${scenarioASlug}-${scenarioBSlug}-${variableSlug}-${timeSliceSlug}-${planeSlug}`
+    // key is in the form `${scenarioASlug};${scenarioBSlug};${variableSlug};${timeSliceSlug};${planeSlug}`
     async (key: string) => {
-      const [scenarioASlug, scenarioBSlug, variableSlug, timeSliceSlug, planeSlug] = key
-        .split('-')
-        .map((s) => (s === '_' || s === 'null' ? null : s))
+      const [scenarioASlug, scenarioBSlug, variableSlug, timeSliceSlug, planeSlug] =
+        parseCompositeKey(key)
 
       const [scenarioAData, scenarioBData] = await Promise.all([
         scenarioDataCache.get(

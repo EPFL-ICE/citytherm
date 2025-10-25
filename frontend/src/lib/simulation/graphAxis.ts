@@ -14,9 +14,17 @@ export interface GraphAxes {
   y: GraphAxis
 }
 
-export function getFinalPositionFromIndexAndAxes(indexX: number, indexY: number, axes: GraphAxes): { x: number; y: number } {
-  const x = axes.x.valuesOverride ? axes.x.valuesOverride[indexX] : axes.x.min + indexX * axes.x.cellSize + axes.x.cellSize / 2
-  const y = axes.y.valuesOverride ? axes.y.valuesOverride[indexY] : axes.y.min + indexY * axes.y.cellSize + axes.y.cellSize / 2
+export function getFinalPositionFromIndexAndAxes(
+  indexX: number,
+  indexY: number,
+  axes: GraphAxes
+): { x: number; y: number } {
+  const x = axes.x.valuesOverride
+    ? axes.x.valuesOverride[indexX]
+    : axes.x.min + indexX * axes.x.cellSize + axes.x.cellSize / 2
+  const y = axes.y.valuesOverride
+    ? axes.y.valuesOverride[indexY]
+    : axes.y.min + indexY * axes.y.cellSize + axes.y.cellSize / 2
   return { x, y }
 }
 

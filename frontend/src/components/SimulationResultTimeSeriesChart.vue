@@ -6,7 +6,7 @@ import {
 } from '@/stores/simulationResultVariables'
 import {
   useSimulationResultTimeSeriesStore,
-  type SimulationResultTimeSeriesComparison,
+  type SimulationResultTimeSeriesComparison
 } from '@/stores/simulationResultTimeSeries'
 import LineChart from './LineChart.vue'
 import { useScenariosStore, type ScenarioDescription } from '@/stores/scenarios'
@@ -34,7 +34,12 @@ const timeSeries = ref<SimulationResultTimeSeriesComparison | null>(null)
 const scenarioADescription = ref<ScenarioDescription | null>(null)
 watchEffect(() => {
   simulationResultTimeSeriesStore
-    .getSimulationResultTimeSeries(props.scenarioASlug, props.scenarioBSlug, props.variableSlug, props.pointSlug)
+    .getSimulationResultTimeSeries(
+      props.scenarioASlug,
+      props.scenarioBSlug,
+      props.variableSlug,
+      props.pointSlug
+    )
     .then((result) => {
       timeSeries.value = result
     })
@@ -79,14 +84,14 @@ watchEffect(() => {
                 }
               ]
             : []),
-            ...(timeSeries.difference
-              ? [
-                  {
-                    name: 'Difference',
-                    data: timeSeries.difference.map((slot) => slot.v)
-                  }
-                ]
-              : [])
+          ...(timeSeries.difference
+            ? [
+                {
+                  name: 'Difference',
+                  data: timeSeries.difference.map((slot) => slot.v)
+                }
+              ]
+            : [])
         ]"
       />
     </div>

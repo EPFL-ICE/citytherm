@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { getSimulationPlanePresetsForParameters, type SimulationPlanePreset, type SimulationPlanePresetsMap } from '@/lib/simulation/simulationResultPlanesUtils';
 import {
-  useScenariosStore,
-  type TimeSeriesPoint
-} from '@/stores/scenarios'
+  getSimulationPlanePresetsForParameters,
+  type SimulationPlanePreset,
+  type SimulationPlanePresetsMap
+} from '@/lib/simulation/simulationResultPlanesUtils'
+import { useScenariosStore, type TimeSeriesPoint } from '@/stores/scenarios'
 import { computed, ref, watchEffect } from 'vue'
 import { makePointSlugArray } from '@/stores/simulationResultTimeSeries'
 
@@ -14,15 +15,12 @@ const props = defineProps<{
 }>()
 const model = defineModel<string | null>()
 
-
 const timeSeriesPointsList = ref<TimeSeriesPoint[] | null>(null)
 watchEffect(() => {
   scenarioStore.getAvailableTimeSeriesPointsForScenario(props.scenarioSlug).then((tspl) => {
     timeSeriesPointsList.value = tspl
-    console.log('timeSeriesPointsList', timeSeriesPointsList.value);
   })
 })
-
 
 const availablePlanes = computed<SimulationPlanePresetsMap>(() => {
   const buildingCanopyHeight = props.scenarioSlug.includes('S1') ? 30 : 16
@@ -38,8 +36,6 @@ function pointItemProps(item: TimeSeriesPoint) {
     value: makePointSlugArray(item.c)
   }
 }
-
-
 </script>
 
 <template>
