@@ -1,8 +1,5 @@
 <script setup lang="ts">
-import {
-  type TimeSeriesPoint,
-  useScenariosStore,
-} from '@/stores/scenarios'
+import { type TimeSeriesPoint, useScenariosStore } from '@/stores/scenarios'
 import TwoPanesLayout from '@/components/TwoPanesLayout.vue'
 import { computed, ref, shallowRef, watchEffect } from 'vue'
 import ToolSet from '@/components/ToolSet.vue'
@@ -17,17 +14,11 @@ import {
 import ScenarioSelect from '@/components/ScenarioSelect.vue'
 import TimeSeriesPointsSelect from '@/components/TimeSeriesPointsSelect.vue'
 import ResultGrid from '@/components/ResultGrid.vue'
+import { makePathToSliceMerge, type SlicePageParams } from '@/lib/utils/routingUtils'
 
 const scenarioStore = useScenariosStore()
 const route = useRoute()
 const router = useRouter()
-
-export interface PageParams {
-  scenarioA: string
-  scenarioB: string | '_'
-  plane: string
-  time: string
-}
 
 const scenarioASlug = computed(() => route.params.scenarioA as string)
 const scenarioBSlug = computed(() =>
@@ -56,22 +47,21 @@ const availablePlanes = computed<SimulationPlanePresetsMap>(() => {
 const planesSelectOptions = computed(() => Object.values(availablePlanes.value))
 const availableTimeSlots = computed(() => getSimulationPlaneAvailableTimeSlots())
 
-function goToUpdatedParams(params: Partial<PageParams>) {
-  const newParams: PageParams = {
+function goToUpdatedParams(params: Partial<SlicePageParams>) {
+  const routePath = makePathToSliceMerge(params, {
     scenarioA: scenarioASlug.value,
-    scenarioB: scenarioBSlug.value || '_',
+    scenarioB: scenarioBSlug.value,
     plane: planeSlug.value,
-    time: timeSlug.value,
-    ...params
-  }
-
-  const routePath = `/simulation/plane/${newParams.scenarioA}/${newParams.scenarioB ?? "_"}/${newParams.plane}/${newParams.time}`
+    time: timeSlug.value
+  })
   router.push(routePath)
 }
 
 const timeSeriesExplorerUrl = computed(() => {
   if (!selectedTimeSeriesPointSlug) return null
-  return `/simulation/timeSeries/${scenarioASlug.value}/${scenarioBSlug.value ?? '_'}/${selectedTimeSeriesPointSlug.value}`
+  return `/simulation/timeSeries/${scenarioASlug.value}/${scenarioBSlug.value ?? '_'}/${
+    selectedTimeSeriesPointSlug.value
+  }`
 })
 
 const gridColumns = computed(() => Math.min(2, selectedVariables.value.length))
@@ -148,7 +138,11 @@ const gridColumns = computed(() => Math.min(2, selectedVariables.value.length))
     <template #default>
       <template v-if="selectedVariables.length > 0">
         <result-grid :numColumns="gridColumns" :rerender-on-columns-change="true">
-          <div v-for="(variable, i) in selectedVariables" :key="variable" :class="{ 'right-border': (i % gridColumns < gridColumns - 1) }">
+          <div
+            v-for="(variable, i) in selectedVariables"
+            :key="variable"
+            :class="{ 'right-border': i % gridColumns < gridColumns - 1 }"
+          >
             <simulation-result-plane-heatmap
               :plane-slug="planeSlug"
               :variable-slug="variable"
@@ -169,9 +163,7 @@ const gridColumns = computed(() => Math.min(2, selectedVariables.value.length))
 </template>
 
 <style scoped>
-
 .right-border {
   border-right: 1px solid rgba(0, 0, 0, 0.05);
 }
-
 </style>

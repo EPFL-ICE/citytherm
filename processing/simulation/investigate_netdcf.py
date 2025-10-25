@@ -1,3 +1,8 @@
+# This file is for exploring the NetCDF data and is not used to process the data as expected by the frontend.
+# It is kept here for reference and potential future use.
+# For actual data processing, please refer to process_netdcf.py in the same directory.
+
+
 import xarray as xr
 import pandas as pd
 import numpy as np
