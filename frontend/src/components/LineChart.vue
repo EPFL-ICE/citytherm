@@ -7,7 +7,8 @@ import {
   TitleComponent,
   TooltipComponent,
   VisualMapComponent,
-  GridComponent
+  GridComponent,
+  LegendComponent
 } from 'echarts/components'
 import { CanvasRenderer } from 'echarts/renderers'
 import type { EChartsOption } from 'echarts/types/dist/shared'
@@ -33,7 +34,8 @@ echarts.use([
   VisualMapComponent,
   GridComponent,
   LineChart,
-  CanvasRenderer
+  CanvasRenderer,
+  LegendComponent
 ])
 
 const chartOptions = computed<EChartsOption>(() => {
@@ -42,10 +44,10 @@ const chartOptions = computed<EChartsOption>(() => {
       formatter: (p: any) => `<b>${p.seriesName}</b><br/>Time: ${p.name}<br/>Value: ${p.data}`
     },
     grid: {
-      left: 50,
-      right: 50,
-      bottom: 50,
-      top: 70
+      left: 20,
+      right: 20,
+      bottom: 20,
+      top: 40
     },
     xAxis: {
       type: 'category',
@@ -56,6 +58,12 @@ const chartOptions = computed<EChartsOption>(() => {
     },
     yAxis: {
       type: 'value'
+    },
+    legend: {
+      data: props.series.map((series) => series.name),
+      top: '0',
+      left: 'center',
+      orient: 'horizontal'
     },
     series: props.series.map((series, index) => ({
       type: 'line',

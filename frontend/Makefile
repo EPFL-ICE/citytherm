@@ -11,7 +11,10 @@ $(foreach tool,$(REQUIRED_TOOLS),\
     $(if $(shell which $(tool)),,$(error "$(tool) not found in PATH")))
 
 
-CITYTHERM_PROCESSED_DATA_DIR = $(shell pwd)/public/geodata
+# Directories
+CITYTHERM_PROCESSED_DATA_DIRS := \
+	$(shell pwd)/public/geodata \
+	$(shell pwd)/public/simulation
 
 # Change the version and date accordingly
 # version=1.0
@@ -36,8 +39,18 @@ processing:
 	# should create geosjon and csv files in ../frontend/public/geodata
 	$(MAKE) -C ../processing
 
+# AI Generated to upload multiple directories
 cdn:
-	s3cmd -c ${HOME}/${S3CMD_CONFIG_NAME} put --recursive --acl-public --guess-mime-type ${data_dir} s3://${bucket}/${path}/
+	@for dir in $(CITYTHERM_PROCESSED_DATA_DIRS); do \
+		echo "📤 Uploading $$dir to s3://${bucket}/${path}/..."; \
+		s3cmd -c ${HOME}/${S3CMD_CONFIG_NAME} \
+			put --recursive --acl-public --guess-mime-type \
+			$$dir s3://${bucket}/${path}/; \
+	done
+
+# original from Pierre
+#cdn:
+#	s3cmd -c ${HOME}/${S3CMD_CONFIG_NAME} put --recursive --acl-public --guess-mime-type ${data_dir} s3://${bucket}/${path}/
 	
 ls:
 	s3cmd -c ${HOME}/${S3CMD_CONFIG_NAME} ls --acl-public s3://${bucket}/${path}/
