@@ -2,11 +2,9 @@
 import {
   type TimeSeriesPoint,
   useScenariosStore,
-  type ScenarioDescription
 } from '@/stores/scenarios'
-import ScenarioPreview from '@/components/ScenarioPreview.vue'
 import TwoPanesLayout from '@/components/TwoPanesLayout.vue'
-import { computed, onMounted, ref, shallowRef, watchEffect } from 'vue'
+import { computed, ref, shallowRef, watchEffect } from 'vue'
 import ToolSet from '@/components/ToolSet.vue'
 import SimulationVariableList from '@/components/SimulationVariableList.vue'
 import SimulationResultPlaneHeatmap from '@/components/SimulationResultPlaneHeatmap.vue'
@@ -14,16 +12,17 @@ import { useRoute, useRouter } from 'vue-router'
 import {
   getSimulationPlaneAvailableTimeSlots,
   getSimulationPlanePresetsForParameters,
-  type SimulationPlanePreset,
   type SimulationPlanePresetsMap
 } from '@/lib/simulation/simulationResultPlanesUtils'
-import { makePointSlugArray } from '@/stores/simulationResultTimeSeries'
+import ScenarioSelect from '@/components/ScenarioSelect.vue'
+import TimeSeriesPointsSelect from '@/components/TimeSeriesPointsSelect.vue'
+import ResultGrid from '@/components/ResultGrid.vue'
 
 const scenarioStore = useScenariosStore()
 const route = useRoute()
 const router = useRouter()
 
-interface PageParams {
+export interface PageParams {
   scenarioA: string
   scenarioB: string | '_'
   plane: string
@@ -36,11 +35,6 @@ const scenarioBSlug = computed(() =>
 )
 const planeSlug = computed(() => route.params.plane as string)
 const timeSlug = computed(() => route.params.time as string)
-
-const scenariosList = ref<ScenarioDescription[] | null>(null)
-onMounted(async () => {
-  scenariosList.value = await scenarioStore.getScenarioDescriptions()
-})
 
 const timeSeriesPointsList = ref<TimeSeriesPoint[] | null>(null)
 const selectedTimeSeriesPointSlug = ref<string | null>(null)
@@ -71,19 +65,16 @@ function goToUpdatedParams(params: Partial<PageParams>) {
     ...params
   }
 
-  const routePath = `/simulation/plane/${newParams.scenarioA}/${newParams.scenarioB}/${newParams.plane}/${newParams.time}`
+  const routePath = `/simulation/plane/${newParams.scenarioA}/${newParams.scenarioB ?? "_"}/${newParams.plane}/${newParams.time}`
   router.push(routePath)
-}
-
-function scenarioItemProps(item: ScenarioDescription | null) {
-  if (!item) return { title: 'No comparison', subtitle: 'Pick a scenario to compare', value: null }
-  return { title: `${item.id} - ${item.scenario}`, subtitle: item.description, value: item.slug }
 }
 
 const timeSeriesExplorerUrl = computed(() => {
   if (!selectedTimeSeriesPointSlug) return null
   return `/simulation/timeSeries/${scenarioASlug.value}/${scenarioBSlug.value ?? '_'}/${selectedTimeSeriesPointSlug.value}`
 })
+
+const gridColumns = computed(() => Math.min(2, selectedVariables.value.length))
 </script>
 
 <template>
@@ -92,27 +83,16 @@ const timeSeriesExplorerUrl = computed(() => {
       <tool-set>
         <template #header>
           <div class="mb-8">
-            <v-select
+            <scenario-select
               :model-value="scenarioASlug"
-              :items="scenariosList ?? []"
-              :item-props="scenarioItemProps"
-              @update:model-value="goToUpdatedParams({ scenarioA: $event })"
+              @update:model-value="goToUpdatedParams({ scenarioA: $event ?? undefined })"
               label="Scenario A"
-              single-line
-              :hide-details="true"
-              density="comfortable"
-              class="mb-2"
             />
-            <v-select
+            <scenario-select
               :model-value="scenarioBSlug"
-              :items="scenariosList ? [null, ...scenariosList] : []"
-              :item-props="scenarioItemProps"
-              @update:model-value="goToUpdatedParams({ scenarioB: $event })"
+              @update:model-value="goToUpdatedParams({ scenarioB: $event ?? undefined })"
               label="Scenario B"
-              single-line
-              :hide-details="true"
-              density="comfortable"
-              class="mb-2"
+              :compare-option="true"
             />
             <v-select
               :model-value="planeSlug"
@@ -148,22 +128,10 @@ const timeSeriesExplorerUrl = computed(() => {
         </template>
         <template #footer>
           <div>
-            <v-select
-              v-if="timeSeriesPointsList"
+            <time-series-points-select
+              :scenario-slug="scenarioASlug"
+              label="Time series point to explore"
               v-model="selectedTimeSeriesPointSlug"
-              :items="timeSeriesPointsList"
-              :item-props="
-                (item) => ({
-                  title: `x: ${item.c[0]} ; y: ${item.c[1]} ; z: ${item.c[2]}`,
-                  subtitle: availablePlanes[item.p as SimulationPlanePreset].name,
-                  value: makePointSlugArray(item.c)
-                })
-              "
-              label="Time series point"
-              single-line
-              :hide-details="true"
-              density="comfortable"
-              class="mb-2"
             />
             <v-btn
               color="primary"
@@ -178,15 +146,32 @@ const timeSeriesExplorerUrl = computed(() => {
     </template>
 
     <template #default>
-      <div v-for="variable in selectedVariables" :key="variable">
-        <simulation-result-plane-heatmap
-          :plane-slug="planeSlug"
-          :variable-slug="variable"
-          :time-slice-slug="timeSlug"
-          :scenario-a-slug="scenarioASlug"
-          :scenario-b-slug="scenarioBSlug"
-        />
-      </div>
+      <template v-if="selectedVariables.length > 0">
+        <result-grid :numColumns="gridColumns" :rerender-on-columns-change="true">
+          <div v-for="(variable, i) in selectedVariables" :key="variable" :class="{ 'right-border': (i % gridColumns < gridColumns - 1) }">
+            <simulation-result-plane-heatmap
+              :plane-slug="planeSlug"
+              :variable-slug="variable"
+              :time-slice-slug="timeSlug"
+              :scenario-a-slug="scenarioASlug"
+              :scenario-b-slug="scenarioBSlug"
+            />
+          </div>
+        </result-grid>
+      </template>
+      <template v-else>
+        <div class="d-flex h-100 align-center justify-center">
+          <div class="text-h4">Please select a variable on the left panel</div>
+        </div>
+      </template>
     </template>
   </two-panes-layout>
 </template>
+
+<style scoped>
+
+.right-border {
+  border-right: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+</style>

@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import MatrixHeatmap from '@/components/MatrixHeatmap.vue'
+import MatrixHeatmap, { type HeatmapData } from '@/components/MatrixHeatmap.vue'
 import { computed, onMounted, ref, watchEffect } from 'vue'
 import {
   useSimulationResultPlaneStore,
+  type SimulationResultPlaneAtomicData,
   type SimulationResultPlaneValues
 } from '@/stores/simulationResultPlane'
 import {
@@ -11,11 +12,16 @@ import {
 } from '@/stores/simulationResultVariables'
 import {
   getExpectedValueRangeForVariable,
+  getFinalPositionFromIndexAndAxes,
   getGraphAxesForPlane,
   type ExpectedValueRange,
   type GraphAxes,
   type GraphAxis
 } from '@/lib/simulation/graphAxis'
+import { useScenariosStore, type TimeSeriesPoint } from '@/stores/scenarios'
+import { makePointSlugArray } from '@/stores/simulationResultTimeSeries'
+import { useRouter } from 'vue-router'
+import { simulationVariablesConfig } from '@/config/simulationVariablesConfig'
 
 const props = defineProps<{
   scenarioASlug: string
@@ -25,11 +31,17 @@ const props = defineProps<{
   variableSlug: string
 }>()
 
+const router = useRouter()
+
 const simulationResultPlaneStore = useSimulationResultPlaneStore()
 const simulationResultsVariablesStore = useSimulationResultVariablesStore()
+const scenarioStore = useScenariosStore()
 
 const simulation = ref<SimulationResultPlaneValues | null>(null)
 const variableAttributes = ref<SimulationResultVariable | null>(null)
+
+const showSpecialPoints = ref(true)
+const inferMinMax = ref(true)
 
 onMounted(async () => {
   simulationResultsVariablesStore.getSimulationResultVariables().then((variables) => {
@@ -51,11 +63,30 @@ watchEffect(() => {
     })
 })
 
-function dataToHeatmapData(data: number[][]): [number, number, number][] {
-  const heatmapData: [number, number, number][] = []
+const timeSeriesPointsList = ref<TimeSeriesPoint[] | null>(null)
+watchEffect(() => {
+  scenarioStore.getAvailableTimeSeriesPointsForScenario(props.scenarioASlug).then((tspl) => {
+    timeSeriesPointsList.value = tspl
+  })
+})
+
+function getMetadataForDataIndex(indexX: number, indexY: number): { pointSlug: string } | undefined {
+  if (!timeSeriesPointsList.value) return undefined
+
+  const { x: trueX, y: trueY } = getFinalPositionFromIndexAndAxes(indexX, indexY, getGraphAxesForPlane(props.planeSlug))
+  const point = timeSeriesPointsList.value.find((point) => point.c[0] === trueX && point.c[1] === trueY)
+  if (point) {
+    return { pointSlug: makePointSlugArray(point.c) }
+  }
+
+  return undefined
+}
+
+function dataToHeatmapData(data: (number | null)[][]): HeatmapData[] {
+  const heatmapData: HeatmapData[] = []
   for (let i = 0; i < data.length; i++) {
     for (let j = 0; j < data[i].length; j++) {
-      heatmapData.push([i, j, data[i][j]])
+      heatmapData.push({ value: [i, j, data[i][j]], metadata: getMetadataForDataIndex(i, j) })
     }
   }
   return heatmapData
@@ -64,7 +95,7 @@ function dataToHeatmapData(data: number[][]): [number, number, number][] {
 const mode = ref<'scenarioA' | 'scenarioB' | 'difference'>('scenarioA')
 
 const heatmapData = computed(() => {
-  if (!simulation.value) return []
+  if (!simulation.value || !timeSeriesPointsList.value) return []
 
   switch (mode.value) {
     case 'scenarioA':
@@ -77,6 +108,36 @@ const heatmapData = computed(() => {
       return simulation.value.data.difference
         ? dataToHeatmapData(simulation.value.data.difference)
         : []
+  }
+})
+
+function getMinMax(data: SimulationResultPlaneAtomicData | undefined | null): { min: number; max: number } {
+  if (!data) return { min: 0, max: 100 }
+
+  let min = Infinity
+  let max = -Infinity
+
+  for (const row of data) {
+    for (const value of row) {
+      if (value === null) continue
+      if (value < min) min = value
+      if (value > max) max = value
+    }
+  }
+
+  return { min, max }
+}
+
+const minMaxOverriddenValues = computed(() => {
+  if (!inferMinMax.value) return undefined;
+
+  switch (mode.value) {
+    case 'scenarioA':
+      return getMinMax(simulation.value?.data.scenarioA)
+    case 'scenarioB':
+      return getMinMax(simulation.value?.data.scenarioB)
+    case 'difference':
+      return getMinMax(simulation.value?.data.difference)
   }
 })
 
@@ -94,10 +155,19 @@ const graphAspectRatio = computed(() => {
     (graphAxes.value.y.max * graphAxes.value.y.cellSize)
   )
 })
+
+const colormap = computed<string[]>(() => {
+  return simulationVariablesConfig[props.variableSlug]?.heatmap.colormap ?? undefined
+})
+
+function navigateToTimeSeriesPoint(pointSlug: string) {
+  const routePath = `/simulation/timeSeries/${props.scenarioASlug}/${props.scenarioBSlug || '_'}/${pointSlug}`
+  router.push(routePath)
+}
 </script>
 
 <template>
-  <div v-if="simulation && variableAttributes" class="pa-8">
+  <div v-if="simulation && variableAttributes" class="pa-4 h-100">
     <h2>{{ variableAttributes.long_name }} ({{ variableAttributes.units }})</h2>
     <v-btn-toggle
       v-if="scenarioBSlug"
@@ -110,6 +180,22 @@ const graphAspectRatio = computed(() => {
       <v-btn value="scenarioB">Scenario B ({{ scenarioBSlug }})</v-btn>
       <v-btn value="difference">Signed difference (A - B)</v-btn>
     </v-btn-toggle>
+    <div class="switches">
+      <v-switch
+        v-model="inferMinMax"
+        label="Infer min/max from data"
+        class="ml-4"
+        density="comfortable"
+        :hide-details="true"
+      />
+      <v-switch
+        v-model="showSpecialPoints"
+        label="Highlight available time series points"
+        class="ml-4"
+        density="comfortable"
+        :hide-details="true"
+      />
+    </div>
 
     <div class="heatmap-container" :style="`aspect-ratio: ${graphAspectRatio}`">
       <matrix-heatmap
@@ -118,6 +204,10 @@ const graphAspectRatio = computed(() => {
         :axisY="graphAxes.y"
         :expected-value-range="expectedValueRange"
         :data="heatmapData"
+        :show-special-points="showSpecialPoints"
+        :override-min-max="minMaxOverriddenValues"
+        :colormap="colormap"
+        @point-clicked="navigateToTimeSeriesPoint"
       />
     </div>
   </div>
@@ -128,8 +218,16 @@ const graphAspectRatio = computed(() => {
 
 <style scoped>
 .heatmap-container {
-  min-height: 500px;
-  max-height: 80vh;
   max-width: 100%;
+  max-height: 80vh;
+}
+
+.switches {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
+
+  border-bottom: 1px solid lightgrey;
 }
 </style>

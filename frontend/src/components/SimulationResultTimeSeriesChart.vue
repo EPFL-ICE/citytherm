@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watchEffect } from 'vue'
+import { onMounted, ref, watchEffect } from 'vue'
 import {
   type SimulationResultVariable,
   useSimulationResultVariablesStore
 } from '@/stores/simulationResultVariables'
 import {
   useSimulationResultTimeSeriesStore,
-  type TimeSeriesData
+  type SimulationResultTimeSeriesComparison,
 } from '@/stores/simulationResultTimeSeries'
 import LineChart from './LineChart.vue'
 import { useScenariosStore, type ScenarioDescription } from '@/stores/scenarios'
@@ -30,31 +30,26 @@ onMounted(async () => {
   })
 })
 
-const scenarioATimeSeries = ref<TimeSeriesData | null>(null)
+const timeSeries = ref<SimulationResultTimeSeriesComparison | null>(null)
 const scenarioADescription = ref<ScenarioDescription | null>(null)
 watchEffect(() => {
   simulationResultTimeSeriesStore
-    .getSimulationResultTimeSeries(props.scenarioASlug, props.variableSlug, props.pointSlug)
+    .getSimulationResultTimeSeries(props.scenarioASlug, props.scenarioBSlug, props.variableSlug, props.pointSlug)
     .then((result) => {
-      scenarioATimeSeries.value = result
+      timeSeries.value = result
     })
   scenarioStore.getScenarioBySlug(props.scenarioASlug).then((desc) => {
     scenarioADescription.value = desc
   })
 })
 
-const scenarioBTimeSeries = ref<TimeSeriesData | null>(null)
 const scenarioBDescription = ref<ScenarioDescription | null>(null)
 watchEffect(() => {
   if (!props.scenarioBSlug) {
-    scenarioBTimeSeries.value = null
+    scenarioBDescription.value = null
     return
   }
-  simulationResultTimeSeriesStore
-    .getSimulationResultTimeSeries(props.scenarioBSlug, props.variableSlug, props.pointSlug)
-    .then((result) => {
-      scenarioBTimeSeries.value = result
-    })
+
   scenarioStore.getScenarioBySlug(props.scenarioBSlug).then((desc) => {
     scenarioBDescription.value = desc
   })
@@ -62,28 +57,36 @@ watchEffect(() => {
 </script>
 
 <template>
-  <div v-if="scenarioATimeSeries && scenarioADescription && variableAttributes" class="pa-8">
+  <div v-if="timeSeries && scenarioADescription && variableAttributes" class="pa-8">
     <h2>{{ variableAttributes.long_name }} ({{ variableAttributes.units }})</h2>
 
     <div class="heatmap-container">
       <line-chart
         :axis-x="{
           name: 'Time',
-          slots: scenarioATimeSeries.map((slot) => ({ name: slot.t }))
+          slots: timeSeries.scenarioA.map((slot) => ({ name: slot.t }))
         }"
         :series="[
           {
             name: `${scenarioADescription.id} - ${scenarioADescription.scenario}`,
-            data: scenarioATimeSeries.map((slot) => slot.v)
+            data: timeSeries.scenarioA.map((slot) => slot.v)
           },
-          ...(scenarioBTimeSeries && scenarioBDescription
+          ...(timeSeries.scenarioB && scenarioBDescription
             ? [
                 {
                   name: `${scenarioBDescription.id} - ${scenarioBDescription.scenario}`,
-                  data: scenarioBTimeSeries.map((slot) => slot.v)
+                  data: timeSeries.scenarioB.map((slot) => slot.v)
                 }
               ]
-            : [])
+            : []),
+            ...(timeSeries.difference
+              ? [
+                  {
+                    name: 'Difference',
+                    data: timeSeries.difference.map((slot) => slot.v)
+                  }
+                ]
+              : [])
         ]"
       />
     </div>
@@ -95,6 +98,7 @@ watchEffect(() => {
 
 <style scoped>
 .heatmap-container {
+  margin-top: 1rem;
   aspect-ratio: 1;
   min-height: 500px;
   max-height: 80vh;

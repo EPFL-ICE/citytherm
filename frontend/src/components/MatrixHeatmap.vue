@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import VChart from 'vue-echarts'
 import * as echarts from 'echarts/core'
 import { HeatmapChart } from 'echarts/charts'
@@ -13,11 +13,30 @@ import { CanvasRenderer } from 'echarts/renderers'
 import type { EChartsOption } from 'echarts/types/dist/shared'
 import type { GraphAxis } from '@/lib/simulation/graphAxis'
 
+export interface HeatmapMetadata {
+  pointSlug?: string
+}
+
+export interface HeatmapData {
+  value: [number, number, number | null]
+  metadata?: HeatmapMetadata
+}
+
+const emit = defineEmits<{
+  (e: 'point-clicked', pointSlug: string): void
+}>();
+
 const props = defineProps<{
   axisX: GraphAxis
   axisY: GraphAxis
   expectedValueRange?: { min: number; max: number }
-  data: [number, number, number][]
+  data: HeatmapData[]
+  showSpecialPoints?: boolean
+  overrideMinMax?: {
+    min: number
+    max: number
+  }
+  colormap?: string[]
 }>()
 
 echarts.use([
@@ -34,7 +53,6 @@ function getCenteredValue(x: number, s: number): number {
 }
 
 function getTooltip(p: any): string {
-  console.log(p)
   const xValue = props.axisX.valuesOverride
     ? props.axisX.valuesOverride[p.value[0]]
     : getCenteredValue(p.value[0], props.axisX.cellSize)
@@ -42,12 +60,23 @@ function getTooltip(p: any): string {
     ? props.axisY.valuesOverride[p.value[1]]
     : getCenteredValue(p.value[1], props.axisY.cellSize)
 
+  const specialPoint = (props.showSpecialPoints && p.data.metadata?.pointSlug) ? '<br/><br/>Time series data available for this point !<br />Click to see the time series graph' : ''
+
   return (
     `${props.axisX.name}: ${xValue} ${props.axisX.unit}<br>` +
     `${props.axisY.name}: ${yValue} ${props.axisY.unit}<br>` +
-    `value: ${p.value[2].toFixed(2)}`
+    `value: ${p.value[2].toFixed(2)}` + specialPoint
   )
 }
+
+const reshapedData = computed(() => {
+  if (!props.showSpecialPoints) return props.data
+
+  return props.data.map((d) => ({
+    ...d,
+    visualMap: !d.metadata?.pointSlug
+  }))
+})
 
 const chartOptions = computed<EChartsOption>(() => {
   return {
@@ -93,21 +122,33 @@ const chartOptions = computed<EChartsOption>(() => {
       nameGap: 40
     },
     visualMap: {
-      min: props.expectedValueRange?.min ?? 0,
-      max: props.expectedValueRange?.max ?? 100,
+      min: props.overrideMinMax?.min ?? props.expectedValueRange?.min ?? 0,
+      max: props.overrideMinMax?.max ?? props.expectedValueRange?.max ?? 100,
       calculable: true,
+      realtime: false,
       orient: 'horizontal',
       left: 'center',
       top: 0,
-      itemHeight: 400
+      itemHeight: 400,
+      inRange: {
+        color: props.colormap
+      }
     },
     series: [
       {
         type: 'heatmap',
-        data: props.data,
+        data: reshapedData.value,
+        itemStyle: {
+          color: (params: { data: HeatmapData }) => {
+            if (params.data.metadata?.pointSlug) {
+              return '#ff13f0'
+            }
+            return undefined
+          }
+        },
         emphasis: {
           itemStyle: {
-            shadowBlur: 10,
+            shadowBlur: 5,
             shadowColor: 'rgba(0, 0, 0, 0.5)'
           }
         }
@@ -115,8 +156,18 @@ const chartOptions = computed<EChartsOption>(() => {
     ]
   } as unknown as EChartsOption
 })
+
+function onClickHeatmap(params: echarts.ECElementEvent) {
+  if (!props.showSpecialPoints) return
+  
+  if (!params.data) return
+  const metadata = (params.data as HeatmapData).metadata
+  if (!metadata?.pointSlug) return
+
+  emit('point-clicked', metadata.pointSlug)
+}
 </script>
 
 <template>
-  <v-chart :option="chartOptions" autoresize />
+  <v-chart :option="chartOptions" autoresize @click="onClickHeatmap" />
 </template>
