@@ -127,17 +127,18 @@ def get_variable_attributes_in_dict(ds, variable_name):
     return {k: prettify_unit(hardcoded_overrides(k, attrs[k])) for k in attrs}
 
 def hardcoded_overrides(variable_name: str, attrs: dict):
+    attrs_copy = attrs.copy()
     if variable_name == "T":
-        attrs["valid_min"] = 10
-        attrs["valid_max"] = 50
+        attrs_copy["valid_min"] = 10
+        attrs_copy["valid_max"] = 50
     elif variable_name == "RelHum":
-        attrs["valid_min"] = 20
-        attrs["valid_max"] = 80
+        attrs_copy["valid_min"] = 20
+        attrs_copy["valid_max"] = 80
     elif variable_name == "WindSpd":
-        attrs["valid_min"] = 0
-        attrs["valid_max"] = 20
-    
-    return attrs
+        attrs_copy["valid_min"] = 0
+        attrs_copy["valid_max"] = 20
+
+    return attrs_copy
 
 # Save plane slices for multiple variables at multiple times
 

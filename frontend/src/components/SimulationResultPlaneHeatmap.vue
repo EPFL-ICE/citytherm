@@ -70,11 +70,20 @@ watchEffect(() => {
   })
 })
 
-function getMetadataForDataIndex(indexX: number, indexY: number): { pointSlug: string } | undefined {
+function getMetadataForDataIndex(
+  indexX: number,
+  indexY: number
+): { pointSlug: string } | undefined {
   if (!timeSeriesPointsList.value) return undefined
 
-  const { x: trueX, y: trueY } = getFinalPositionFromIndexAndAxes(indexX, indexY, getGraphAxesForPlane(props.planeSlug))
-  const point = timeSeriesPointsList.value.find((point) => point.c[0] === trueX && point.c[1] === trueY)
+  const { x: trueX, y: trueY } = getFinalPositionFromIndexAndAxes(
+    indexX,
+    indexY,
+    getGraphAxesForPlane(props.planeSlug)
+  )
+  const point = timeSeriesPointsList.value.find(
+    (point) => point.c[0] === trueX && point.c[1] === trueY
+  )
   if (point) {
     return { pointSlug: makePointSlugArray(point.c) }
   }
@@ -111,7 +120,10 @@ const heatmapData = computed(() => {
   }
 })
 
-function getMinMax(data: SimulationResultPlaneAtomicData | undefined | null): { min: number; max: number } {
+function getMinMax(data: SimulationResultPlaneAtomicData | undefined | null): {
+  min: number
+  max: number
+} {
   if (!data) return { min: 0, max: 100 }
 
   let min = Infinity
@@ -129,7 +141,7 @@ function getMinMax(data: SimulationResultPlaneAtomicData | undefined | null): { 
 }
 
 const minMaxOverriddenValues = computed(() => {
-  if (!inferMinMax.value) return undefined;
+  if (!inferMinMax.value) return undefined
 
   switch (mode.value) {
     case 'scenarioA':
@@ -161,7 +173,9 @@ const colormap = computed<string[]>(() => {
 })
 
 function navigateToTimeSeriesPoint(pointSlug: string) {
-  const routePath = `/simulation/timeSeries/${props.scenarioASlug}/${props.scenarioBSlug || '_'}/${pointSlug}`
+  const routePath = `/simulation/timeSeries/${props.scenarioASlug}/${
+    props.scenarioBSlug || '_'
+  }/${pointSlug}`
   router.push(routePath)
 }
 </script>

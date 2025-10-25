@@ -9,6 +9,7 @@ import {
   type SimulationPlanePreset,
   type SimulationPlanePresetsMap
 } from '@/lib/simulation/simulationResultPlanesUtils'
+import { makePathToSlice } from '@/lib/utils/routingUtils'
 
 const scenariosList = ref<ScenarioDescription[] | null>(null)
 
@@ -39,7 +40,12 @@ let selectedPlane = computed<SimulationPlane | null>(() => {
 const sliceExplorerUrl = computed(() => {
   if (selectedScenariosSlug.value.length === 0 || !selectedPlaneSlug.value) return null
 
-  return `/simulation/plane/${selectedScenariosSlug.value[0] || '_'}/_/${selectedPlaneSlug.value || '_'}/time_12`
+  return makePathToSlice({
+    scenarioA: selectedScenariosSlug.value[0],
+    scenarioB: null,
+    plane: selectedPlaneSlug.value,
+    time: 'time_12'
+  })
 })
 </script>
 

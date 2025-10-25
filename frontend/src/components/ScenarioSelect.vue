@@ -1,8 +1,5 @@
 <script setup lang="ts">
-import {
-  useScenariosStore,
-  type ScenarioDescription
-} from '@/stores/scenarios'
+import { useScenariosStore, type ScenarioDescription } from '@/stores/scenarios'
 import { computed, onMounted, ref } from 'vue'
 
 const scenarioStore = useScenariosStore()
@@ -32,7 +29,6 @@ const items = computed(() => {
 
   return scenariosList.value
 })
-
 </script>
 
 <template>

@@ -24,7 +24,7 @@ export interface HeatmapData {
 
 const emit = defineEmits<{
   (e: 'point-clicked', pointSlug: string): void
-}>();
+}>()
 
 const props = defineProps<{
   axisX: GraphAxis
@@ -60,12 +60,16 @@ function getTooltip(p: any): string {
     ? props.axisY.valuesOverride[p.value[1]]
     : getCenteredValue(p.value[1], props.axisY.cellSize)
 
-  const specialPoint = (props.showSpecialPoints && p.data.metadata?.pointSlug) ? '<br/><br/>Time series data available for this point !<br />Click to see the time series graph' : ''
+  const specialPoint =
+    props.showSpecialPoints && p.data.metadata?.pointSlug
+      ? '<br/><br/>Time series data available for this point !<br />Click to see the time series graph'
+      : ''
 
   return (
     `${props.axisX.name}: ${xValue} ${props.axisX.unit}<br>` +
     `${props.axisY.name}: ${yValue} ${props.axisY.unit}<br>` +
-    `value: ${p.value[2].toFixed(2)}` + specialPoint
+    `value: ${p.value[2].toFixed(2)}` +
+    specialPoint
   )
 }
 
@@ -159,7 +163,7 @@ const chartOptions = computed<EChartsOption>(() => {
 
 function onClickHeatmap(params: echarts.ECElementEvent) {
   if (!props.showSpecialPoints) return
-  
+
   if (!params.data) return
   const metadata = (params.data as HeatmapData).metadata
   if (!metadata?.pointSlug) return

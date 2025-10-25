@@ -1,4 +1,4 @@
-import { KeyedCache } from '@/lib/utils/cache'
+import { KeyedCache, makeCompositeKey, parseCompositeKey } from '@/lib/utils/cache'
 import { defineStore } from 'pinia'
 
 export type TimeSeriesDataPoint = {
@@ -62,7 +62,7 @@ function makeSlugForSingleScenario(
   variableSlug: string,
   pointSlug: string
 ): string {
-  return `${scenarioSlug};${variableSlug};${pointSlug}`
+  return makeCompositeKey([scenarioSlug, variableSlug, pointSlug])
 }
 
 function makeSlugForComparisonScenario(
@@ -71,14 +71,12 @@ function makeSlugForComparisonScenario(
   variableSlug: string,
   pointSlug: string
 ): string {
-  return `${scenarioASlug};${scenarioBSlug ?? '_'};${variableSlug};${pointSlug}`
+  return makeCompositeKey([scenarioASlug, scenarioBSlug, variableSlug, pointSlug])
 }
 
 // key is in the form `${scenarioSlug};${variableSlug};${pointSlug}`
 async function fetchSimulationResultTimeSeries(key: string): Promise<TimeSeriesData> {
-  const [scenarioASlug, variableSlug, pointSlug] = key
-    .split(';')
-    .map((s) => (s === '_' || s === 'null' ? null : s))
+  const [scenarioASlug, variableSlug, pointSlug] = parseCompositeKey(key)
   return fetchSimulationResultTimeSeriesForScenarioVariableAndPoint(
     scenarioASlug!,
     variableSlug!,
@@ -86,52 +84,19 @@ async function fetchSimulationResultTimeSeries(key: string): Promise<TimeSeriesD
   )
 }
 
-async function fetchSimulationResultTimeSeriesForComparison(scenarioASlug: string, scenarioBSlug: string | null, variableSlug: string, pointSlug: string): Promise<SimulationResultTimeSeriesComparison> {
-  const [scenarioAData, scenarioBData] = await Promise.all([
-    fetchSimulationResultTimeSeriesForScenarioVariableAndPoint(
-      scenarioASlug,
-      variableSlug,
-      pointSlug
-    ),
-    scenarioBSlug
-      ? fetchSimulationResultTimeSeriesForScenarioVariableAndPoint(
-          scenarioBSlug,
-          variableSlug,
-          pointSlug
-        )
-      : Promise.resolve(null)
-  ])
-
-  return {
-    scenarioA: scenarioAData,
-    scenarioB: scenarioBData,
-    difference: scenarioBData ? getDifferenceData(scenarioAData, scenarioBData) : null
-  }
-}
-
-async function fetchSimulationResultTimeSeriesForComparisonSlug(key: string): Promise<SimulationResultTimeSeriesComparison> {
-  const [scenarioASlug, scenarioBSlug, variableSlug, pointSlug] = key.split(';').map((s) => (s === '_' || s === 'null' ? null : s))
-  
-  return fetchSimulationResultTimeSeriesForComparison(
-    scenarioASlug!,
-    scenarioBSlug,
-    variableSlug!,
-    pointSlug!
-  )
-}
-
 export const useSimulationResultTimeSeriesStore = defineStore('simulationResultTimeSeries', () => {
   const scenarioDataCache = new KeyedCache<TimeSeriesData, Error>(fetchSimulationResultTimeSeries)
-  
-  const simulationResultTimeSeriesCache = new KeyedCache<SimulationResultTimeSeriesComparison, Error>(
+
+  const simulationResultTimeSeriesCache = new KeyedCache<
+    SimulationResultTimeSeriesComparison,
+    Error
+  >(
     // key is in the form `${scenarioASlug};${scenarioBSlug};${variableSlug};${pointSlug}`
     async (key: string) => {
-      const [scenarioASlug, scenarioBSlug, variableSlug, pointSlug] = key.split(';').map((s) => (s === '_' || s === 'null' ? null : s))
+      const [scenarioASlug, scenarioBSlug, variableSlug, pointSlug] = parseCompositeKey(key)
 
       const [scenarioAData, scenarioBData] = await Promise.all([
-        scenarioDataCache.get(
-          makeSlugForSingleScenario(scenarioASlug!, variableSlug!, pointSlug!)
-        ),
+        scenarioDataCache.get(makeSlugForSingleScenario(scenarioASlug!, variableSlug!, pointSlug!)),
         scenarioBSlug
           ? scenarioDataCache.get(
               makeSlugForSingleScenario(scenarioBSlug, variableSlug!, pointSlug!)
@@ -139,9 +104,7 @@ export const useSimulationResultTimeSeriesStore = defineStore('simulationResultT
           : null
       ])
 
-      const differenceData = scenarioBData
-        ? getDifferenceData(scenarioAData, scenarioBData)
-        : null
+      const differenceData = scenarioBData ? getDifferenceData(scenarioAData, scenarioBData) : null
 
       return {
         scenarioA: scenarioAData,
@@ -151,8 +114,15 @@ export const useSimulationResultTimeSeriesStore = defineStore('simulationResultT
     }
   )
 
-  async function getSimulationResultTimeSeries(scenarioASlug: string, scenarioBSlug: string | null, variableSlug: string, pointSlug: string): Promise<SimulationResultTimeSeriesComparison> {
-    return simulationResultTimeSeriesCache.get(makeSlugForComparisonScenario(scenarioASlug, scenarioBSlug, variableSlug, pointSlug))
+  async function getSimulationResultTimeSeries(
+    scenarioASlug: string,
+    scenarioBSlug: string | null,
+    variableSlug: string,
+    pointSlug: string
+  ): Promise<SimulationResultTimeSeriesComparison> {
+    return simulationResultTimeSeriesCache.get(
+      makeSlugForComparisonScenario(scenarioASlug, scenarioBSlug, variableSlug, pointSlug)
+    )
   }
 
   return {
