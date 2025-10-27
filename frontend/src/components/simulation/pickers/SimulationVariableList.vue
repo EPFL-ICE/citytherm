@@ -2,7 +2,7 @@
 import {
   useSimulationResultVariablesStore,
   type SluggedSimulationResultVariable
-} from '@/stores/simulationResultVariables'
+} from '@/stores/simulation/simulationResultVariables'
 import { onMounted, ref } from 'vue'
 
 const model = defineModel()

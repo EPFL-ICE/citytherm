@@ -124,21 +124,21 @@ def export_variable_attributes(variable_names, ds, output_directory):
 def get_variable_attributes_in_dict(ds, variable_name):
     variable = ds.data_vars[variable_name]
     attrs = variable.attrs
-    return {k: prettify_unit(hardcoded_overrides(k, attrs[k])) for k in attrs}
+    overriden_attrs = hardcoded_overrides(variable_name, attrs.copy())
+    return {k: prettify_unit(overriden_attrs[k]) for k in overriden_attrs}
 
 def hardcoded_overrides(variable_name: str, attrs: dict):
-    attrs_copy = attrs.copy()
     if variable_name == "T":
-        attrs_copy["valid_min"] = 10
-        attrs_copy["valid_max"] = 50
+        attrs["valid_min"] = 10
+        attrs["valid_max"] = 50
     elif variable_name == "RelHum":
-        attrs_copy["valid_min"] = 20
-        attrs_copy["valid_max"] = 80
+        attrs["valid_min"] = 20
+        attrs["valid_max"] = 80
     elif variable_name == "WindSpd":
-        attrs_copy["valid_min"] = 0
-        attrs_copy["valid_max"] = 20
+        attrs["valid_min"] = 0
+        attrs["valid_max"] = 20
 
-    return attrs_copy
+    return attrs
 
 # Save plane slices for multiple variables at multiple times
 
@@ -314,7 +314,7 @@ def save_json(dict, path, pretty=False):
 
 def save_json_for_scenario(dict, output_dir, scenario, dir_path, filename, pretty=False):
     scenario_slug = scenario.split("_")[0]
-    output_dir = Path(f"./{output_dir}/{scenario_slug}/{dir_path}")
+    output_dir = Path(f"./{output_dir}/scenarios/{scenario_slug}/{dir_path}")
     save_json(dict, output_dir / f"{filename}.json", pretty=pretty)
 
 def save_slice_to_json(scenario, output_dir, variable_slug, time_index, slicer_slug, dict):

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useScenariosStore, type ScenarioDescription } from '@/stores/scenarios'
+import { useScenariosStore, type ScenarioDescription } from '@/stores/simulation/scenarios'
 import { computed, onMounted, ref } from 'vue'
 
 const scenarioStore = useScenariosStore()

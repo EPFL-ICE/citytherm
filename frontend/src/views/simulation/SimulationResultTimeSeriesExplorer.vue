@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import TwoPanesLayout from '@/components/TwoPanesLayout.vue'
-import ToolSet from '@/components/ToolSet.vue'
+import TwoPanesLayout from '@/components/ui/TwoPanesLayout.vue'
+import ToolSet from '@/components/ui/ToolSet.vue'
 import { computed, shallowRef } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import SimulationVariableList from '@/components/SimulationVariableList.vue'
-import SimulationResultTimeSeriesChart from '@/components/SimulationResultTimeSeriesChart.vue'
-import ScenarioSelect from '@/components/ScenarioSelect.vue'
-import TimeSeriesPointsSelect from '@/components/TimeSeriesPointsSelect.vue'
-import ResultGrid from '@/components/ResultGrid.vue'
+import SimulationVariableList from '@/components/simulation/pickers/SimulationVariableList.vue'
+import SimulationResultTimeSeriesChart from '@/components/simulation/SimulationResultTimeSeriesChart.vue'
+import ScenarioSelect from '@/components/simulation/pickers/ScenarioSelect.vue'
+import TimeSeriesPointsSelect from '@/components/simulation/pickers/TimeSeriesPointsSelect.vue'
+import ResultGrid from '@/components/ui/ResultGrid.vue'
 import { makePathToTimeSeriesMerge, type TimeSeriesPageParams } from '@/lib/utils/routingUtils'
 
 const route = useRoute()

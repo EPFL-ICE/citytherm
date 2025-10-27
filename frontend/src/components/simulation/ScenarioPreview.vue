@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { defineProps, onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import { useScenariosStore, type BuildingPart, type Scenario } from '@/stores/scenarios'
+import { useScenariosStore, type BuildingPart, type Scenario } from '@/stores/simulation/scenarios'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import {

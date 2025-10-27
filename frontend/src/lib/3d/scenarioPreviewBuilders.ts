@@ -1,4 +1,4 @@
-import type { BuildingMap, BuildingPart, SoilMap } from '@/stores/scenarios'
+import type { BuildingMap, BuildingPart, SoilMap } from '@/stores/simulation/scenarios'
 import * as THREE from 'three'
 import { createBuildingMaterial, simulationSoilTypeCodeToColor } from './materials'
 
