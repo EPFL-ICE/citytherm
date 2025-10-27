@@ -219,6 +219,7 @@ const colormap = computed<string[]>(() => {
         :show-special-points="showSpecialPoints"
         :override-min-max="minMaxOverriddenValues"
         :colormap="colormap"
+        :reset-visual-map-range-on-data-change="true"
         @point-clicked="(pointSlug) => emit('point-clicked', pointSlug)"
       />
     </div>
