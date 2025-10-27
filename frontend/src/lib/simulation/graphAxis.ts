@@ -1,4 +1,4 @@
-import type { SimulationResultVariable } from '@/stores/simulationResultVariables'
+import type { SimulationResultVariable } from '@/stores/simulation/simulationResultVariables'
 
 export interface GraphAxis {
   unit: string

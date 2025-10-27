@@ -1,19 +1,19 @@
 <script setup lang="ts">
-import { type TimeSeriesPoint, useScenariosStore } from '@/stores/scenarios'
-import TwoPanesLayout from '@/components/TwoPanesLayout.vue'
+import { type TimeSeriesPoint, useScenariosStore } from '@/stores/simulation/scenarios'
+import TwoPanesLayout from '@/components/ui/TwoPanesLayout.vue'
 import { computed, ref, shallowRef, watchEffect } from 'vue'
-import ToolSet from '@/components/ToolSet.vue'
-import SimulationVariableList from '@/components/SimulationVariableList.vue'
-import SimulationResultPlaneHeatmap from '@/components/SimulationResultPlaneHeatmap.vue'
+import ToolSet from '@/components/ui/ToolSet.vue'
+import SimulationVariableList from '@/components/simulation/pickers/SimulationVariableList.vue'
+import SimulationResultPlaneHeatmap from '@/components/simulation/SimulationResultPlaneHeatmap.vue'
 import { useRoute, useRouter } from 'vue-router'
 import {
   getSimulationPlaneAvailableTimeSlots,
   getSimulationPlanePresetsForParameters,
   type SimulationPlanePresetsMap
 } from '@/lib/simulation/simulationResultPlanesUtils'
-import ScenarioSelect from '@/components/ScenarioSelect.vue'
-import TimeSeriesPointsSelect from '@/components/TimeSeriesPointsSelect.vue'
-import ResultGrid from '@/components/ResultGrid.vue'
+import ScenarioSelect from '@/components/simulation/pickers/ScenarioSelect.vue'
+import TimeSeriesPointsSelect from '@/components/simulation/pickers/TimeSeriesPointsSelect.vue'
+import ResultGrid from '@/components/ui/ResultGrid.vue'
 import {
   makePathToSliceMerge,
   makePathToTimeSeries,

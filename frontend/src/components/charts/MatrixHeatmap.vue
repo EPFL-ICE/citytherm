@@ -178,7 +178,7 @@ watch(
   () => props.data,
   async () => {
     await nextTick() // wait for DOM and chart updates
-    
+
     const chart = heatmapChart.value
     if (chart) {
       console.log(chart)
@@ -189,12 +189,8 @@ watch(
             {
               visualMapIndex: 0,
               selected: [
-                props.overrideMinMax?.min ??
-                props.expectedValueRange?.min ??
-                0,
-                props.overrideMinMax?.max ??
-                props.expectedValueRange?.max ??
-                100
+                props.overrideMinMax?.min ?? props.expectedValueRange?.min ?? 0,
+                props.overrideMinMax?.max ?? props.expectedValueRange?.max ?? 100
               ]
             }
           ]

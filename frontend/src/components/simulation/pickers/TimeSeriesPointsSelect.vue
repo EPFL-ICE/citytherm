@@ -4,9 +4,9 @@ import {
   type SimulationPlanePreset,
   type SimulationPlanePresetsMap
 } from '@/lib/simulation/simulationResultPlanesUtils'
-import { useScenariosStore, type TimeSeriesPoint } from '@/stores/scenarios'
+import { useScenariosStore, type TimeSeriesPoint } from '@/stores/simulation/scenarios'
 import { computed, ref, watchEffect } from 'vue'
-import { makePointSlugArray } from '@/stores/simulationResultTimeSeries'
+import { makePointSlugArray } from '@/stores/simulation/simulationResultTimeSeries'
 
 const scenarioStore = useScenariosStore()
 const props = defineProps<{

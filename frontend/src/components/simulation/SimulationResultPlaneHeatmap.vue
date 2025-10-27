@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import MatrixHeatmap, { type HeatmapData } from '@/components/MatrixHeatmap.vue'
+import MatrixHeatmap, { type HeatmapData } from '@/components/charts/MatrixHeatmap.vue'
 import { computed, onMounted, ref, watchEffect } from 'vue'
 import {
   useSimulationResultPlaneStore,
   type SimulationResultPlaneAtomicData,
   type SimulationResultPlaneValues
-} from '@/stores/simulationResultPlane'
+} from '@/stores/simulation/simulationResultPlane'
 import {
   type SimulationResultVariable,
   useSimulationResultVariablesStore
-} from '@/stores/simulationResultVariables'
+} from '@/stores/simulation/simulationResultVariables'
 import {
   getExpectedValueRangeForVariable,
   getFinalPositionFromIndexAndAxes,
@@ -18,8 +18,8 @@ import {
   type GraphAxes,
   type GraphAxis
 } from '@/lib/simulation/graphAxis'
-import { useScenariosStore, type TimeSeriesPoint } from '@/stores/scenarios'
-import { makePointSlugArray } from '@/stores/simulationResultTimeSeries'
+import { useScenariosStore, type TimeSeriesPoint } from '@/stores/simulation/scenarios'
+import { makePointSlugArray } from '@/stores/simulation/simulationResultTimeSeries'
 import { useRouter } from 'vue-router'
 import { simulationVariablesConfig } from '@/config/simulationVariablesConfig'
 import { makePathToTimeSeries } from '@/lib/utils/routingUtils'

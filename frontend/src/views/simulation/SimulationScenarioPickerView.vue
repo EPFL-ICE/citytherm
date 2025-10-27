@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { useScenariosStore, type ScenarioDescription } from '@/stores/scenarios'
-import ScenarioPreview from '@/components/ScenarioPreview.vue'
-import TwoPanesLayout from '@/components/TwoPanesLayout.vue'
+import { useScenariosStore, type ScenarioDescription } from '@/stores/simulation/scenarios'
+import ScenarioPreview from '@/components/simulation/ScenarioPreview.vue'
+import TwoPanesLayout from '@/components/ui/TwoPanesLayout.vue'
 import { computed, onMounted, ref } from 'vue'
 import {
   getSimulationPlanePresetsForParameters,
