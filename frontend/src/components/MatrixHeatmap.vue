@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, nextTick, ref, watch } from 'vue'
 import VChart from 'vue-echarts'
 import * as echarts from 'echarts/core'
 import { HeatmapChart } from 'echarts/charts'
@@ -37,6 +37,7 @@ const props = defineProps<{
     max: number
   }
   colormap?: string[]
+  resetVisualMapRangeOnDataChange?: boolean
 }>()
 
 echarts.use([
@@ -47,6 +48,8 @@ echarts.use([
   HeatmapChart,
   CanvasRenderer
 ])
+
+const heatmapChart = ref<InstanceType<typeof VChart> | null>(null)
 
 function getCenteredValue(x: number, s: number): number {
   return x * s + s / 2
@@ -170,8 +173,39 @@ function onClickHeatmap(params: echarts.ECElementEvent) {
 
   emit('point-clicked', metadata.pointSlug)
 }
+
+watch(
+  () => props.data,
+  async () => {
+    await nextTick() // wait for DOM and chart updates
+    
+    const chart = heatmapChart.value
+    if (chart) {
+      console.log(chart)
+      if (props.resetVisualMapRangeOnDataChange) {
+        chart.dispatchAction({
+          type: 'selectDataRange',
+          batch: [
+            {
+              visualMapIndex: 0,
+              selected: [
+                props.overrideMinMax?.min ??
+                props.expectedValueRange?.min ??
+                0,
+                props.overrideMinMax?.max ??
+                props.expectedValueRange?.max ??
+                100
+              ]
+            }
+          ]
+        })
+      }
+    }
+  },
+  { deep: true }
+)
 </script>
 
 <template>
-  <v-chart :option="chartOptions" autoresize @click="onClickHeatmap" />
+  <v-chart ref="heatmapChart" :option="chartOptions" autoresize @click="onClickHeatmap" />
 </template>
