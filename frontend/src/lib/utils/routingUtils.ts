@@ -30,7 +30,9 @@ export interface TimeSeriesPageParams {
 }
 
 export function makePathToTimeSeries(params: TimeSeriesPageParams) {
-  return `/simulation/timeSeries/${params.scenarioA}/${params.scenarioB ?? '_'}/${params.point}?vars=${encodeURIComponent(params.variables.join(','))}`
+  return `/simulation/timeSeries/${params.scenarioA}/${params.scenarioB ?? '_'}/${
+    params.point
+  }?vars=${encodeURIComponent(params.variables.join(','))}`
 }
 
 export function makePathToTimeSeriesMerge(
