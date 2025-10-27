@@ -37,7 +37,21 @@ The following command line programs need to be installed :
 - tippecanoe (`brew install tippecanoe`)
 - s3cmd (`brew install s3cmd`)
 
+As well as the following python packages :
+- netcdf4 (`pip install netcdf4`)
+- xarray (`pip install xarray`)
+
 ### Setup & Usage
+
+To generate the processed data into pieces usable by the frontend run `make all` in the following directories :
+- processing
+- processing/simulation (requires processing/simulation/raw_data to contain the NetCDF files)
+
+And copy the contents :
+- from /processed_data into /frontend/public/geodata
+- from /simulation/processed_data into /frontend/public/simulation
+
+Then `npm run dev` in /frontend
 
 #### Node.js Version Management
 

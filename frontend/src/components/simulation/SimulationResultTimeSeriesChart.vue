@@ -3,13 +3,13 @@ import { onMounted, ref, watchEffect } from 'vue'
 import {
   type SimulationResultVariable,
   useSimulationResultVariablesStore
-} from '@/stores/simulationResultVariables'
+} from '@/stores/simulation/simulationResultVariables'
 import {
   useSimulationResultTimeSeriesStore,
   type SimulationResultTimeSeriesComparison
-} from '@/stores/simulationResultTimeSeries'
-import LineChart from './LineChart.vue'
-import { useScenariosStore, type ScenarioDescription } from '@/stores/scenarios'
+} from '@/stores/simulation/simulationResultTimeSeries'
+import LineChart from '../charts/LineChart.vue'
+import { useScenariosStore, type ScenarioDescription } from '@/stores/simulation/scenarios'
 
 const props = defineProps<{
   scenarioASlug: string
