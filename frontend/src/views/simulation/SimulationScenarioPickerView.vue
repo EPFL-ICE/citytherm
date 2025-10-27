@@ -44,7 +44,8 @@ const sliceExplorerUrl = computed(() => {
     scenarioA: selectedScenariosSlug.value[0],
     scenarioB: null,
     plane: selectedPlaneSlug.value,
-    time: 'time_12'
+    time: 'time_12',
+    variables: []
   })
 })
 </script>

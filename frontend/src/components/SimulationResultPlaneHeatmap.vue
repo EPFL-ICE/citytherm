@@ -22,6 +22,7 @@ import { useScenariosStore, type TimeSeriesPoint } from '@/stores/scenarios'
 import { makePointSlugArray } from '@/stores/simulationResultTimeSeries'
 import { useRouter } from 'vue-router'
 import { simulationVariablesConfig } from '@/config/simulationVariablesConfig'
+import { makePathToTimeSeries } from '@/lib/utils/routingUtils'
 
 const props = defineProps<{
   scenarioASlug: string
@@ -29,6 +30,10 @@ const props = defineProps<{
   planeSlug: string
   timeSliceSlug: string
   variableSlug: string
+}>()
+
+const emit = defineEmits<{
+  (e: 'point-clicked', pointSlug: string): void
 }>()
 
 const router = useRouter()
@@ -171,13 +176,6 @@ const graphAspectRatio = computed(() => {
 const colormap = computed<string[]>(() => {
   return simulationVariablesConfig[props.variableSlug]?.heatmap.colormap ?? undefined
 })
-
-function navigateToTimeSeriesPoint(pointSlug: string) {
-  const routePath = `/simulation/timeSeries/${props.scenarioASlug}/${
-    props.scenarioBSlug || '_'
-  }/${pointSlug}`
-  router.push(routePath)
-}
 </script>
 
 <template>
@@ -221,7 +219,7 @@ function navigateToTimeSeriesPoint(pointSlug: string) {
         :show-special-points="showSpecialPoints"
         :override-min-max="minMaxOverriddenValues"
         :colormap="colormap"
-        @point-clicked="navigateToTimeSeriesPoint"
+        @point-clicked="(pointSlug) => emit('point-clicked', pointSlug)"
       />
     </div>
   </div>
