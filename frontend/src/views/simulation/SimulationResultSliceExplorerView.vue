@@ -14,7 +14,11 @@ import {
 import ScenarioSelect from '@/components/ScenarioSelect.vue'
 import TimeSeriesPointsSelect from '@/components/TimeSeriesPointsSelect.vue'
 import ResultGrid from '@/components/ResultGrid.vue'
-import { makePathToSliceMerge, type SlicePageParams } from '@/lib/utils/routingUtils'
+import {
+  makePathToSliceMerge,
+  makePathToTimeSeries,
+  type SlicePageParams
+} from '@/lib/utils/routingUtils'
 
 const scenarioStore = useScenariosStore()
 const route = useRoute()
@@ -26,6 +30,10 @@ const scenarioBSlug = computed(() =>
 )
 const planeSlug = computed(() => route.params.plane as string)
 const timeSlug = computed(() => route.params.time as string)
+const selectedVariables = computed(() => {
+  const vars = route.query.vars as string | undefined
+  return vars ? vars.split(',') : []
+})
 
 const timeSeriesPointsList = ref<TimeSeriesPoint[] | null>(null)
 const selectedTimeSeriesPointSlug = ref<string | null>(null)
@@ -34,8 +42,6 @@ watchEffect(() => {
     timeSeriesPointsList.value = tspl
   })
 })
-
-const selectedVariables = shallowRef<string[]>([])
 
 const availablePlanes = computed<SimulationPlanePresetsMap>(() => {
   const buildingCanopyHeight = scenarioASlug.value.includes('S1') ? 30 : 16
@@ -52,19 +58,33 @@ function goToUpdatedParams(params: Partial<SlicePageParams>) {
     scenarioA: scenarioASlug.value,
     scenarioB: scenarioBSlug.value,
     plane: planeSlug.value,
-    time: timeSlug.value
+    time: timeSlug.value,
+    variables: selectedVariables.value
   })
   router.push(routePath)
 }
 
 const timeSeriesExplorerUrl = computed(() => {
-  if (!selectedTimeSeriesPointSlug) return null
-  return `/simulation/timeSeries/${scenarioASlug.value}/${scenarioBSlug.value ?? '_'}/${
-    selectedTimeSeriesPointSlug.value
-  }`
+  if (!selectedTimeSeriesPointSlug.value) return null
+  return makePathToTimeSeries({
+    scenarioA: scenarioASlug.value,
+    scenarioB: scenarioBSlug.value,
+    point: selectedTimeSeriesPointSlug.value,
+    variables: selectedVariables.value
+  })
 })
 
 const gridColumns = computed(() => Math.min(2, selectedVariables.value.length))
+
+function navigateToTimeSeriesPoint(pointSlug: string) {
+  const routePath = makePathToTimeSeries({
+    scenarioA: scenarioASlug.value,
+    scenarioB: scenarioBSlug.value,
+    point: pointSlug,
+    variables: selectedVariables.value
+  })
+  router.push(routePath)
+}
 </script>
 
 <template>
@@ -113,7 +133,10 @@ const gridColumns = computed(() => Math.min(2, selectedVariables.value.length))
         <template #default>
           <div>
             <h3>Available variables</h3>
-            <simulation-variable-list v-model="selectedVariables" />
+            <simulation-variable-list
+              :model-value="selectedVariables"
+              @update:model-value="goToUpdatedParams({ variables: $event })"
+            />
           </div>
         </template>
         <template #footer>
@@ -149,6 +172,7 @@ const gridColumns = computed(() => Math.min(2, selectedVariables.value.length))
               :time-slice-slug="timeSlug"
               :scenario-a-slug="scenarioASlug"
               :scenario-b-slug="scenarioBSlug"
+              @point-clicked="(point) => navigateToTimeSeriesPoint(point)"
             />
           </div>
         </result-grid>

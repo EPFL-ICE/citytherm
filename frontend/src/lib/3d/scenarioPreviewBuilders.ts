@@ -10,7 +10,7 @@ export interface Vector2 {
 export function createSoilGeometry(sceneSize: Vector2, quadSize: number, soilMap: SoilMap) {
   const segX = sceneSize.x / quadSize
   const segY = sceneSize.y / quadSize
-  const geometry = new THREE.PlaneGeometry(sceneSize.x, sceneSize.y, segX, segY).toNonIndexed() // <-- key line
+  const geometry = new THREE.PlaneGeometry(sceneSize.x, sceneSize.y, segX, segY).toNonIndexed() // toNonIndexed important for per-vertex color
   const colors = []
   const uvs = geometry.attributes.uv
 

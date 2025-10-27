@@ -18,14 +18,17 @@ const scenarioBSlug = computed(() =>
   route.params.scenarioB === '_' ? null : (route.params.scenarioB as string)
 )
 const pointSlug = computed(() => route.params.point as string)
-
-const selectedVariables = shallowRef<string[]>([])
+const selectedVariables = computed(() => {
+  const vars = route.query.vars as string | undefined
+  return vars ? vars.split(',') : []
+})
 
 function goToUpdatedParams(params: Partial<TimeSeriesPageParams>) {
   const routePath = makePathToTimeSeriesMerge(params, {
     scenarioA: scenarioASlug.value,
     scenarioB: scenarioBSlug.value,
-    point: pointSlug.value
+    point: pointSlug.value,
+    variables: selectedVariables.value
   })
   router.push(routePath)
 }
@@ -58,7 +61,10 @@ const gridColumns = computed(() => Math.min(2, selectedVariables.value.length))
         </template>
         <template #default>
           <div>
-            <simulation-variable-list v-model="selectedVariables" />
+            <simulation-variable-list
+              :model-value="selectedVariables"
+              @update:model-value="goToUpdatedParams({ variables: $event })"
+            />
           </div>
         </template>
       </tool-set>
