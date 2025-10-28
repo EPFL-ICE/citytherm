@@ -1,3 +1,4 @@
+import { cdnUrl } from '@/config/layerTypes'
 import { KeyedCache, makeCompositeKey, parseCompositeKey } from '@/lib/utils/cache'
 import { defineStore } from 'pinia'
 
@@ -53,7 +54,7 @@ async function fetchSimulationResultForScenarioPlaneTimeAndVariable(
   variableSlug: string
 ): Promise<SimulationResultPlaneData> {
   const response = await fetch(
-    `/simulation/scenarios/${scenarioSlug}/${variableSlug}/${timeSliceSlug}/${planeSlug}.json`
+    `${cdnUrl}/simulation/scenarios/${scenarioSlug}/${variableSlug}/${timeSliceSlug}/${planeSlug}.json`
   )
   if (!response.ok) {
     throw new Error(`Failed to fetch simulation result: ${response.statusText}`)
