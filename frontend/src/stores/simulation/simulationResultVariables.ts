@@ -1,3 +1,4 @@
+import { cdnUrl } from '@/config/layerTypes'
 import { KeyedCache } from '@/lib/utils/cache'
 import { defineStore } from 'pinia'
 
@@ -17,7 +18,7 @@ export interface SimulationResultVariable {
 export type SluggedSimulationResultVariable = SimulationResultVariable & { slug: string }
 
 async function fetchVariablesAttributes(): Promise<{ [key: string]: SimulationResultVariable }> {
-  const response = await fetch(`/simulation/variablesAttributes.json`)
+  const response = await fetch(`${cdnUrl}/simulation/variablesAttributes.json`)
   if (!response.ok) {
     throw new Error(`Failed to fetch variable attributes: ${response.statusText}`)
   }

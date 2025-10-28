@@ -1,3 +1,4 @@
+import { cdnUrl } from '@/config/layerTypes'
 import { KeyedCache } from '@/lib/utils/cache'
 import { defineStore } from 'pinia'
 
@@ -33,7 +34,7 @@ export type Scenario = {
 }
 
 async function fetchBuilding(key: string): Promise<BuildingMap> {
-  const response = await fetch(`/simulation/scenarios/${key}/buildingMap.json`)
+  const response = await fetch(`${cdnUrl}/simulation/scenarios/${key}/buildingMap.json`)
   if (!response.ok) {
     throw new Error(`Failed to fetch building map: ${response.statusText}`)
   }
@@ -41,7 +42,7 @@ async function fetchBuilding(key: string): Promise<BuildingMap> {
 }
 
 async function fetchSoilMap(key: string): Promise<SoilMap> {
-  const response = await fetch(`/simulation/scenarios/${key}/soilMap.json`)
+  const response = await fetch(`${cdnUrl}/simulation/scenarios/${key}/soilMap.json`)
   if (!response.ok) {
     throw new Error(`Failed to fetch soil map: ${response.statusText}`)
   }
@@ -66,7 +67,7 @@ export interface ScenarioDescription {
 }
 
 async function fetchScenarioDescriptions(): Promise<ScenarioDescription[]> {
-  const response = await fetch('/simulation/scenarios/scenarios.json')
+  const response = await fetch(`${cdnUrl}/simulation/scenarios/scenarios.json`)
   if (!response.ok) {
     throw new Error(`Failed to fetch scenario descriptions: ${response.statusText}`)
   }
@@ -80,7 +81,7 @@ export interface TimeSeriesPoint {
 }
 
 async function fetchScenarioTimeSeriesPoints(scenario: string): Promise<TimeSeriesPoint[]> {
-  const response = await fetch(`/simulation/scenarios/${scenario}/timeSeriesPoints.json`)
+  const response = await fetch(`${cdnUrl}/simulation/scenarios/${scenario}/timeSeriesPoints.json`)
   if (!response.ok) {
     throw new Error(`Failed to fetch scenario descriptions: ${response.statusText}`)
   }
