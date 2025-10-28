@@ -26,9 +26,15 @@ export interface MapLayerConfig {
   legendColors?: LegendColor[]
 }
 
+export const cdnUrlOptions = {
+  prod: 'https://enacit4r-cdn.epfl.ch/citytherm/2025-09-16',
+  dev: ''
+}
+
 export const baseUrlOptions = {
-  prod: 'https://enacit4r-cdn.epfl.ch/citytherm/2025-09-16/geodata',
+  prod: `${cdnUrlOptions.prod}/geodata`,
   dev: '/geodata'
 }
 
+export const cdnUrl = import.meta.env.DEV ? cdnUrlOptions.dev : cdnUrlOptions.prod
 export const baseUrl = import.meta.env.DEV ? baseUrlOptions.dev : baseUrlOptions.prod
