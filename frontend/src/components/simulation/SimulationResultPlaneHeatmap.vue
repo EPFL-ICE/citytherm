@@ -20,9 +20,7 @@ import {
 } from '@/lib/simulation/graphAxis'
 import { useScenariosStore, type TimeSeriesPoint } from '@/stores/simulation/scenarios'
 import { makePointSlugArray } from '@/stores/simulation/simulationResultTimeSeries'
-import { useRouter } from 'vue-router'
 import { simulationVariablesConfig } from '@/config/simulationVariablesConfig'
-import { makePathToTimeSeries } from '@/lib/utils/routingUtils'
 
 const props = defineProps<{
   scenarioASlug: string
@@ -35,8 +33,6 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: 'point-clicked', pointSlug: string): void
 }>()
-
-const router = useRouter()
 
 const simulationResultPlaneStore = useSimulationResultPlaneStore()
 const simulationResultsVariablesStore = useSimulationResultVariablesStore()
@@ -55,6 +51,7 @@ onMounted(async () => {
 })
 
 watchEffect(() => {
+  simulation.value = null
   simulationResultPlaneStore
     .getSimulationResultPlane(
       props.scenarioASlug,
@@ -70,6 +67,7 @@ watchEffect(() => {
 
 const timeSeriesPointsList = ref<TimeSeriesPoint[] | null>(null)
 watchEffect(() => {
+  timeSeriesPointsList.value = null
   scenarioStore.getAvailableTimeSeriesPointsForScenario(props.scenarioASlug).then((tspl) => {
     timeSeriesPointsList.value = tspl
   })

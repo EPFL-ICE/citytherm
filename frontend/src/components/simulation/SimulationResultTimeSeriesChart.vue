@@ -10,6 +10,7 @@ import {
 } from '@/stores/simulation/simulationResultTimeSeries'
 import LineChart from '../charts/LineChart.vue'
 import { useScenariosStore, type ScenarioDescription } from '@/stores/simulation/scenarios'
+import { time } from 'echarts'
 
 const props = defineProps<{
   scenarioASlug: string
@@ -33,6 +34,7 @@ onMounted(async () => {
 const timeSeries = ref<SimulationResultTimeSeriesComparison | null>(null)
 const scenarioADescription = ref<ScenarioDescription | null>(null)
 watchEffect(() => {
+  timeSeries.value = null
   simulationResultTimeSeriesStore
     .getSimulationResultTimeSeries(
       props.scenarioASlug,
