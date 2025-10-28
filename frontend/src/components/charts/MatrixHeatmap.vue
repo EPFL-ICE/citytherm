@@ -104,7 +104,7 @@ const chartOptions = computed<EChartsOption>(() => {
         (_, i) => i + props.axisX.min
       ), // keep indices
       axisLabel: {
-        formatter: (val) =>
+        formatter: (val: any) =>
           props.axisX.valuesOverride
             ? props.axisX.valuesOverride[val]
             : getCenteredValue(val, props.axisX.cellSize) // convert 0–99 to meters
@@ -120,7 +120,7 @@ const chartOptions = computed<EChartsOption>(() => {
         (_, i) => i + props.axisY.min
       ), // keep indices
       axisLabel: {
-        formatter: (val) =>
+        formatter: (val: any) =>
           props.axisY.valuesOverride
             ? props.axisY.valuesOverride[val]
             : getCenteredValue(val, props.axisY.cellSize) // convert 0–99 to meters
