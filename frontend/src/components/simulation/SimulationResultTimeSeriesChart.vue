@@ -44,7 +44,7 @@ watchEffect(() => {
     .then((result) => {
       timeSeries.value = result
     })
-  scenarioStore.getScenarioBySlug(props.scenarioASlug).then((desc) => {
+  scenarioStore.getScenarioDescriptionBySlug(props.scenarioASlug).then((desc) => {
     scenarioADescription.value = desc
   })
 })
@@ -56,7 +56,7 @@ watchEffect(() => {
     return
   }
 
-  scenarioStore.getScenarioBySlug(props.scenarioBSlug).then((desc) => {
+  scenarioStore.getScenarioDescriptionBySlug(props.scenarioBSlug).then((desc) => {
     scenarioBDescription.value = desc
   })
 })
@@ -74,13 +74,13 @@ watchEffect(() => {
         }"
         :series="[
           {
-            name: `${scenarioADescription.id} - ${scenarioADescription.scenario}`,
+            name: `${scenarioADescription.id} - ${scenarioADescription.name}`,
             data: timeSeries.scenarioA.map((slot) => slot.v)
           },
           ...(timeSeries.scenarioB && scenarioBDescription
             ? [
                 {
-                  name: `${scenarioBDescription.id} - ${scenarioBDescription.scenario}`,
+                  name: `${scenarioBDescription.id} - ${scenarioBDescription.name}`,
                   data: timeSeries.scenarioB.map((slot) => slot.v)
                 }
               ]

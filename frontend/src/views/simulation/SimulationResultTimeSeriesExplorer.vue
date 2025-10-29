@@ -58,7 +58,12 @@ const planeExplorerUrl = computed(() => {
 <template>
   <two-panes-layout title="Time Series Results Explorer">
     <template #subtitle>
-      <v-btn :to="planeExplorerUrl" :prepend-icon="mdiChevronLeft" color="primary" density="comfortable">
+      <v-btn
+        :to="planeExplorerUrl"
+        :prepend-icon="mdiChevronLeft"
+        color="primary"
+        density="comfortable"
+      >
         Back to Plane Explorer
       </v-btn>
     </template>

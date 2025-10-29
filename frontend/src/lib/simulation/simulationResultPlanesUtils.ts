@@ -34,8 +34,7 @@ export function getSimulationPlanePresetsForParameters(
     horizontal_human_height: {
       slug: 'horizontal_human_height',
       name: 'Horizontal - Human Height (1.4m)',
-      description:
-        'A horizontal plane at 1.4 meters above ground, representing human height.',
+      description: 'A horizontal plane at 1.4 meters above ground, representing human height.',
       plane: { rotationX: -Math.PI / 2, position: { x: 0, y: 1.4, z: 0 } }
     },
     horizontal_building_canopy: {

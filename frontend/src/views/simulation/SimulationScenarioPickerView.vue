@@ -1,5 +1,9 @@
 <script setup lang="ts">
-import { useScenariosStore, type ScenarioDescription } from '@/stores/simulation/scenarios'
+import {
+  useScenariosStore,
+  type ScenarioCollection,
+  type ScenarioDescription
+} from '@/stores/simulation/scenarios'
 import ScenarioPreview from '@/components/simulation/ScenarioPreview.vue'
 import TwoPanesLayout from '@/components/ui/TwoPanesLayout.vue'
 import { computed, onMounted, ref } from 'vue'
@@ -9,19 +13,26 @@ import {
   type SimulationPlanePreset,
   type SimulationPlanePresetsMap
 } from '@/lib/simulation/simulationResultPlanesUtils'
-import { makePathToPlane, makePathToScenarioPickerMerge, type ScenarioPickerParams } from '@/lib/utils/routingUtils'
+import {
+  makePathToPlane,
+  makePathToScenarioPickerMerge,
+  type ScenarioPickerParams
+} from '@/lib/utils/routingUtils'
 import { useRoute, useRouter } from 'vue-router'
+import InfoTooltip from '@/components/InfoTooltip.vue'
 
 const route = useRoute()
 const router = useRouter()
 const scenarioStore = useScenariosStore()
 
-const scenariosSlug = computed(() => (route.query.scenarios as string | undefined ?? "").split(","))
-const planeSlug = computed(() => (route.query.plane as SimulationPlanePreset | undefined) ?? "")
+const scenariosSlug = computed(() =>
+  ((route.query.scenarios as string | undefined) ?? '').split(',')
+)
+const planeSlug = computed(() => (route.query.plane as SimulationPlanePreset | undefined) ?? '')
 
-const scenariosList = ref<ScenarioDescription[] | null>(null)
+const scenariosCollection = ref<ScenarioCollection | null>(null)
 onMounted(async () => {
-  scenariosList.value = await scenarioStore.getScenarioDescriptions()
+  scenariosCollection.value = await scenarioStore.getScenarioDescriptions()
 })
 
 const availablePlanes = computed<SimulationPlanePresetsMap>(() => {
@@ -58,30 +69,70 @@ const planeExplorerUrl = computed(() => {
     variables: []
   })
 })
+
+function getTooltipContent(scenario: ScenarioDescription): string {
+  return `${scenario.description}\n\n<b>Primary Analysis focus :</b>\n${scenario.primaryAnalysisFocus}\n\n<b>Relevant lecture(s):</b> ${scenario.relevantLectures.join(', ')}`
+}
+
+const scenariosListItems = computed(() => {
+  const items = []
+  const list = Object.values(scenariosCollection.value?.scenarios || {})
+  for (const scenario of list) {
+    items.push({
+      title: `${scenario.id} - ${scenario.name}`,
+      subtitle: scenario.description,
+      value: scenario.slug
+    })
+  }
+  return items
+})
 </script>
 
 <template>
-  <two-panes-layout title="Simulation scenario picker">
+  <two-panes-layout title="Simulation Scenarios">
     <template #left-pane>
       <v-list
         :selected="scenariosSlug"
-        @update:selected="(value) => { goToUpdatedParams({ scenario: (value as string[])[0] ?? undefined }) }"
+        @update:selected="
+          (value) => {
+            goToUpdatedParams({ scenario: (value as string[])[0] ?? undefined })
+          }
+        "
         two-line
         class="pt-0"
       >
-        <v-list-item
-          v-for="scenario in scenariosList"
-          :key="scenario.id"
-          :value="scenario.slug"
-          :title="`${scenario.id} - ${scenario.scenario}`"
-          :subtitle="scenario.description"
-        />
+        <template
+          v-for="(group, index) in Object.values(scenariosCollection?.groups || {})"
+          :key="index"
+        >
+          <v-list-subheader class="text-h6">{{ group.groupName }}</v-list-subheader>
+
+          <div class="mb-4">
+            <v-list-item
+              v-for="scenario in group.scenarios.map(
+                (slug) => scenariosCollection!.scenarios[slug]
+              )"
+              :key="scenario.id"
+              :value="scenario.slug"
+              :title="`${scenario.id} - ${scenario.name}`"
+              :subtitle="scenario.description"
+            >
+              <template #append>
+                <info-tooltip :content="getTooltipContent(scenario)" />
+              </template>
+            </v-list-item>
+          </div>
+        </template>
       </v-list>
 
-      <div>
+      <div class="pt-4">
         <v-select
           :model-value="planeSlug"
-          @update:model-value="(value) => { goToUpdatedParams({ plane: value ?? undefined }) }"
+          @update:model-value="
+            (value) => {
+              goToUpdatedParams({ plane: value ?? undefined })
+            }
+          "
           :items="planesSelectOptions"
           :item-props="
             (item) => ({ title: item.name, subtitle: item.description, value: item.slug })
