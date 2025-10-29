@@ -26,7 +26,7 @@ const router = useRouter()
 const scenarioStore = useScenariosStore()
 
 const scenariosSlug = computed(() =>
-  ((route.query.scenarios as string | undefined) ?? '').split(',')
+  (route.query.scenarios as string | undefined)?.split(',') ?? []
 )
 const planeSlug = computed(() => (route.query.plane as SimulationPlanePreset | undefined) ?? '')
 

@@ -25,7 +25,7 @@ path=citytherm/${version}
 # you can retrieve .s3cfg from https://enac-it-secrets.epfl.ch/fr/project/08a95a29-3788-46f9-aec8-f47985b60358/secrets/overview?secretPath=%2Fs3%2Fcdn
 # in enac-it4r/enacit-4r/s3/cdn/.s3cfg 
 S3CMD_CONFIG_NAME=.s3cfg_cdn_enac
-data_dir=$(CITYTHERM_PROCESSED_DATA_DIR)
+#data_dir=$(CITYTHERM_PROCESSED_DATA_DIR)
 
 help:
 	@echo "make cdn          # upload files to s3://${bucket}/${path}/"
