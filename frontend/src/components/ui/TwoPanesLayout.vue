@@ -10,6 +10,7 @@ const props = defineProps<{
       <v-card class="d-flex flex-column h-100" flat>
         <v-card-text class="flex-grow-0">
           <h2>{{ props.title }}</h2>
+          <slot name="subtitle"></slot>
         </v-card-text>
         <v-card-text class="left-pane-content">
           <slot name="left-pane"></slot>

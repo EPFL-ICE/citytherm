@@ -1,6 +1,7 @@
 import { cdnUrl } from '@/config/layerTypes'
 import { KeyedCache } from '@/lib/utils/cache'
 import { defineStore } from 'pinia'
+import { makePointSlugArray } from './simulationResultTimeSeries'
 
 export interface BuildingPart {
   x: number
@@ -118,10 +119,17 @@ export const useScenariosStore = defineStore('scenarios', () => {
     return scenarioTimeSeriesCache.get(slug)
   }
 
+  function getFullTimeSeriesPointFromSlugOrNull(scenarioSlug: string, pointSlug: string): TimeSeriesPoint | null {
+    const points = scenarioTimeSeriesCache.getOrNull(scenarioSlug)
+    if (!points) return null
+    return points.find((p) => makePointSlugArray(p.c) === pointSlug) ?? null
+  }
+
   return {
     getScenarioDescriptions,
     getScenario,
     getScenarioBySlug,
-    getAvailableTimeSeriesPointsForScenario
+    getAvailableTimeSeriesPointsForScenario,
+    getFullTimeSeriesPointFromSlugOrNull
   }
 })

@@ -44,6 +44,14 @@ export class KeyedCache<T, E> {
       throw error
     }
   }
+
+  getOrNull(key: string): T | null {
+    const item = this.cache.get(key)
+    if (item && item.status === 'success') {
+      return item.data
+    }
+    return null
+  }
 }
 
 export function makeCompositeKey(parts: (string | null)[]) {
