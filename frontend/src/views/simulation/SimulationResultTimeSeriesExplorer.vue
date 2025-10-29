@@ -1,17 +1,20 @@
 <script setup lang="ts">
 import TwoPanesLayout from '@/components/ui/TwoPanesLayout.vue'
 import ToolSet from '@/components/ui/ToolSet.vue'
-import { computed, shallowRef } from 'vue'
+import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import SimulationVariableList from '@/components/simulation/pickers/SimulationVariableList.vue'
 import SimulationResultTimeSeriesChart from '@/components/simulation/SimulationResultTimeSeriesChart.vue'
 import ScenarioSelect from '@/components/simulation/pickers/ScenarioSelect.vue'
 import TimeSeriesPointsSelect from '@/components/simulation/pickers/TimeSeriesPointsSelect.vue'
 import ResultGrid from '@/components/ui/ResultGrid.vue'
-import { makePathToTimeSeriesMerge, type TimeSeriesPageParams } from '@/lib/utils/routingUtils'
+import { makePathToSlice, makePathToTimeSeriesMerge, type TimeSeriesPageParams } from '@/lib/utils/routingUtils'
+import { useScenariosStore } from '@/stores/simulation/scenarios'
+import { mdiChevronLeft } from "@mdi/js"
 
 const route = useRoute()
 const router = useRouter()
+const scenarioStore = useScenariosStore();
 
 const scenarioASlug = computed(() => route.params.scenarioA as string)
 const scenarioBSlug = computed(() =>
@@ -34,10 +37,23 @@ function goToUpdatedParams(params: Partial<TimeSeriesPageParams>) {
 }
 
 const gridColumns = computed(() => Math.min(2, selectedVariables.value.length))
+
+const planeExplorerUrl = computed(() => {
+  return makePathToSlice({
+    scenarioA: scenarioASlug.value,
+    scenarioB: scenarioBSlug.value,
+    plane: scenarioStore.getFullTimeSeriesPointFromSlugOrNull(scenarioASlug.value, pointSlug.value)?.p ?? "horizontal_ground",
+    time: "time_12",
+    variables: selectedVariables.value
+  })
+})
 </script>
 
 <template>
-  <two-panes-layout title="Simulation result time series explorer">
+  <two-panes-layout title="Time Series Results Explorer">
+    <template #subtitle>
+      <v-btn :to="planeExplorerUrl" :prepend-icon="mdiChevronLeft" color="primary">Back to Plane Explorer</v-btn>
+    </template>
     <template #left-pane>
       <tool-set>
         <template #header>

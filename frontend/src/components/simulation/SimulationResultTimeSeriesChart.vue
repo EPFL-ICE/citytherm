@@ -10,7 +10,6 @@ import {
 } from '@/stores/simulation/simulationResultTimeSeries'
 import LineChart from '../charts/LineChart.vue'
 import { useScenariosStore, type ScenarioDescription } from '@/stores/simulation/scenarios'
-import { time } from 'echarts'
 
 const props = defineProps<{
   scenarioASlug: string
@@ -71,7 +70,7 @@ watchEffect(() => {
       <line-chart
         :axis-x="{
           name: 'Time',
-          slots: timeSeries.scenarioA.map((slot) => ({ name: slot.t }))
+          slots: timeSeries.scenarioA.map((slot) => ({ name: slot.t.slice(0, 5) }))
         }"
         :series="[
           {
