@@ -1,3 +1,4 @@
+import re
 import xarray as xr
 import json
 from pathlib import Path
@@ -313,7 +314,8 @@ def save_json(dict, path, pretty=False):
             json.dump(dict, f, separators=(',', ':'))
 
 def save_json_for_scenario(dict, output_dir, scenario, dir_path, filename, pretty=False):
-    scenario_slug = scenario.split("_")[0]
+    match = re.match(r"^(S\d+(?:_\d+)?)(?:_.*)?", scenario)
+    scenario_slug = match.group(1) if match else scenario
     output_dir = Path(f"./{output_dir}/scenarios/{scenario_slug}/{dir_path}")
     save_json(dict, output_dir / f"{filename}.json", pretty=pretty)
 
