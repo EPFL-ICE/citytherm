@@ -119,7 +119,10 @@ export const useScenariosStore = defineStore('scenarios', () => {
     return scenarioTimeSeriesCache.get(slug)
   }
 
-  function getFullTimeSeriesPointFromSlugOrNull(scenarioSlug: string, pointSlug: string): TimeSeriesPoint | null {
+  function getFullTimeSeriesPointFromSlugOrNull(
+    scenarioSlug: string,
+    pointSlug: string
+  ): TimeSeriesPoint | null {
     const points = scenarioTimeSeriesCache.getOrNull(scenarioSlug)
     if (!points) return null
     return points.find((p) => makePointSlugArray(p.c) === pointSlug) ?? null

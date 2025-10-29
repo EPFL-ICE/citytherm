@@ -8,13 +8,17 @@ import SimulationResultTimeSeriesChart from '@/components/simulation/SimulationR
 import ScenarioSelect from '@/components/simulation/pickers/ScenarioSelect.vue'
 import TimeSeriesPointsSelect from '@/components/simulation/pickers/TimeSeriesPointsSelect.vue'
 import ResultGrid from '@/components/ui/ResultGrid.vue'
-import { makePathToSlice, makePathToTimeSeriesMerge, type TimeSeriesPageParams } from '@/lib/utils/routingUtils'
+import {
+  makePathToPlane,
+  makePathToTimeSeriesMerge,
+  type TimeSeriesPageParams
+} from '@/lib/utils/routingUtils'
 import { useScenariosStore } from '@/stores/simulation/scenarios'
-import { mdiChevronLeft } from "@mdi/js"
+import { mdiChevronLeft } from '@mdi/js'
 
 const route = useRoute()
 const router = useRouter()
-const scenarioStore = useScenariosStore();
+const scenarioStore = useScenariosStore()
 
 const scenarioASlug = computed(() => route.params.scenarioA as string)
 const scenarioBSlug = computed(() =>
@@ -39,11 +43,13 @@ function goToUpdatedParams(params: Partial<TimeSeriesPageParams>) {
 const gridColumns = computed(() => Math.min(2, selectedVariables.value.length))
 
 const planeExplorerUrl = computed(() => {
-  return makePathToSlice({
+  return makePathToPlane({
     scenarioA: scenarioASlug.value,
     scenarioB: scenarioBSlug.value,
-    plane: scenarioStore.getFullTimeSeriesPointFromSlugOrNull(scenarioASlug.value, pointSlug.value)?.p ?? "horizontal_ground",
-    time: "time_12",
+    plane:
+      scenarioStore.getFullTimeSeriesPointFromSlugOrNull(scenarioASlug.value, pointSlug.value)?.p ??
+      'horizontal_ground',
+    time: 'time_12',
     variables: selectedVariables.value
   })
 })
@@ -52,7 +58,9 @@ const planeExplorerUrl = computed(() => {
 <template>
   <two-panes-layout title="Time Series Results Explorer">
     <template #subtitle>
-      <v-btn :to="planeExplorerUrl" :prepend-icon="mdiChevronLeft" color="primary">Back to Plane Explorer</v-btn>
+      <v-btn :to="planeExplorerUrl" :prepend-icon="mdiChevronLeft" color="primary" density="comfortable">
+        Back to Plane Explorer
+      </v-btn>
     </template>
     <template #left-pane>
       <tool-set>

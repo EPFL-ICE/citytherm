@@ -1,4 +1,20 @@
-export interface SlicePageParams {
+export interface ScenarioPickerParams {
+  scenario: string | null
+  plane: string | null
+}
+
+export function makePathToScenarioPicker(params: ScenarioPickerParams) {
+  return `/simulation?scenarios=${params.scenario ?? '_'}&plane=${params.plane ?? '_'}`
+}
+
+export function makePathToScenarioPickerMerge(newParams: Partial<ScenarioPickerParams>, oldParams: ScenarioPickerParams) {
+  return makePathToScenarioPicker({
+    ...oldParams,
+    ...newParams
+  })
+}
+
+export interface PlanePageParams {
   scenarioA: string
   scenarioB: string | null
   plane: string
@@ -6,17 +22,17 @@ export interface SlicePageParams {
   variables: string[]
 }
 
-export function makePathToSlice(params: SlicePageParams) {
+export function makePathToPlane(params: PlanePageParams) {
   return `/simulation/plane/${params.scenarioA}/${params.scenarioB ?? '_'}/${params.plane}/${
     params.time
   }?vars=${encodeURIComponent(params.variables.join(','))}`
 }
 
-export function makePathToSliceMerge(
-  newParams: Partial<SlicePageParams>,
-  oldParams: SlicePageParams
+export function makePathToPlaneMerge(
+  newParams: Partial<PlanePageParams>,
+  oldParams: PlanePageParams
 ) {
-  return makePathToSlice({
+  return makePathToPlane({
     ...oldParams,
     ...newParams
   })

@@ -1,7 +1,7 @@
 import SimulationResultTimeSeriesExplorer from '@/views/simulation/SimulationResultTimeSeriesExplorer.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 import ComparisonView from '../views/ComparisonView.vue'
-import SimulationResultSliceExplorerView from '../views/simulation/SimulationResultSliceExplorerView.vue'
+import SimulationResultPlaneExplorerView from '../views/simulation/SimulationResultPlaneExplorerView.vue'
 import SimulationScenarioPickerView from '../views/simulation/SimulationScenarioPickerView.vue'
 
 const router = createRouter({
@@ -19,8 +19,8 @@ const router = createRouter({
     },
     {
       path: '/simulation/plane/:scenarioA/:scenarioB/:plane/:time',
-      name: 'simulation result slice explorer',
-      component: SimulationResultSliceExplorerView
+      name: 'simulation result plane explorer',
+      component: SimulationResultPlaneExplorerView
     },
     {
       path: '/simulation/timeSeries/:scenarioA/:scenarioB/:point',

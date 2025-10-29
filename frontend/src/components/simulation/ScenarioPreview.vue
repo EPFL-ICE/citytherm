@@ -4,10 +4,8 @@ import { useScenariosStore, type BuildingPart, type Scenario } from '@/stores/si
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import {
-  createBuildingMaterial,
   createOscillatingPlaneMaterial,
   createSoilMaterial,
-  simulationSoilTypeCodeToColor
 } from '@/lib/3d/materials'
 import { createBuildingInstancedMesh, createSoilGeometry } from '@/lib/3d/scenarioPreviewBuilders'
 
@@ -30,16 +28,62 @@ let scenario: Scenario | null = null
 let buildings: THREE.InstancedMesh | null = null
 let soil: THREE.Mesh | null = null
 let plane: THREE.Mesh | null = null
+const ready = ref(false)
 let loading = ref(true)
 
+onMounted(() => {
+  scene = new THREE.Scene()
+  scene.background = new THREE.Color(0xeeeeee)
+
+  const aspect = container.value!.clientWidth / container.value!.clientHeight
+  camera = new THREE.PerspectiveCamera(60, aspect, 0.1, 1000)
+  camera.position.set(120, 120, 120)
+  camera.lookAt(0, 0, 0)
+
+  renderer = new THREE.WebGLRenderer({ antialias: true })
+  renderer.setSize(container.value!.clientWidth, container.value!.clientHeight)
+  container.value!.appendChild(renderer.domElement)
+
+  // 💫 OrbitControls
+  controls = new OrbitControls(camera, renderer.domElement)
+  controls.enableDamping = true
+  controls.dampingFactor = 0.05
+  controls.enablePan = true
+  controls.minDistance = 5
+  controls.autoRotateSpeed = 0.4
+  controls.maxDistance = 400
+
+  // Lights
+  const light = new THREE.DirectionalLight(0xffffff, 1)
+  light.position.set(10, 50, 20)
+  scene.add(light)
+
+  const ambient = new THREE.AmbientLight(0xffffff, 0.4)
+  scene.add(ambient)
+
+  // 🌀 Animation loop
+  function animate() {
+    requestAnimationFrame(animate)
+    controls.update()
+    renderer.render(scene, camera)
+  }
+  animate()
+
+  // 💡 Handle resize
+  window.addEventListener('resize', onResize)
+
+  ready.value = true
+})
+
 watch(
-  () => props.scenarioId,
+  () => [props.scenarioId, ready.value],
   async (newId, oldId) => {
+    if (!ready.value) return
     if (newId === oldId) return
 
     loading.value = true
 
-    scenario = await scenarioStore.getScenario(newId)
+    scenario = await scenarioStore.getScenario(props.scenarioId)
 
     createSoil()
     createBuildings()
@@ -50,8 +94,9 @@ watch(
 )
 
 watch(
-  () => props.plane,
+  () => [props.plane, ready.value],
   (newPlane, oldPlane) => {
+    if (!ready.value) return
     if (newPlane === oldPlane) return
 
     createPlane()
@@ -97,48 +142,6 @@ function createBuildings() {
   buildings = createBuildingInstancedMesh(scenario.buildings, sceneSize)
   scene.add(buildings)
 }
-
-onMounted(() => {
-  scene = new THREE.Scene()
-  scene.background = new THREE.Color(0xeeeeee)
-
-  const aspect = container.value!.clientWidth / container.value!.clientHeight
-  camera = new THREE.PerspectiveCamera(60, aspect, 0.1, 1000)
-  camera.position.set(120, 120, 120)
-  camera.lookAt(0, 0, 0)
-
-  renderer = new THREE.WebGLRenderer({ antialias: true })
-  renderer.setSize(container.value!.clientWidth, container.value!.clientHeight)
-  container.value!.appendChild(renderer.domElement)
-
-  // 💫 OrbitControls
-  controls = new OrbitControls(camera, renderer.domElement)
-  controls.enableDamping = true
-  controls.dampingFactor = 0.05
-  controls.enablePan = true
-  controls.minDistance = 5
-  controls.autoRotateSpeed = 0.4
-  controls.maxDistance = 400
-
-  // Lights
-  const light = new THREE.DirectionalLight(0xffffff, 1)
-  light.position.set(10, 50, 20)
-  scene.add(light)
-
-  const ambient = new THREE.AmbientLight(0xffffff, 0.4)
-  scene.add(ambient)
-
-  // 🌀 Animation loop
-  function animate() {
-    requestAnimationFrame(animate)
-    controls.update()
-    renderer.render(scene, camera)
-  }
-  animate()
-
-  // 💡 Handle resize
-  window.addEventListener('resize', onResize)
-})
 
 function onResize() {
   if (!container.value) return
