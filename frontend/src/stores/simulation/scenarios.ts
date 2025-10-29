@@ -29,7 +29,7 @@ export interface SoilMap {
   anomalies: { [key: `${number};${number}`]: SoilTypeAnomaly }
 }
 
-export type Scenario = {
+export type ScenarioMap = {
   soil: SoilMap
   buildings: BuildingMap
 }
@@ -50,24 +50,35 @@ async function fetchSoilMap(key: string): Promise<SoilMap> {
   return response.json()
 }
 
-async function fetchScenario(key: string): Promise<Scenario> {
+async function fetchScenario(key: string): Promise<ScenarioMap> {
   const [buildings, soil] = await Promise.all([fetchBuilding(key), fetchSoilMap(key)])
   return { buildings, soil }
 }
 
-export interface ScenarioDescription {
-  id: string
-  slug: string
-  scenario: string
-  description: string
-  key_variables_changed: string
-  primary_analysis_focus: string
-  representative_LCZ: string
-  details?: string
-  relevant_lectures: string[]
+// Represents a group, e.g., "Group 1: Building Materials & Urban Form"
+export interface Group {
+  groupName: string
+  scenarios: string[] // Array of scenario slugs (e.g., ["S1_1", "S1_2"])
 }
 
-async function fetchScenarioDescriptions(): Promise<ScenarioDescription[]> {
+// Represents a single scenario in detail
+export interface ScenarioDescription {
+  id: string // e.g., "S1.1"
+  slug: string // e.g., "S1_1"
+  name: string // Scenario name (was "Scenario Category" in the table)
+  description: string
+  group: string // Group slug this scenario belongs to (e.g., "Group1")
+  primaryAnalysisFocus: string
+  relevantLectures: string[] // e.g., ["L5", "L8"]
+}
+
+// The root object representing the entire dataset
+export interface ScenarioCollection {
+  groups: { [groupSlug: string]: Group }
+  scenarios: { [scenarioSlug: string]: ScenarioDescription }
+}
+
+async function fetchScenarioDescriptions(): Promise<ScenarioCollection> {
   const response = await fetch(`${cdnUrl}/simulation/scenarios/scenarios.json`)
   if (!response.ok) {
     throw new Error(`Failed to fetch scenario descriptions: ${response.statusText}`)
@@ -90,25 +101,25 @@ async function fetchScenarioTimeSeriesPoints(scenario: string): Promise<TimeSeri
 }
 
 export const useScenariosStore = defineStore('scenarios', () => {
-  const scenarioDescriptionsCache = new KeyedCache<ScenarioDescription[], Error>(
+  const scenarioDescriptionsCache = new KeyedCache<ScenarioCollection, Error>(
     fetchScenarioDescriptions
   )
-  const scenariosCache = new KeyedCache<Scenario, Error>(fetchScenario)
+  const scenariosCache = new KeyedCache<ScenarioMap, Error>(fetchScenario)
   const scenarioTimeSeriesCache = new KeyedCache<TimeSeriesPoint[], Error>(
     fetchScenarioTimeSeriesPoints
   )
 
-  async function getScenarioDescriptions(): Promise<ScenarioDescription[]> {
+  async function getScenarioDescriptions(): Promise<ScenarioCollection> {
     return scenarioDescriptionsCache.get('all') // TODO: make cache without key ?
   }
 
-  async function getScenario(key: string): Promise<Scenario> {
+  async function getScenarioMap(key: string): Promise<ScenarioMap> {
     return scenariosCache.get(key)
   }
 
-  async function getScenarioBySlug(slug: string) {
+  async function getScenarioDescriptionBySlug(slug: string) {
     const scenarios = await getScenarioDescriptions()
-    const scenario = scenarios.find((s) => s.slug === slug)
+    const scenario = scenarios.scenarios[slug]
     if (!scenario) {
       throw new Error(`Scenario with slug ${slug} not found`)
     }
@@ -130,8 +141,8 @@ export const useScenariosStore = defineStore('scenarios', () => {
 
   return {
     getScenarioDescriptions,
-    getScenario,
-    getScenarioBySlug,
+    getScenarioMap,
+    getScenarioDescriptionBySlug,
     getAvailableTimeSeriesPointsForScenario,
     getFullTimeSeriesPointFromSlugOrNull
   }

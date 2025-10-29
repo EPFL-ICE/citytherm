@@ -120,7 +120,7 @@ export function simulationSoilTypeCodeToColor(code: number): THREE.Color {
 }
 
 export function createOscillatingPlaneMaterial(
-  color = 0x0000ff,
+  color = 0xdddd22,
   minOpacity = 0.4,
   maxOpacity = 0.5,
   speed = 3.0

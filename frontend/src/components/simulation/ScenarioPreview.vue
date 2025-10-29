@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { defineProps, onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import { useScenariosStore, type BuildingPart, type Scenario } from '@/stores/simulation/scenarios'
+import {
+  useScenariosStore,
+  type BuildingPart,
+  type ScenarioMap
+} from '@/stores/simulation/scenarios'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
-import {
-  createOscillatingPlaneMaterial,
-  createSoilMaterial,
-} from '@/lib/3d/materials'
+import { createOscillatingPlaneMaterial, createSoilMaterial } from '@/lib/3d/materials'
 import { createBuildingInstancedMesh, createSoilGeometry } from '@/lib/3d/scenarioPreviewBuilders'
 
 const props = defineProps<{
@@ -24,7 +25,7 @@ let scene: THREE.Scene
 let camera: THREE.PerspectiveCamera
 let renderer: THREE.WebGLRenderer
 let controls: OrbitControls
-let scenario: Scenario | null = null
+let scenario: ScenarioMap | null = null
 let buildings: THREE.InstancedMesh | null = null
 let soil: THREE.Mesh | null = null
 let plane: THREE.Mesh | null = null
@@ -33,7 +34,7 @@ let loading = ref(true)
 
 onMounted(() => {
   scene = new THREE.Scene()
-  scene.background = new THREE.Color(0xeeeeee)
+  scene.background = new THREE.Color(0xffffff)
 
   const aspect = container.value!.clientWidth / container.value!.clientHeight
   camera = new THREE.PerspectiveCamera(60, aspect, 0.1, 1000)
@@ -83,7 +84,7 @@ watch(
 
     loading.value = true
 
-    scenario = await scenarioStore.getScenario(props.scenarioId)
+    scenario = await scenarioStore.getScenarioMap(props.scenarioId)
 
     createSoil()
     createBuildings()

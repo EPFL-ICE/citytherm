@@ -7,7 +7,10 @@ export function makePathToScenarioPicker(params: ScenarioPickerParams) {
   return `/simulation?scenarios=${params.scenario ?? '_'}&plane=${params.plane ?? '_'}`
 }
 
-export function makePathToScenarioPickerMerge(newParams: Partial<ScenarioPickerParams>, oldParams: ScenarioPickerParams) {
+export function makePathToScenarioPickerMerge(
+  newParams: Partial<ScenarioPickerParams>,
+  oldParams: ScenarioPickerParams
+) {
   return makePathToScenarioPicker({
     ...oldParams,
     ...newParams
