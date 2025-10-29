@@ -15,10 +15,12 @@ import ScenarioSelect from '@/components/simulation/pickers/ScenarioSelect.vue'
 import TimeSeriesPointsSelect from '@/components/simulation/pickers/TimeSeriesPointsSelect.vue'
 import ResultGrid from '@/components/ui/ResultGrid.vue'
 import {
-  makePathToSliceMerge,
+  makePathToPlaneMerge,
+  makePathToScenarioPicker,
   makePathToTimeSeries,
-  type SlicePageParams
+  type PlanePageParams
 } from '@/lib/utils/routingUtils'
+import { mdiChevronLeft } from '@mdi/js'
 
 const scenarioStore = useScenariosStore()
 const route = useRoute()
@@ -53,8 +55,8 @@ const availablePlanes = computed<SimulationPlanePresetsMap>(() => {
 const planesSelectOptions = computed(() => Object.values(availablePlanes.value))
 const availableTimeSlots = computed(() => getSimulationPlaneAvailableTimeSlots())
 
-function goToUpdatedParams(params: Partial<SlicePageParams>) {
-  const routePath = makePathToSliceMerge(params, {
+function goToUpdatedParams(params: Partial<PlanePageParams>) {
+  const routePath = makePathToPlaneMerge(params, {
     scenarioA: scenarioASlug.value,
     scenarioB: scenarioBSlug.value,
     plane: planeSlug.value,
@@ -85,10 +87,22 @@ function navigateToTimeSeriesPoint(pointSlug: string) {
   })
   router.push(routePath)
 }
+
+const pickerUrl = computed(() => {
+  return makePathToScenarioPicker({
+    scenario: scenarioASlug.value,
+    plane: planeSlug.value
+  })
+})
 </script>
 
 <template>
-  <two-panes-layout title="Simulation result slice explorer">
+  <two-panes-layout title="Plane Data Explorer">
+    <template #subtitle>
+      <v-btn :to="pickerUrl" :prepend-icon="mdiChevronLeft" color="primary" density="comfortable">
+        Back to Scenarios
+      </v-btn>
+    </template>
     <template #left-pane>
       <tool-set>
         <template #header>
@@ -132,7 +146,7 @@ function navigateToTimeSeriesPoint(pointSlug: string) {
         </template>
         <template #default>
           <div>
-            <h3>Available variables</h3>
+            <h3>Variables</h3>
             <simulation-variable-list
               :model-value="selectedVariables"
               @update:model-value="goToUpdatedParams({ variables: $event })"

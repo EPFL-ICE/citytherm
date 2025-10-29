@@ -51,17 +51,17 @@ echarts.use([
 
 const heatmapChart = ref<InstanceType<typeof VChart> | null>(null)
 
-function getCenteredValue(x: number, s: number): number {
-  return x * s + s / 2
+function getGraduationValue(x: number, s: number): number {
+  return x * s
 }
 
 function getTooltip(p: any): string {
   const xValue = props.axisX.valuesOverride
     ? props.axisX.valuesOverride[p.value[0]]
-    : getCenteredValue(p.value[0], props.axisX.cellSize)
+    : getGraduationValue(p.value[0], props.axisX.cellSize)
   const yValue = props.axisY.valuesOverride
     ? props.axisY.valuesOverride[p.value[1]]
-    : getCenteredValue(p.value[1], props.axisY.cellSize)
+    : getGraduationValue(p.value[1], props.axisY.cellSize)
 
   const specialPoint =
     props.showSpecialPoints && p.data.metadata?.pointSlug
@@ -107,7 +107,7 @@ const chartOptions = computed<EChartsOption>(() => {
         formatter: (val: any) =>
           props.axisX.valuesOverride
             ? props.axisX.valuesOverride[val]
-            : getCenteredValue(val, props.axisX.cellSize) // convert 0–99 to meters
+            : getGraduationValue(val, props.axisX.cellSize) // convert 0–99 to meters
       },
       nameLocation: 'middle',
       nameGap: 30
@@ -123,7 +123,7 @@ const chartOptions = computed<EChartsOption>(() => {
         formatter: (val: any) =>
           props.axisY.valuesOverride
             ? props.axisY.valuesOverride[val]
-            : getCenteredValue(val, props.axisY.cellSize) // convert 0–99 to meters
+            : getGraduationValue(val, props.axisY.cellSize) // convert 0–99 to meters
       },
       nameLocation: 'middle',
       nameGap: 40
