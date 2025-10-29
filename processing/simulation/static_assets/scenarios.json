@@ -1,155 +1,152 @@
-[
-  {
-    "id": "S0",
-    "slug": "S0",
-    "scenario": "Baseline",
-    "description": "4x4 grid, uniform 16m height, 16m street width, concrete buildings, asphalt ground.",
-    "key_variables_changed": "None (baseline reference)",
-    "primary_analysis_focus": "Establish reference for fluxes, temperatures, and comfort metrics.",
-    "representative_LCZ": "LCZ 5 (Open Mid-Rise)",
-    "details": "Dense mix of mid-rise buildings; concrete construction; no trees.",
-    "relevant_lectures": ["L5: Building-Environment", "L6: Ground-Environment"]
+{
+  "groups": {
+    "Group0": {
+      "groupName": "Baseline Scenario",
+      "scenarios": ["S0"]
+    },
+    "Group1": {
+      "groupName": "Building Materials & Urban Form (Student A)",
+      "scenarios": ["S1_1", "S1_2", "S1_3", "S1_4", "S1_5"]
+    },
+    "Group2": {
+      "groupName": "Ground Modification (Student B)",
+      "scenarios": ["S2_1", "S2_2"]
+    },
+    "Group3": {
+      "groupName": "Vegetation Strategies (Student C)",
+      "scenarios": ["S3_1", "S3_2", "S3_3", "S3_4"]
+    },
+    "Group4": {
+      "groupName": "Water Bodies (Student D)",
+      "scenarios": ["S4_1", "S4_2"]
+    }
   },
-  {
-    "id": "S1",
-    "slug": "S1",
-    "scenario": "Tall Canyon",
-    "description": "Building Height: 16m -> 30m",
-    "key_variables_changed": "Building height",
-    "primary_analysis_focus": "Impact of Aspect Ratio, Sky View Factor (SVF), shading, and wind flow on canyon climate.",
-    "representative_LCZ": "LCZ 4 (Open High-Rise)",
-    "details": "Dense mix of tall buildings; concrete construction; no trees.",
-    "relevant_lectures": ["L5: Building-Environment"]
-  },
-  {
-    "id": "S2",
-    "slug": "S2",
-    "scenario": "Wide Canyon",
-    "description": "Street Width: 16m -> 30m",
-    "key_variables_changed": "Street width",
-    "primary_analysis_focus": "Impact of Aspect Ratio, SVF, and increased solar access.",
-    "representative_LCZ": "LCZ 5 / 9 (Open Mid-Rise / Sparsely Built)",
-    "relevant_lectures": ["L5: Building-Environment"]
-  },
-  {
-    "id": "S3",
-    "slug": "S3",
-    "scenario": "Staggered Layout",
-    "description": "Building Alignment: Aligned grid -> Staggered grid",
-    "key_variables_changed": "Building alignment",
-    "primary_analysis_focus": "Changes in wind channeling, ventilation, and turbulence within the urban fabric.",
-    "representative_LCZ": "LCZ 5 (Open Mid-Rise / Sparsely Built)",
-    "relevant_lectures": ["L5: Building-Environment"]
-  },
-  {
-    "id": "S4",
-    "slug": "S4",
-    "scenario": "Cool Pavement",
-    "description": "Street Material: Asphalt -> High-albedo concrete",
-    "key_variables_changed": "Street material (albedo)",
-    "primary_analysis_focus": "Effect of albedo on surface temperature, radiation balance (Q∗), and stored heat (ΔQS).",
-    "representative_LCZ": "LCZ 5 (Open Mid-Rise)",
-    "relevant_lectures": ["L6: Ground-Environment"]
-  },
-  {
-    "id": "S5",
-    "slug": "S5",
-    "scenario": "Green Street",
-    "description": "Street Material: Asphalt -> Mix of concrete pavement, grass verges, and soil areas.",
-    "key_variables_changed": "Street material (albedo and evapotranspiration)",
-    "primary_analysis_focus": "Combined effects of albedo and evapotranspiration (QE) on the energy balance.",
-    "representative_LCZ": "LCZ 5 (Open Mid-Rise with increased pervious surface)",
-    "details": "Open arrangement of mid-rise buildings with abundant green spaces.",
-    "relevant_lectures": ["L6: Ground-Environment", "L8: Vegetation-Environment"]
-  },
-  {
-    "id": "S6",
-    "slug": "S6",
-    "scenario": "Green Facades",
-    "description": "Building Walls: Add green walls to all building facades.",
-    "key_variables_changed": "Building wall greening",
-    "primary_analysis_focus": "Cooling from evapotranspiration and shading directly on building surfaces.",
-    "representative_LCZ": "LCZ 5 (Open Mid-Rise)",
-    "relevant_lectures": ["L5: Building-Environment", "L8: Vegetation-Environment"]
-  },
-  {
-    "id": "S7",
-    "slug": "S7",
-    "scenario": "Green Roofs",
-    "description": "Building Roofs: Convert all roofs to extensive green roofs.",
-    "key_variables_changed": "Roof greening",
-    "primary_analysis_focus": "Impact of evapotranspiration, increased thermal mass, and insulation on roofs.",
-    "representative_LCZ": "LCZ 5 (Open Mid-Rise)",
-    "relevant_lectures": ["L5: Building-Environment", "L8: Vegetation-Environment"]
-  },
-  {
-    "id": "S8",
-    "slug": "S8",
-    "scenario": "Deciduous Trees",
-    "description": "Vegetation: Add deciduous trees, simulated for leaf-off (winter) conditions.",
-    "key_variables_changed": "Tree vegetation type (deciduous, leaf-off)",
-    "primary_analysis_focus": "Assess the impact of woody elements on wind and radiation without foliage evapotranspiration.",
-    "representative_LCZ": "LCZ 5 (Open Mid-Rise)",
-    "relevant_lectures": ["L8: Vegetation-Environment"]
-  },
-  {
-    "id": "S9",
-    "slug": "S9",
-    "scenario": "Evergreen Trees",
-    "description": "Vegetation: Add a row of evergreen trees along the streets.",
-    "key_variables_changed": "Tree vegetation type (evergreen)",
-    "primary_analysis_focus": "Comparison of year-round shading and microclimate impact vs. deciduous tree structure.",
-    "representative_LCZ": "LCZ 5 (Open Mid-Rise)",
-    "relevant_lectures": ["L8: Vegetation-Environment"]
-  },
-  {
-    "id": "S10",
-    "slug": "S10",
-    "scenario": "Misting System",
-    "description": "Water Body: Add an active misting/spray system in the central plaza.",
-    "key_variables_changed": "Artificial water cooling (misting)",
-    "primary_analysis_focus": "Intensive, localized evaporative cooling; impact on air temperature and humidity.",
-    "representative_LCZ": "LCZ 5 (Open Mid-Rise)",
-    "relevant_lectures": ["L7: Water Bodies-Environment"]
-  },
-  {
-    "id": "S11",
-    "slug": "S11",
-    "scenario": "Urban Pond",
-    "description": "Water Body: Add a shallow water pond in the central plaza.",
-    "key_variables_changed": "Water surface presence",
-    "primary_analysis_focus": "Cooling from evaporation and the effect of water's high thermal inertia on diurnal temperature swing.",
-    "representative_LCZ": "LCZ 5 (with LCZ G - Water feature [only if very large])",
-    "relevant_lectures": ["L7: Water Bodies-Environment"]
-  },
-  {
-    "id": "S12",
-    "slug": "S12",
-    "scenario": "Combination: Green Infrastructure",
-    "description": "Combines S2.2 (Green Street), S3.2 (Green Roofs), and S4.2 (Evergreen Trees).",
-    "key_variables_changed": "Multiple green infrastructure components",
-    "primary_analysis_focus": "Analyzing the synergistic impact of combined measures (Intensive Green Infrastructure).",
-    "representative_LCZ": "LCZ 5",
-    "relevant_lectures": ["L5", "L6", "L8"]
-  },
-  {
-    "id": "S13",
-    "slug": "S13",
-    "scenario": "Combination: Cool Tech",
-    "description": "Combines S2.1 (Cool Pavement) and S5.1 (Misting System).",
-    "key_variables_changed": "Technology-based cooling strategies",
-    "primary_analysis_focus": "Analyzing the synergistic impact of combined measures (Technology-focused mitigation).",
-    "representative_LCZ": "LCZ 5",
-    "relevant_lectures": ["L6", "L7"]
-  },
-  {
-    "id": "S14",
-    "slug": "S14",
-    "scenario": "Combination: Holistic Design",
-    "description": "Combines S1.3 (Staggered Layout), S2.2 (Green Street), and S4.2 (Evergreen Trees).",
-    "key_variables_changed": "Integrated design and vegetation configuration",
-    "primary_analysis_focus": "Analyzing the synergistic impact of combined measures (Integrated form and cover design).",
-    "representative_LCZ": "LCZ 5",
-    "relevant_lectures": ["L5", "L6", "L8"]
+  "scenarios": {
+    "S0": {
+      "id": "S0",
+      "slug": "S0",
+      "name": "Baseline",
+      "description": "Idealized domain: 4×4 grid buildings - aligned, uniform 16 m building height, 16 m street width, urban canyon aspect ratio of 1, concrete buildings, asphalt ground, LCZ 5.",
+      "group": "Group0",
+      "primaryAnalysisFocus": "Establish reference for fluxes, environmental conditions, and comfort metrics.",
+      "relevantLectures": ["L5", "L6"]
+    },
+    "S1_1": {
+      "id": "S1.1",
+      "slug": "S1_1",
+      "name": "Tall Canyon",
+      "description": "Building Height: 16 m → 30 m.",
+      "group": "Group1",
+      "primaryAnalysisFocus": "Impact of Urban Canyon Aspect Ratio, Sky View Factor (SVF), mutual shading, and wind flow on canyon climate.",
+      "relevantLectures": ["L5"]
+    },
+    "S1_2": {
+      "id": "S1.2",
+      "slug": "S1_2",
+      "name": "Wide Canyon",
+      "description": "Street Width: 16 m → 30 m.",
+      "group": "Group1",
+      "primaryAnalysisFocus": "Impact of lower Urban Canyon Aspect Ratio, higher SVF, and increased solar access on surface heating.",
+      "relevantLectures": ["L5"]
+    },
+    "S1_3": {
+      "id": "S1.3",
+      "slug": "S1_3",
+      "name": "Staggered Layout",
+      "description": "Building Alignment: Aligned grid → Staggered grid.",
+      "group": "Group1",
+      "primaryAnalysisFocus": "Changes in wind channeling and ventilation in canyons, surface temperatures.",
+      "relevantLectures": ["L5"]
+    },
+    "S1_4": {
+      "id": "S1.4",
+      "slug": "S1_4",
+      "name": "Building Materials: Glass",
+      "description": "Building Façade Material: Concrete → Glass.",
+      "group": "Group1",
+      "primaryAnalysisFocus": "Effect of shortwave and longwave radiation, heat storage, surface temperatures.",
+      "relevantLectures": ["L5"]
+    },
+    "S1_5": {
+      "id": "S1.5",
+      "slug": "S1_5",
+      "name": "Building Materials: Green Façade",
+      "description": "Building Walls: Concrete → Green walls on all façades.",
+      "group": "Group1",
+      "primaryAnalysisFocus": "Cooling from evapotranspiration (Qₑ), surface temperatures, longwave radiation.",
+      "relevantLectures": ["L5", "L8"]
+    },
+    "S2_1": {
+      "id": "S2.1",
+      "slug": "S2_1",
+      "name": "High Albedo Pavement",
+      "description": "Street Material: Asphalt → High-albedo pavement.",
+      "group": "Group2",
+      "primaryAnalysisFocus": "Effect of albedo on surface temperature, radiation balance (Q*), and stored heat (ΔQₛ).",
+      "relevantLectures": ["L6"]
+    },
+    "S2_2": {
+      "id": "S2.2",
+      "slug": "S2_2",
+      "name": "Sandy Loamy Ground",
+      "description": "Street Material: Asphalt → Sandy Loam soil.",
+      "group": "Group2",
+      "primaryAnalysisFocus": "Impact of changing from impervious to pervious surface, allowing for cooling from evapotranspiration (Qₑ), ground temperatures at different levels.",
+      "relevantLectures": ["L6"]
+    },
+    "S3_1": {
+      "id": "S3.1",
+      "slug": "S3_1",
+      "name": "Grass Cover",
+      "description": "Ground Cover: Asphalt → Grass (25 cm).",
+      "group": "Group3",
+      "primaryAnalysisFocus": "Impact of a low, continuous vegetative cover on surface temperature and latent heat flux (Qₑ).",
+      "relevantLectures": ["L8", "L6"]
+    },
+    "S3_2": {
+      "id": "S3.2",
+      "slug": "S3_2",
+      "name": "Hedges",
+      "description": "Vegetation: Add 1 m high hedges along streets.",
+      "group": "Group3",
+      "primaryAnalysisFocus": "Effects of low, dense vegetation on near-ground wind flow, shading, and local humidity.",
+      "relevantLectures": ["L8"]
+    },
+    "S3_3": {
+      "id": "S3.3",
+      "slug": "S3_3",
+      "name": "Deciduous Trees",
+      "description": "Vegetation: Add 6 m deciduous trees along streets.",
+      "group": "Group3",
+      "primaryAnalysisFocus": "Effect of shading and evapotranspiration from tree canopies on canyon climate.",
+      "relevantLectures": ["L8"]
+    },
+    "S3_4": {
+      "id": "S3.4",
+      "slug": "S3_4",
+      "name": "Evergreen Trees",
+      "description": "Vegetation: Add 6 m evergreen trees along streets.",
+      "group": "Group3",
+      "primaryAnalysisFocus": "Effect of shading and evapotranspiration from tree canopies on canyon climate.",
+      "relevantLectures": ["L8"]
+    },
+    "S4_1": {
+      "id": "S4.1",
+      "slug": "S4_1",
+      "name": "Mist Nozzles",
+      "description": "Water Feature: Add an active misting/spray system.",
+      "group": "Group4",
+      "primaryAnalysisFocus": "Intensive, localized evaporative cooling; impact on air temperature and humidity.",
+      "relevantLectures": ["L7"]
+    },
+    "S4_2": {
+      "id": "S4.2",
+      "slug": "S4_2",
+      "name": "Urban Pond",
+      "description": "Water Feature: Add a shallow water pond.",
+      "group": "Group4",
+      "primaryAnalysisFocus": "Cooling from evaporation and the effect of water’s high thermal inertia.",
+      "relevantLectures": ["L7"]
+    }
   }
-]
+}
