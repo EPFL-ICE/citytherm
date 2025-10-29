@@ -1,5 +1,9 @@
 <script setup lang="ts">
-import { useScenariosStore, type ScenarioDescription } from '@/stores/simulation/scenarios'
+import {
+  useScenariosStore,
+  type ScenarioCollection,
+  type ScenarioDescription
+} from '@/stores/simulation/scenarios'
 import { computed, onMounted, ref } from 'vue'
 
 const scenarioStore = useScenariosStore()
@@ -9,25 +13,25 @@ const props = defineProps<{
 }>()
 const model = defineModel<string | null>()
 
-const scenariosList = ref<ScenarioDescription[] | null>(null)
+const scenariosCollection = ref<ScenarioCollection | null>(null)
 
 onMounted(async () => {
-  scenariosList.value = await scenarioStore.getScenarioDescriptions()
+  scenariosCollection.value = await scenarioStore.getScenarioDescriptions()
 })
 
 function scenarioItemProps(item: ScenarioDescription | null) {
   if (!item) return { title: 'No comparison', subtitle: 'Pick a scenario to compare', value: null }
-  return { title: `${item.id} - ${item.scenario}`, subtitle: item.description, value: item.slug }
+  return { title: `${item.id} - ${item.name}`, subtitle: item.description, value: item.slug }
 }
 
 const items = computed(() => {
-  if (!scenariosList.value) return []
+  if (!scenariosCollection.value) return []
 
   if (props.compareOption) {
-    return [null, ...scenariosList.value]
+    return [null, ...Object.values(scenariosCollection.value.scenarios)]
   }
 
-  return scenariosList.value
+  return Object.values(scenariosCollection.value.scenarios)
 })
 </script>
 

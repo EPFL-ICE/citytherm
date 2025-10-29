@@ -102,6 +102,7 @@ onUnmounted(() => {
   max-height: 400px;
   overflow-y: auto;
   z-index: 1000;
+  white-space: pre-line;
 
   pointer-events: auto; /* ✅ allows clicking */
 }
