@@ -5,7 +5,8 @@ export interface ScenarioPickerParams {
 
 export function makePathToScenarioPicker(params: ScenarioPickerParams) {
   const scenarioStr = params.scenario ? `scenarios=${params.scenario}` : ''
-  return `/simulation?${scenarioStr}&plane=${params.plane ?? '_'}`
+  const planeStr = params.plane ? `&plane=${params.plane}` : ''
+  return `/simulation?${scenarioStr}${planeStr}`
 }
 
 export function makePathToScenarioPickerMerge(
