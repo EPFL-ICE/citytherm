@@ -9,10 +9,11 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { createOscillatingPlaneMaterial, createSoilMaterial } from '@/lib/3d/materials'
 import { createBuildingInstancedMesh, createSoilGeometry } from '@/lib/3d/scenarioPreviewBuilders'
+import type { SimulationPlane } from '@/lib/simulation/simulationResultPlanesUtils'
 
 const props = defineProps<{
   scenarioId: string
-  plane: { rotationX: number; position: { x?: number; y?: number; z?: number } } | null
+  plane: SimulationPlane | null
 }>()
 
 const scenarioStore = useScenariosStore()
@@ -36,10 +37,11 @@ let loading = ref(true)
 onMounted(() => {
   scene = new THREE.Scene()
   scene.background = new THREE.Color(0xffffff)
+  scene.scale.z = -1 // Invert Z axis to have a right-handed coordinate system (Positive Z goes into the scene rather than out of it)
 
   const aspect = container.value!.clientWidth / container.value!.clientHeight
   camera = new THREE.PerspectiveCamera(60, aspect, 0.1, 1000)
-  camera.position.set(120, 120, 120)
+  camera.position.set(-80, 120, 180)
   camera.lookAt(0, 0, 0)
 
   renderer = new THREE.WebGLRenderer({ antialias: true })
@@ -112,10 +114,14 @@ function createPlane() {
   if (!props.plane) return
   if (plane) scene.remove(plane)
 
-  const geometry = new THREE.PlaneGeometry(200, 200)
+  const geometry = new THREE.PlaneGeometry(props.plane.size?.width || 200, props.plane.size?.height || 200)
   const material = createOscillatingPlaneMaterial()
   const mesh = new THREE.Mesh(geometry, material)
-  mesh.rotateX(props.plane.rotationX)
+
+  if (props.plane.rotation.x) mesh.rotateX(props.plane.rotation.x)
+  if (props.plane.rotation.y) mesh.rotateY(props.plane.rotation.y)
+  if (props.plane.rotation.z) mesh.rotateZ(props.plane.rotation.z)
+
   if (props.plane.position.x) mesh.position.x = props.plane.position.x
   if (props.plane.position.y) mesh.position.y = props.plane.position.y
   if (props.plane.position.z) mesh.position.z = props.plane.position.z
@@ -153,7 +159,6 @@ function createArrow(arrowLength = 100, arrowWidth = 1, color = 0xff0000) {
   const shaftGeometry = new THREE.CylinderGeometry(arrowWidth, arrowWidth, arrowLength, 8)
   const shaftMaterial = new THREE.MeshBasicMaterial({ color })
   const shaft = new THREE.Mesh(shaftGeometry, shaftMaterial)
-  // shaft.rotation.x = Math.PI / 2;
   arrow.add(shaft)
 
   const headGeometry = new THREE.CylinderGeometry(0, arrowWidth * 2, arrowWidth * 4, 8)

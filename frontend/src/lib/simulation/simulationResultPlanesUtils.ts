@@ -1,6 +1,7 @@
 export interface SimulationPlane {
-  rotationX: number // in radians
+  rotation: { x?: number; y?: number; z?: number } // in radians
   position: { x?: number; y?: number; z?: number }
+  size?: { width?: number; height?: number }
 }
 
 export interface SimulationPlaneOption {
@@ -21,7 +22,7 @@ export type SimulationPlanePresetsMap = Record<SimulationPlanePreset, Simulation
 
 export function getSimulationPlanePresetsForParameters(
   buildingCanopyHeight: number,
-  midBuildingZ: number
+  midBuildingX: number
 ): SimulationPlanePresetsMap {
   return {
     horizontal_ground: {
@@ -29,13 +30,13 @@ export function getSimulationPlanePresetsForParameters(
       name: 'Horizontal - Ground (0.2m)',
       description:
         'A horizontal plane at ground level (0.2m), useful for assessing surface temperatures.',
-      plane: { rotationX: -Math.PI / 2, position: { x: 0, y: 0.2, z: 0 } }
+      plane: { rotation: { x: -Math.PI / 2 }, position: { x: 0, y: 0.2, z: 0 } }
     },
     horizontal_human_height: {
       slug: 'horizontal_human_height',
       name: 'Horizontal - Human Height (1.4m)',
       description: 'A horizontal plane at 1.4 meters above ground, representing human height.',
-      plane: { rotationX: -Math.PI / 2, position: { x: 0, y: 1.4, z: 0 } }
+      plane: { rotation: { x: -Math.PI / 2 }, position: { x: 0, y: 1.4, z: 0 } }
     },
     horizontal_building_canopy: {
       slug: 'horizontal_building_canopy',
@@ -43,19 +44,19 @@ export function getSimulationPlanePresetsForParameters(
       description: `A horizontal plane 1m above the average building height (${
         buildingCanopyHeight + 1
       }m).`,
-      plane: { rotationX: -Math.PI / 2, position: { x: 0, y: buildingCanopyHeight + 1, z: 0 } }
+      plane: { rotation: { x: -Math.PI / 2 }, position: { x: 0, y: buildingCanopyHeight + 1, z: 0 } }
     },
     vertical_mid_canyon: {
       slug: 'vertical_mid_canyon',
       name: 'Vertical - Mid Street Canyon',
       description: 'A vertical plane cutting through the middle of a street canyon.',
-      plane: { rotationX: 0, position: { x: 0, y: 0, z: 0 } }
+      plane: { rotation: { y: Math.PI / 2 }, position: { x: 0, y: 35, z: 0 }, size: { height: 70 } }
     },
     vertical_mid_building: {
       slug: 'vertical_mid_building',
       name: 'Vertical - Mid Building',
       description: `A vertical plane cutting through the middle of a building.`,
-      plane: { rotationX: 0, position: { x: 0, y: 0, z: midBuildingZ } }
+      plane: { rotation: { y: Math.PI / 2 }, position: { x: midBuildingX, y: 35, z: 0 }, size: { height: 70 } }
     }
   }
 }
