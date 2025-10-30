@@ -240,23 +240,6 @@ function createAxes() {
   const zAxis = createAxis(zHeight, 0x00ff00, 'Z', 'green', 10, new THREE.Vector3(-5, 0, -5))
   zAxis.position.set(-sceneSize.x / 2, zHeight / 2, -sceneSize.y / 2)
   scene.add(zAxis)
-
-  /*const arrowY = createArrow(sceneSize.y, 1, 0x0000ff);
-  arrowY.position.set(-sceneSize.x / 2, 0, 0);
-  arrowY.rotation.x = Math.PI / 2;
-  scene.add(arrowY);
-
-  const yLabel = makeTextSprite('Y', { color: 'blue' });
-  yLabel.position.set(-sceneSize.x / 2, 0, sceneSize.y / 2 + 5);
-  scene.add(yLabel);
-
-  const arrowZ = createArrow(zHeight, 1, 0x00ff00);
-  arrowZ.position.set(-sceneSize.x / 2, zHeight / 2, -sceneSize.y / 2);
-  scene.add(arrowZ);
-
-  const zLabel = makeTextSprite('Z', { color: 'green' });
-  zLabel.position.set(-sceneSize.x / 2, zHeight + 10, -sceneSize.y / 2);
-  scene.add(zLabel);*/
 }
 
 function onResize() {
