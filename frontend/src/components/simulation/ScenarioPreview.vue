@@ -29,6 +29,7 @@ let scenario: ScenarioMap | null = null
 let buildings: THREE.InstancedMesh | null = null
 let soil: THREE.Mesh | null = null
 let plane: THREE.Mesh | null = null
+
 const ready = ref(false)
 let loading = ref(true)
 
