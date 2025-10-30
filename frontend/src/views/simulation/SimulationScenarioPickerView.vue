@@ -42,8 +42,8 @@ onMounted(async () => {
 })
 
 const availablePlanes = computed<SimulationPlanePresetsMap>(() => {
-  const buildingCanopyHeight = scenariosSlug.value.includes('S1') ? 30 : 16
-  const midBuildingZ = scenariosSlug.value.includes('S2') ? 25 : 19
+  const buildingCanopyHeight = scenariosSlug.value.includes('S1_1') ? 30 : 16
+  const midBuildingZ = scenariosSlug.value.includes('S1_2') ? 25 : 19
 
   return getSimulationPlanePresetsForParameters(buildingCanopyHeight, midBuildingZ)
 })
