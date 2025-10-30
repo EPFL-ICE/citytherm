@@ -1,6 +1,7 @@
 <script setup lang="ts">
 const props = defineProps<{
   title: string
+  disableLeftPanePadding?: boolean
 }>()
 </script>
 
@@ -12,7 +13,7 @@ const props = defineProps<{
           <h2>{{ props.title }}</h2>
           <slot name="subtitle"></slot>
         </v-card-text>
-        <v-card-text class="left-pane-content">
+        <v-card-text class="left-pane-content" :class="{ 'pa-0': props.disableLeftPanePadding }">
           <slot name="left-pane"></slot>
         </v-card-text>
       </v-card>
