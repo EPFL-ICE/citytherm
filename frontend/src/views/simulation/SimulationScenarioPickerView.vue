@@ -73,7 +73,7 @@ const planeExplorerUrl = computed(() => {
 })
 
 function getTooltipContent(scenario: ScenarioDescription): string {
-  return `${scenario.description}\n\n<b>Primary Analysis focus :</b>\n${scenario.primaryAnalysisFocus}}`
+  return `${scenario.description}\n\n<b>Primary Analysis focus :</b>\n${scenario.primaryAnalysisFocus}`
 }
 </script>
 
