@@ -115,19 +115,19 @@ function createPlane() {
   if (plane) scene.remove(plane)
 
   const geometry = new THREE.PlaneGeometry(
-    props.plane.size?.width || 200,
-    props.plane.size?.height || 200
+    props.plane.size?.width ?? 200,
+    props.plane.size?.height ?? 200
   )
   const material = createOscillatingPlaneMaterial()
   const mesh = new THREE.Mesh(geometry, material)
 
-  if (props.plane.rotation.x) mesh.rotateX(props.plane.rotation.x)
-  if (props.plane.rotation.y) mesh.rotateY(props.plane.rotation.y)
-  if (props.plane.rotation.z) mesh.rotateZ(props.plane.rotation.z)
+  if (props.plane.rotation.x !== undefined) mesh.rotateX(props.plane.rotation.x)
+  if (props.plane.rotation.y !== undefined) mesh.rotateY(props.plane.rotation.y)
+  if (props.plane.rotation.z !== undefined) mesh.rotateZ(props.plane.rotation.z)
 
-  if (props.plane.position.x) mesh.position.x = props.plane.position.x
-  if (props.plane.position.y) mesh.position.y = props.plane.position.y
-  if (props.plane.position.z) mesh.position.z = props.plane.position.z
+  if (props.plane.position.x !== undefined) mesh.position.x = props.plane.position.x
+  if (props.plane.position.y !== undefined) mesh.position.y = props.plane.position.y
+  if (props.plane.position.z !== undefined) mesh.position.z = props.plane.position.z
   scene.add(mesh)
 
   plane = mesh
