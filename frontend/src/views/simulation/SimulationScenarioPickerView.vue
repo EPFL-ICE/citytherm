@@ -29,7 +29,7 @@ const scenarioStore = useScenariosStore()
 const scenariosSlug = computed(
   () => (route.query.scenarios as string | undefined)?.split(',') ?? []
 )
-const planeSlug = computed(() => (route.query.plane as SimulationPlanePreset | undefined) ?? '')
+const planeSlug = computed(() => (route.query.plane as SimulationPlanePreset | undefined) ?? null)
 
 const scenariosCollection = ref<ScenarioCollection | null>(null)
 const openedGroups = ref<number[]>([0, 1])
