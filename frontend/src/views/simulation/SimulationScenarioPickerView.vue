@@ -20,6 +20,7 @@ import {
 } from '@/lib/utils/routingUtils'
 import { useRoute, useRouter } from 'vue-router'
 import InfoTooltip from '@/components/InfoTooltip.vue'
+import ToolSet from '@/components/ui/ToolSet.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -31,6 +32,7 @@ const scenariosSlug = computed(
 const planeSlug = computed(() => (route.query.plane as SimulationPlanePreset | undefined) ?? '')
 
 const scenariosCollection = ref<ScenarioCollection | null>(null)
+const openedGroups = ref<number[]>([0, 1])
 onMounted(async () => {
   scenariosCollection.value = await scenarioStore.getScenarioDescriptions()
 })
@@ -71,86 +73,86 @@ const planeExplorerUrl = computed(() => {
 })
 
 function getTooltipContent(scenario: ScenarioDescription): string {
-  return `${scenario.description}\n\n<b>Primary Analysis focus :</b>\n${scenario.primaryAnalysisFocus}\n\n<b>Relevant lecture(s):</b> ${scenario.relevantLectures.join(', ')}`
+  return `${scenario.description}\n\n<b>Primary Analysis focus :</b>\n${scenario.primaryAnalysisFocus}}`
 }
-
-const scenariosListItems = computed(() => {
-  const items = []
-  const list = Object.values(scenariosCollection.value?.scenarios || {})
-  for (const scenario of list) {
-    items.push({
-      title: `${scenario.id} - ${scenario.name}`,
-      subtitle: scenario.description,
-      value: scenario.slug
-    })
-  }
-  return items
-})
 </script>
 
 <template>
-  <two-panes-layout title="Simulation Scenarios">
+  <two-panes-layout title="Simulation Scenarios" :disable-left-pane-padding="true">
     <template #left-pane>
-      <v-list
-        :selected="scenariosSlug"
-        @update:selected="
-          (value) => {
-            goToUpdatedParams({ scenario: (value as string[])[0] ?? undefined })
-          }
-        "
-        two-line
-        class="pt-0"
-      >
-        <template
-          v-for="(group, index) in Object.values(scenariosCollection?.groups || {})"
-          :key="index"
-        >
-          <v-list-subheader class="text-h6">{{ group.groupName }}</v-list-subheader>
-
-          <div class="mb-4">
-            <v-list-item
-              v-for="scenario in group.scenarios.map(
-                (slug) => scenariosCollection!.scenarios[slug]
-              )"
-              :key="scenario.id"
-              :value="scenario.slug"
-              :title="`${scenario.id} - ${scenario.name}`"
-              :subtitle="scenario.description"
+      <tool-set>
+        <template #default>
+          <v-expansion-panels multiple v-model="openedGroups">
+            <v-list
+              :selected="scenariosSlug"
+              @update:selected="
+                (value) => {
+                  goToUpdatedParams({ scenario: (value as string[])[0] ?? undefined })
+                }
+              "
+              two-line
+              class="pt-0 w-100"
             >
-              <template #append>
-                <info-tooltip :content="getTooltipContent(scenario)" />
-              </template>
-            </v-list-item>
+              <v-expansion-panel
+                v-for="(group, index) in Object.values(scenariosCollection?.groups || {})"
+                :key="index"
+              >
+                <v-expansion-panel-title class="group-name">{{
+                  group.groupName
+                }}</v-expansion-panel-title>
+
+                <v-expansion-panel-text>
+                  <v-list-item
+                    v-for="scenario in group.scenarios.map(
+                      (slug) => scenariosCollection!.scenarios[slug]
+                    )"
+                    :key="scenario.id"
+                    :value="scenario.slug"
+                    :title="`${scenario.id} - ${scenario.name}`"
+                  >
+                    <template #append>
+                      <info-tooltip :content="getTooltipContent(scenario)" />
+                    </template>
+                  </v-list-item>
+                </v-expansion-panel-text>
+              </v-expansion-panel>
+            </v-list>
+          </v-expansion-panels>
+        </template>
+
+        <template #footer>
+          <div class="pa-4">
+            <v-select
+              :model-value="planeSlug"
+              @update:model-value="
+                (value) => {
+                  goToUpdatedParams({ plane: value ?? undefined })
+                }
+              "
+              :items="planesSelectOptions"
+              :item-props="
+                (item) => ({ title: item.name, subtitle: item.description, value: item.slug })
+              "
+              label="Select a simulation plane"
+              single-line
+              :disabled="scenariosSlug.length === 0 || planesSelectOptions.length === 0"
+            />
+            <v-btn
+              class="w-100"
+              color="primary"
+              :disabled="!planeExplorerUrl"
+              :to="planeExplorerUrl!"
+            >
+              Load Scenario
+            </v-btn>
           </div>
         </template>
-      </v-list>
-
-      <div class="pt-4">
-        <v-select
-          :model-value="planeSlug"
-          @update:model-value="
-            (value) => {
-              goToUpdatedParams({ plane: value ?? undefined })
-            }
-          "
-          :items="planesSelectOptions"
-          :item-props="
-            (item) => ({ title: item.name, subtitle: item.description, value: item.slug })
-          "
-          label="Select a simulation plane"
-          single-line
-          :disabled="scenariosSlug.length === 0 || planesSelectOptions.length === 0"
-        />
-      </div>
-
-      <v-btn color="primary" :disabled="!planeExplorerUrl" :to="planeExplorerUrl!">
-        Load Scenario
-      </v-btn>
+      </tool-set>
     </template>
 
     <template #default>
       <scenario-preview
-        v-if="scenariosSlug.length > 0"
+        v-if="scenariosSlug.length > 0 && scenariosSlug[0] !== null"
         :scenarioId="scenariosSlug[0]"
         :plane="selectedPlane"
       />
@@ -160,3 +162,14 @@ const scenariosListItems = computed(() => {
     </template>
   </two-panes-layout>
 </template>
+
+<style scoped>
+.group-name {
+  font-weight: 500;
+  font-size: 1.25em;
+}
+
+:deep(.v-expansion-panel-text__wrapper) {
+  padding: 0 0.5rem 0.5rem 0.5rem;
+}
+</style>
