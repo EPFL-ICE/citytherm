@@ -76,7 +76,7 @@ const timeSeriesExplorerUrl = computed(() => {
   })
 })
 
-const gridColumns = computed(() => Math.min(2, selectedVariables.value.length))
+const gridColumns = computed(() => Math.min(3, selectedVariables.value.length))
 
 function navigateToTimeSeriesPoint(pointSlug: string) {
   const routePath = makePathToTimeSeries({
