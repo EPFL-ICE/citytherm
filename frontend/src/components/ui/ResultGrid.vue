@@ -38,7 +38,6 @@ const gridStyle = computed(() => ({
 <style scoped>
 .map-grid {
   display: grid;
-  gap: 0.75rem;
   grid-auto-rows: 1fr;
 }
 </style>

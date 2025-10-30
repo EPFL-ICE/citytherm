@@ -56,7 +56,7 @@ const planeExplorerUrl = computed(() => {
 </script>
 
 <template>
-  <two-panes-layout title="Time Series Results Explorer">
+  <two-panes-layout title="Time Series Data Explorer">
     <template #subtitle>
       <v-btn
         :to="planeExplorerUrl"
