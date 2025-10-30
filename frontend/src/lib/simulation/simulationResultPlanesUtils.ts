@@ -44,7 +44,10 @@ export function getSimulationPlanePresetsForParameters(
       description: `A horizontal plane 1m above the average building height (${
         buildingCanopyHeight + 1
       }m).`,
-      plane: { rotation: { x: -Math.PI / 2 }, position: { x: 0, y: buildingCanopyHeight + 1, z: 0 } }
+      plane: {
+        rotation: { x: -Math.PI / 2 },
+        position: { x: 0, y: buildingCanopyHeight + 1, z: 0 }
+      }
     },
     vertical_mid_canyon: {
       slug: 'vertical_mid_canyon',
@@ -56,7 +59,11 @@ export function getSimulationPlanePresetsForParameters(
       slug: 'vertical_mid_building',
       name: 'Vertical - Mid Building',
       description: `A vertical plane cutting through the middle of a building.`,
-      plane: { rotation: { y: Math.PI / 2 }, position: { x: midBuildingX, y: 35, z: 0 }, size: { height: 70 } }
+      plane: {
+        rotation: { y: Math.PI / 2 },
+        position: { x: midBuildingX, y: 35, z: 0 },
+        size: { height: 70 }
+      }
     }
   }
 }

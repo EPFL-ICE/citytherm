@@ -114,7 +114,10 @@ function createPlane() {
   if (!props.plane) return
   if (plane) scene.remove(plane)
 
-  const geometry = new THREE.PlaneGeometry(props.plane.size?.width || 200, props.plane.size?.height || 200)
+  const geometry = new THREE.PlaneGeometry(
+    props.plane.size?.width || 200,
+    props.plane.size?.height || 200
+  )
   const material = createOscillatingPlaneMaterial()
   const mesh = new THREE.Mesh(geometry, material)
 
