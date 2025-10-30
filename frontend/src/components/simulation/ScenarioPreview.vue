@@ -62,6 +62,8 @@ onMounted(() => {
   const ambient = new THREE.AmbientLight(0xffffff, 0.4)
   scene.add(ambient)
 
+  createAxes()
+
   // 🌀 Animation loop
   function animate() {
     requestAnimationFrame(animate)
@@ -142,6 +144,118 @@ function createBuildings() {
 
   buildings = createBuildingInstancedMesh(scenario.buildings, sceneSize)
   scene.add(buildings)
+}
+
+function createArrow(arrowLength = 100, arrowWidth = 1, color = 0xff0000) {
+  const arrow = new THREE.Group()
+
+  const shaftGeometry = new THREE.CylinderGeometry(arrowWidth, arrowWidth, arrowLength, 8)
+  const shaftMaterial = new THREE.MeshBasicMaterial({ color })
+  const shaft = new THREE.Mesh(shaftGeometry, shaftMaterial)
+  // shaft.rotation.x = Math.PI / 2;
+  arrow.add(shaft)
+
+  const headGeometry = new THREE.CylinderGeometry(0, arrowWidth * 2, arrowWidth * 4, 8)
+  const headMaterial = new THREE.MeshBasicMaterial({ color })
+  const head = new THREE.Mesh(headGeometry, headMaterial)
+  head.position.y = arrowLength / 2 + arrowWidth * 2
+  arrow.add(head)
+
+  return arrow
+}
+
+function makeTextSprite(
+  message: string,
+  parameters: Partial<{ fontFace: string; fontSize: number; color: string }> = {}
+) {
+  const fontFace = parameters.fontFace || 'Arial'
+  const fontSize = parameters.fontSize || 512
+  const color = parameters.color || 'rgba(255, 255, 255, 1.0)'
+
+  const canvas = document.createElement('canvas')
+  const context = canvas.getContext('2d')
+  if (!context) throw new Error('Could not get canvas context')
+
+  context.font = `${fontSize}px ${fontFace}`
+  const textWidth = context.measureText(message).width
+
+  canvas.width = textWidth
+  canvas.height = fontSize * 1.2 // some padding
+
+  // Redraw with correct size
+  context.font = `${fontSize}px ${fontFace}`
+  context.fillStyle = color
+  context.fillText(message, 0, fontSize)
+
+  const texture = new THREE.CanvasTexture(canvas)
+  const material = new THREE.SpriteMaterial({ map: texture, transparent: true })
+  const sprite = new THREE.Sprite(material)
+
+  // scale sprite so text isn't huge
+  sprite.scale.set(canvas.width / 100, canvas.height / 100, 1)
+
+  return sprite
+}
+
+function createAxis(
+  length: number,
+  color: number,
+  label: string,
+  labelsColor: string,
+  graduationStep = 20,
+  graduationOffset: THREE.Vector3 = new THREE.Vector3(0, 0, -5)
+) {
+  const group = new THREE.Group()
+
+  const arrowX = createArrow(length, 1, color)
+  group.add(arrowX)
+
+  const xLabel = makeTextSprite(label, { color: labelsColor })
+  xLabel.position.set(0, length / 2 + 5, 0)
+  group.add(xLabel)
+
+  for (let i = graduationStep; i <= length; i += graduationStep) {
+    const tick = makeTextSprite(`${i}m`, { fontSize: 256, color: labelsColor })
+    tick.rotation.z = -Math.PI / 2
+    tick.position.set(0, i - length / 2, 0).add(graduationOffset)
+    group.add(tick)
+  }
+
+  return group
+}
+
+function createAxes() {
+  const xAxis = createAxis(sceneSize.x, 0xff0000, 'X', 'red')
+  xAxis.rotation.z = -Math.PI / 2
+  xAxis.position.set(0, 0, -sceneSize.y / 2)
+  scene.add(xAxis)
+
+  const yAxis = createAxis(sceneSize.y, 0x0000ff, 'Y', 'blue', 20, new THREE.Vector3(-5, 0, 0))
+  yAxis.rotation.x = Math.PI / 2
+  yAxis.position.set(-sceneSize.x / 2, 0, 0)
+  scene.add(yAxis)
+
+  const zHeight = 70
+  const zAxis = createAxis(zHeight, 0x00ff00, 'Z', 'green', 10, new THREE.Vector3(-5, 0, -5))
+  zAxis.position.set(-sceneSize.x / 2, zHeight / 2, -sceneSize.y / 2)
+  scene.add(zAxis)
+
+  /*const arrowY = createArrow(sceneSize.y, 1, 0x0000ff);
+  arrowY.position.set(-sceneSize.x / 2, 0, 0);
+  arrowY.rotation.x = Math.PI / 2;
+  scene.add(arrowY);
+
+  const yLabel = makeTextSprite('Y', { color: 'blue' });
+  yLabel.position.set(-sceneSize.x / 2, 0, sceneSize.y / 2 + 5);
+  scene.add(yLabel);
+
+  const arrowZ = createArrow(zHeight, 1, 0x00ff00);
+  arrowZ.position.set(-sceneSize.x / 2, zHeight / 2, -sceneSize.y / 2);
+  scene.add(arrowZ);
+
+  const zLabel = makeTextSprite('Z', { color: 'green' });
+  zLabel.position.set(-sceneSize.x / 2, zHeight + 10, -sceneSize.y / 2);
+  scene.add(zLabel);*/
 }
 
 function onResize() {
