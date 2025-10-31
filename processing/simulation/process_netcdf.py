@@ -60,14 +60,14 @@ def export_buildings_and_soil_maps(scenario_name: str, ds, output_directory: str
     save_json_for_scenario(st_dict, output_directory, scenario_name, "", "soilMap", pretty=False)
 
 def hardcoded_side_color(scenario_name: str):
-    if scenario_name == "S2_Wide_Canyon":
+    if scenario_name.startswith("S1_5"):
         return "#00e000"
+    elif scenario_name.startswith("S1_4"):
+        return "#8ad7dc"
     return "#aaaaaa"
 
 def hardcoded_top_color(scenario_name: str):
-    if scenario_name == "S2_Wide_Canyon":
-        return "#02dc02"
-    return "#cccccc"
+    return "#aaaaaa"
 
 def building_height_dict(building_heights):
     first_time_slice = building_heights.isel(Time=0)
@@ -232,7 +232,7 @@ def make_horizontal_time_series_points(variable_names: list[str]):
         }
     ]
 
-    x = y = 99.0
+    x = y = 100.0
 
     return [
         make_time_series_point([x, y, plane["height"]], variable_names, plane["plane"])
@@ -261,8 +261,11 @@ def export_time_series_points(scenario: str, ds, points, output_directory: str):
             save_json_for_scenario(to_json_compatible(time_series.to_dict(orient="records")), output_directory, scenario, f"{variable_name}/timeSeries", f"{number_for_filename(coords[0])}-{number_for_filename(coords[1])}-{number_for_filename(coords[2])}")
 
 def get_single_time_series_point_for_var_and_coords_dataframe(ds, variable_name: str, coords: list[float]):
+    x = coords[0] + 1.0 if coords[0] % 2 != 0 else coords[0]
+    y = coords[1] + 1.0 if coords[1] % 2 != 0 else coords[1]
+
     variable = ds.data_vars[variable_name]
-    point_data = variable.sel(GridsI=coords[0], GridsJ=coords[1], GridsK=coords[2], method="nearest")
+    point_data = variable.sel(GridsI=x, GridsJ=y, GridsK=coords[2], method="nearest")
 
     df = point_data.to_dataframe().reset_index().rename(columns={variable_name: "v"}).drop(columns=["GridsI", "GridsJ", "GridsK"])
     df["t"] = df["Time"].dt.strftime('%H:%M:%S')

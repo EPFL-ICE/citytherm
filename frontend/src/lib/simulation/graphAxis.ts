@@ -17,14 +17,15 @@ export interface GraphAxes {
 export function getFinalPositionFromIndexAndAxes(
   indexX: number,
   indexY: number,
-  axes: GraphAxes
+  axes: GraphAxes,
+  cellCenter = true
 ): { x: number; y: number } {
   const x = axes.x.valuesOverride
     ? axes.x.valuesOverride[indexX]
-    : axes.x.min + indexX * axes.x.cellSize + axes.x.cellSize / 2
+    : axes.x.min + indexX * axes.x.cellSize + (cellCenter ? axes.x.cellSize / 2 : 0)
   const y = axes.y.valuesOverride
     ? axes.y.valuesOverride[indexY]
-    : axes.y.min + indexY * axes.y.cellSize + axes.y.cellSize / 2
+    : axes.y.min + indexY * axes.y.cellSize + (cellCenter ? axes.y.cellSize / 2 : 0)
   return { x, y }
 }
 

@@ -12,8 +12,10 @@ export function createBuildingMaterial(): THREE.MeshStandardMaterial {
       #include <common>
       attribute vec3 instanceTopColor;
       attribute vec3 instanceSideColor;
+      attribute vec3 instanceWindowColor;
       varying vec3 vTopColor;
       varying vec3 vSideColor;
+      varying vec3 vWindowColor;
       varying vec3 vNormalW;
       varying vec3 vWorldPos;
     `
@@ -25,6 +27,7 @@ export function createBuildingMaterial(): THREE.MeshStandardMaterial {
       #include <begin_vertex>
       vTopColor = instanceTopColor;
       vSideColor = instanceSideColor;
+      vWindowColor = instanceWindowColor;
       vNormalW = normalize(mat3(modelMatrix) * normal);
       vec4 worldPos = modelMatrix * vec4(position, 1.0);
       vWorldPos = worldPos.xyz;
@@ -38,6 +41,7 @@ export function createBuildingMaterial(): THREE.MeshStandardMaterial {
       #include <common>
       varying vec3 vTopColor;
       varying vec3 vSideColor;
+      varying vec3 vWindowColor;
       varying vec3 vNormalW;
       varying vec3 vWorldPos;
     `
@@ -74,10 +78,10 @@ export function createBuildingMaterial(): THREE.MeshStandardMaterial {
                       (1.0 - step(0.9, cell.x)) *
                       (1.0 - step(0.9, cell.y));
 
-        vec3 windowColor = vec3(0.5, 0.7, 1.0);
+        vec3 windowColor = vWindowColor;
 
         // Mix base with window glow
-        baseColor = mix(baseColor, windowColor, window);
+        baseColor = mix(baseColor, windowColor, step(1.0, window));
       }
 
       diffuseColor.rgb *= baseColor;

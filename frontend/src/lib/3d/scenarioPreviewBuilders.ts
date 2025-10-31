@@ -71,11 +71,13 @@ export function createBuildingInstancedMesh(buildingMap: BuildingMap, sceneSize:
   // Create per‑instance attribute buffers
   const instanceTopColors = new Float32Array(count * 3)
   const instanceSideColors = new Float32Array(count * 3)
+  const instanceWindowColors = new Float32Array(count * 3)
 
   const dummy = new THREE.Object3D()
 
   const defaultSideColor = stringHexCodeToHexNumber(buildingMap.defaultSideColor ?? '#bbbbbb')
   const defaultTopColor = stringHexCodeToHexNumber(buildingMap.defaultTopColor ?? '#bbbbbb')
+  const defaultWindowColor = stringHexCodeToHexNumber("#8ad7dc")
 
   buildingMap.buildingsParts.forEach((building, i) => {
     // Set transformation matrix
@@ -94,10 +96,12 @@ export function createBuildingInstancedMesh(buildingMap: BuildingMap, sceneSize:
     const colorSide = new THREE.Color().setHex(
       building.sc ? stringHexCodeToHexNumber(building.sc) : defaultSideColor
     )
+    const colorWindow = new THREE.Color().setHex(defaultWindowColor)
 
     // Stores the colors in the buffers
     colorTop.toArray(instanceTopColors, i * 3)
     colorSide.toArray(instanceSideColors, i * 3)
+    colorWindow.toArray(instanceWindowColors, i * 3)
   })
 
   geometry.setAttribute(
@@ -107,6 +111,10 @@ export function createBuildingInstancedMesh(buildingMap: BuildingMap, sceneSize:
   geometry.setAttribute(
     'instanceSideColor',
     new THREE.InstancedBufferAttribute(instanceSideColors, 3)
+  )
+  geometry.setAttribute(
+    'instanceWindowColor',
+    new THREE.InstancedBufferAttribute(instanceWindowColors, 3)
   )
 
   mesh.instanceMatrix.needsUpdate = true
