@@ -82,7 +82,8 @@ function getMetadataForDataIndex(
   const { x: trueX, y: trueY } = getFinalPositionFromIndexAndAxes(
     indexX,
     indexY,
-    getGraphAxesForPlane(props.planeSlug)
+    getGraphAxesForPlane(props.planeSlug),
+    false
   )
   const point = timeSeriesPointsList.value.find(
     (point) => point.c[0] === trueX && point.c[1] === trueY
