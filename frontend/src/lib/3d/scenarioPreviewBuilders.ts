@@ -77,7 +77,7 @@ export function createBuildingInstancedMesh(buildingMap: BuildingMap, sceneSize:
 
   const defaultSideColor = stringHexCodeToHexNumber(buildingMap.defaultSideColor ?? '#bbbbbb')
   const defaultTopColor = stringHexCodeToHexNumber(buildingMap.defaultTopColor ?? '#bbbbbb')
-  const defaultWindowColor = stringHexCodeToHexNumber("#8ad7dc")
+  const defaultWindowColor = stringHexCodeToHexNumber('#8ad7dc')
 
   buildingMap.buildingsParts.forEach((building, i) => {
     // Set transformation matrix
