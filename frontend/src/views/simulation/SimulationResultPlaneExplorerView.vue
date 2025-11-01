@@ -9,6 +9,7 @@ import { useRoute, useRouter } from 'vue-router'
 import {
   getSimulationPlaneAvailableTimeSlots,
   getSimulationPlanePresetsForParameters,
+  getSimulationPresetsForScenarioSlug,
   type SimulationPlanePresetsMap
 } from '@/lib/simulation/simulationResultPlanesUtils'
 import ScenarioSelect from '@/components/simulation/pickers/ScenarioSelect.vue'
@@ -45,12 +46,9 @@ watchEffect(() => {
   })
 })
 
-const availablePlanes = computed<SimulationPlanePresetsMap>(() => {
-  const buildingCanopyHeight = scenarioASlug.value.includes('S1') ? 30 : 16
-  const midBuildingZ = scenarioASlug.value.includes('S2') ? 25 : 19
-
-  return getSimulationPlanePresetsForParameters(buildingCanopyHeight, midBuildingZ)
-})
+const availablePlanes = computed<SimulationPlanePresetsMap>(() =>
+  getSimulationPresetsForScenarioSlug(scenarioASlug.value)
+)
 
 const planesSelectOptions = computed(() => Object.values(availablePlanes.value))
 const availableTimeSlots = computed(() => getSimulationPlaneAvailableTimeSlots())

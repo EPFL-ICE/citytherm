@@ -8,7 +8,7 @@ import ScenarioPreview from '@/components/simulation/ScenarioPreview.vue'
 import TwoPanesLayout from '@/components/ui/TwoPanesLayout.vue'
 import { computed, onMounted, ref } from 'vue'
 import {
-  getSimulationPlanePresetsForParameters,
+  getSimulationPresetsForScenarioSlug,
   type SimulationPlane,
   type SimulationPlanePreset,
   type SimulationPlanePresetsMap
@@ -41,12 +41,9 @@ onMounted(async () => {
   scenariosCollection.value = await scenarioStore.getScenarioDescriptions()
 })
 
-const availablePlanes = computed<SimulationPlanePresetsMap>(() => {
-  const buildingCanopyHeight = scenariosSlug.value.includes('S1_1') ? 30 : 16
-  const midBuildingZ = scenariosSlug.value.includes('S1_2') ? 25 : 19
-
-  return getSimulationPlanePresetsForParameters(buildingCanopyHeight, midBuildingZ)
-})
+const availablePlanes = computed<SimulationPlanePresetsMap>(() =>
+  getSimulationPresetsForScenarioSlug(scenariosSlug.value[0] || '')
+)
 
 const planesSelectOptions = computed(() => Object.values(availablePlanes.value))
 

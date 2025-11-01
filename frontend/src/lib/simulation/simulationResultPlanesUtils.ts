@@ -20,6 +20,15 @@ export type SimulationPlanePreset =
 
 export type SimulationPlanePresetsMap = Record<SimulationPlanePreset, SimulationPlaneOption>
 
+export function getSimulationPresetsForScenarioSlug(
+  scenarioSlug: string
+): SimulationPlanePresetsMap {
+  const buildingCanopyHeight = scenarioSlug.includes('S1_1') ? 30 : 16
+  const midBuildingZ = scenarioSlug.includes('S1_2') ? 25 : 19
+
+  return getSimulationPlanePresetsForParameters(buildingCanopyHeight, midBuildingZ)
+}
+
 export function getSimulationPlanePresetsForParameters(
   buildingCanopyHeight: number,
   midBuildingX: number
