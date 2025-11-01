@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import {
   getSimulationPlanePresetsForParameters,
+  getSimulationPresetsForScenarioSlug,
   type SimulationPlanePreset,
   type SimulationPlanePresetsMap
 } from '@/lib/simulation/simulationResultPlanesUtils'
@@ -22,12 +23,9 @@ watchEffect(() => {
   })
 })
 
-const availablePlanes = computed<SimulationPlanePresetsMap>(() => {
-  const buildingCanopyHeight = props.scenarioSlug.includes('S1') ? 30 : 16
-  const midBuildingZ = props.scenarioSlug.includes('S2') ? 25 : 19
-
-  return getSimulationPlanePresetsForParameters(buildingCanopyHeight, midBuildingZ)
-})
+const availablePlanes = computed<SimulationPlanePresetsMap>(() =>
+  getSimulationPresetsForScenarioSlug(props.scenarioSlug)
+)
 
 function pointItemProps(item: TimeSeriesPoint) {
   return {
