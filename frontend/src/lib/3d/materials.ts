@@ -115,8 +115,9 @@ export function createSoilMaterial(): THREE.ShaderMaterial {
 
 const errorColor = new THREE.Color().setRGB(1, 0.3, 0.7) // Pinkish color for error
 const codeToColor: { [key: number]: THREE.Color } = {
-  2007: new THREE.Color().setRGB(0.25, 0.25, 0.25),
-  2045: new THREE.Color().setRGB(0.6, 0.6, 0.6)
+  2007: new THREE.Color().setRGB(0.25, 0.25, 0.25), // Asphalt
+  2045: new THREE.Color().setRGB(0.6, 0.6, 0.6), // High albedo pavement
+  2011: new THREE.Color().setRGB(0.8, 0.7, 0.5), // Sandy loam
 } as const
 
 export function simulationSoilTypeCodeToColor(code: number): THREE.Color {
