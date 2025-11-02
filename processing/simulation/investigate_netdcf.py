@@ -10,16 +10,28 @@ import json
 from pathlib import Path
 import math
 
-scenario = "S0_Baseline_Scenario"
+scenario = "S2_1_High_Albedo_Pavement"
 
 file_path = f"./raw_data/{scenario}.nc"
 ds = xr.open_dataset(file_path)
-print(ds.data_vars)
-print(ds.data_vars["T"])
-print(ds.data_vars["RelHum"])
-print(ds.data_vars["WindSpd"])
+# print(ds.data_vars)
 
 var_keys = ["T", "RelHum", "WindSpd"]
+
+def explore_variable(variable_name):
+    variable = ds.data_vars[variable_name]
+    print(variable)
+    print(variable.attrs)
+    print(variable.dims)
+    print(variable.shape)
+    print(variable.isel(Time=0))
+
+    values = variable.values.flatten()
+    unique_values = np.unique(values)
+    print(f"Unique values for {variable_name}: {unique_values}")
+    print(f"Number of unique values for {variable_name}: {len(unique_values)}")
+
+explore_variable("SoilProfileType")
 
 def prettify_unit(unit: str) -> str:
     unit_mappings = {
@@ -216,7 +228,7 @@ def export_dataframe_to_formats(df, base_path, base_filename):
 
 
 
-export_variable_attributes()
+# export_variable_attributes()
 
 # Check if building heights are constant over time
 def check_constant_over_time():
