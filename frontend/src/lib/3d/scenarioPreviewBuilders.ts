@@ -133,20 +133,58 @@ export function createObjectsGroup(objectsMap: SimulationObjectMap, sceneSize: V
 
   // Create objects based on the scenario data
   objectsMap.objects.forEach((object) => {
-    const mesh = createObjectMesh(object)
-    group.add(mesh)
+    const subgroup = createObjectGroup(object, objectsMap.defaultObject)
+    subgroup.position.set(object.x, 1, object.y) // assuming y is up
+    group.add(subgroup)
   })
 
   return group
 }
 
-function createObjectMesh(object: SimulationObject) {
-  // For simplicity, represent all objects as simple cones
+function createObjectGroup(object: SimulationObject, defaultType: number) {
+  const o = object.o ?? defaultType
+
+  if (o === -2) {
+    // Betula Tree, hardcoded values provided by Jaafar
+    return createTreeMesh(6, 7, 0xeeeeee, 0x55aa55)
+  } else if (o === -3) {
+    // Acer Tree, hardcoded values provided by Jaafar
+    return createTreeMesh(11, 9)
+  }
+
+  const group = new THREE.Group()
   const geometry = new THREE.ConeGeometry(1, 2, 8)
   const material = new THREE.MeshStandardMaterial({ color: 0x00ff00 })
   const mesh = new THREE.Mesh(geometry, material)
-
-  mesh.position.set(object.x, 1, object.y) // assuming y is up
+  group.add(mesh)
 
   return mesh
+}
+
+function createTreeMesh(
+  height: number,
+  crownWidth: number,
+  trunkColor = 0x8b4513,
+  crownColor = 0x228b22
+) {
+  const group = new THREE.Group()
+
+  // Create trunk
+  const trunkHeight = height * 0.8
+  const trunkRadius = crownWidth * 0.1
+  const trunkGeometry = new THREE.CylinderGeometry(trunkRadius, trunkRadius, trunkHeight, 8)
+  const trunkMaterial = new THREE.MeshStandardMaterial({ color: trunkColor })
+  const trunkMesh = new THREE.Mesh(trunkGeometry, trunkMaterial)
+  trunkMesh.position.y = trunkHeight / 2 - 1 // position trunk at the bottom
+  group.add(trunkMesh)
+
+  // Create crown
+  const crownRadius = crownWidth * 0.5
+  const geometry = new THREE.IcosahedronGeometry(crownRadius, 1)
+  const material = new THREE.MeshStandardMaterial({ color: crownColor })
+  const mesh = new THREE.Mesh(geometry, material)
+  mesh.position.y = height - crownRadius / 2 // position crown at the top
+  group.add(mesh)
+
+  return group
 }
