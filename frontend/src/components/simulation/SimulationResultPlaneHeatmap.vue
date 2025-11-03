@@ -173,7 +173,7 @@ const graphAspectRatio = computed(() => {
 })
 
 const colormap = computed<string[]>(() => {
-  return simulationVariablesConfig[props.variableSlug]?.heatmap.colormap ?? undefined
+  return simulationVariablesConfig[props.variableSlug]?.heatmap.colormap ?? simulationVariablesConfig.default.heatmap.colormap
 })
 </script>
 
