@@ -29,9 +29,21 @@ export interface SoilMap {
   anomalies: { [key: `${number};${number}`]: SoilTypeAnomaly }
 }
 
+export interface SimulationObject {
+  x: number
+  y: number
+  o?: number // object type code
+}
+
+export interface SimulationObjectMap {
+  defaultObject: number
+  objects: SimulationObject[]
+}
+
 export type ScenarioMap = {
   soil: SoilMap
   buildings: BuildingMap
+  objects: SimulationObjectMap
 }
 
 async function fetchBuilding(key: string): Promise<BuildingMap> {
@@ -50,9 +62,21 @@ async function fetchSoilMap(key: string): Promise<SoilMap> {
   return response.json()
 }
 
+async function fetchObjectsMap(key: string): Promise<SimulationObjectMap> {
+  const response = await fetch(`${cdnUrl}/simulation/scenarios/${key}/objectsMap.json`)
+  if (!response.ok) {
+    throw new Error(`Failed to fetch objects map: ${response.statusText}`)
+  }
+  return response.json()
+}
+
 async function fetchScenario(key: string): Promise<ScenarioMap> {
-  const [buildings, soil] = await Promise.all([fetchBuilding(key), fetchSoilMap(key)])
-  return { buildings, soil }
+  const [buildings, soil, objects] = await Promise.all([
+    fetchBuilding(key),
+    fetchSoilMap(key),
+    fetchObjectsMap(key)
+  ])
+  return { buildings, soil, objects }
 }
 
 // Represents a group, e.g., "Group 1: Building Materials & Urban Form"

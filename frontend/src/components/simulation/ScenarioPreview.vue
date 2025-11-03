@@ -8,7 +8,11 @@ import {
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { createOscillatingPlaneMaterial, createSoilMaterial } from '@/lib/3d/materials'
-import { createBuildingInstancedMesh, createSoilGeometry } from '@/lib/3d/scenarioPreviewBuilders'
+import {
+  createBuildingInstancedMesh,
+  createObjectsGroup,
+  createSoilGeometry
+} from '@/lib/3d/scenarioPreviewBuilders'
 import type { SimulationPlane } from '@/lib/simulation/simulationResultPlanesUtils'
 
 const props = defineProps<{
@@ -30,6 +34,7 @@ let scenario: ScenarioMap | null = null
 let buildings: THREE.InstancedMesh | null = null
 let soil: THREE.Mesh | null = null
 let plane: THREE.Mesh | null = null
+let objects: THREE.Group | null = null
 
 const ready = ref(false)
 let loading = ref(true)
@@ -93,6 +98,7 @@ watch(
 
     createSoil()
     createBuildings()
+    createObjects()
 
     loading.value = false
   },
@@ -154,6 +160,15 @@ function createBuildings() {
 
   buildings = createBuildingInstancedMesh(scenario.buildings, sceneSize)
   scene.add(buildings)
+}
+
+function createObjects() {
+  if (!scenario?.objects) return
+  if (objects) scene.remove(objects)
+
+  objects = createObjectsGroup(scenario.objects, sceneSize)
+  objects.position.add(new THREE.Vector3(-sceneSize.x / 2, 0, -sceneSize.y / 2))
+  scene.add(objects)
 }
 
 function createArrow(arrowLength = 100, arrowWidth = 1, color = 0xff0000) {
