@@ -1,4 +1,10 @@
-import type { BuildingMap, BuildingPart, SoilMap } from '@/stores/simulation/scenarios'
+import type {
+  BuildingMap,
+  BuildingPart,
+  SimulationObject,
+  SimulationObjectMap,
+  SoilMap
+} from '@/stores/simulation/scenarios'
 import * as THREE from 'three'
 import { createBuildingMaterial, simulationSoilTypeCodeToColor } from './materials'
 
@@ -118,6 +124,29 @@ export function createBuildingInstancedMesh(buildingMap: BuildingMap, sceneSize:
   )
 
   mesh.instanceMatrix.needsUpdate = true
+
+  return mesh
+}
+
+export function createObjectsGroup(objectsMap: SimulationObjectMap, sceneSize: Vector2) {
+  const group = new THREE.Group()
+
+  // Create objects based on the scenario data
+  objectsMap.objects.forEach((object) => {
+    const mesh = createObjectMesh(object)
+    group.add(mesh)
+  })
+
+  return group
+}
+
+function createObjectMesh(object: SimulationObject) {
+  // For simplicity, represent all objects as simple cones
+  const geometry = new THREE.ConeGeometry(1, 2, 8)
+  const material = new THREE.MeshStandardMaterial({ color: 0x00ff00 })
+  const mesh = new THREE.Mesh(geometry, material)
+
+  mesh.position.set(object.x, 1, object.y) // assuming y is up
 
   return mesh
 }

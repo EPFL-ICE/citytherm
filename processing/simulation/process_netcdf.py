@@ -18,9 +18,9 @@ def process_netcdf(scenario_name: str, input_directory: str, output_directory: s
     ds = xr.open_dataset(input_path)
     print(ds)
 
-    print("Processing building heights and soil types...")
-    export_buildings_and_soil_maps(scenario_name, ds, output_directory)
-    print("Done processing building heights and soil types.", end="\n\n")
+    print("Processing building heights, soil types, and objects...")
+    export_buildings_and_soil_maps_and_objects(scenario_name, ds, output_directory)
+    print("Done processing building heights, soil types, and objects.", end="\n\n")
 
     var_keys = ["T", "RelHum", "WindSpd"]
 
@@ -46,7 +46,7 @@ def process_netcdf(scenario_name: str, input_directory: str, output_directory: s
 
 # Building heights and soil types helpers
 
-def export_buildings_and_soil_maps(scenario_name: str, ds, output_directory: str = "processed_data"):
+def export_buildings_and_soil_maps_and_objects(scenario_name: str, ds, output_directory: str = "processed_data"):
     building_heights = ds.data_vars["BuildingHeight"]
     bh_dict = building_height_dict(building_heights)
     bh_dict["defaultSideColor"] = hardcoded_side_color(scenario_name)
@@ -55,9 +55,13 @@ def export_buildings_and_soil_maps(scenario_name: str, ds, output_directory: str
     soil_profile_type = ds.data_vars["SoilProfileType"]
     st_dict = soiltype_dict(soil_profile_type)
 
+    objects = ds.data_vars["Objects"]
+    obj_dict = objects_dict(objects)
+
     # Save the processed data
     save_json_for_scenario(bh_dict, output_directory, scenario_name, "", "buildingMap", pretty=False)
     save_json_for_scenario(st_dict, output_directory, scenario_name, "", "soilMap", pretty=False)
+    save_json_for_scenario(obj_dict, output_directory, scenario_name, "", "objectsMap", pretty=False)
 
 def hardcoded_side_color(scenario_name: str):
     if scenario_name.startswith("S1_5"):
@@ -110,6 +114,37 @@ def soiltype_dict(soil_profile_type):
         "anomalies": anomalies_dict
     }
 
+def objects_dict(objects):
+    first_time_slice = objects.isel(Time=0).sel(GridsK=1.0) # Only objects on the ground (on the 2m*2m square centered at height 1m so, so touching the ground)
+    dataframe = first_time_slice.to_dataframe().reset_index().drop(columns=["Time","GridsK"]).rename(columns={"GridsI": "x", "GridsJ": "y", "Objects": "o"})
+    print(dataframe)
+    dataframe_cleaned = dataframe[dataframe["o"].notna() & (dataframe["o"] > 1)] # 0 is no object and 1 is building, already taken into account in building heights
+    print(dataframe_cleaned)
+
+    if dataframe_cleaned.empty:
+        return {
+            "defaultObject": 0,
+            "objects": []
+        }
+
+    for col in ["x", "y", "o"]:
+        dataframe_cleaned[col] = dataframe_cleaned[col].apply(lambda v: int(v) if float(v).is_integer() else v)
+
+    print(dataframe_cleaned)
+    most_common_object = dataframe_cleaned["o"].mode()[0]
+
+
+    # Convert to list of dicts and remove 'o' if equal to most_common_object, reduces size of JSON by about 29%
+    records = []
+    for record in dataframe_cleaned.to_dict(orient="records"):
+        if record["o"] == most_common_object:
+            record = {k: v for k, v in record.items() if k != "o"}
+        records.append(record)
+
+    return {
+        "defaultObject": int(most_common_object),
+        "objects": records
+    }
 
 # Export variable schemas in a json file for consumption by frontend
 

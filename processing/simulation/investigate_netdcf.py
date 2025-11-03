@@ -10,11 +10,11 @@ import json
 from pathlib import Path
 import math
 
-scenario = "S2_1_High_Albedo_Pavement"
+scenario = "S3_3_Decidious_Trees"
 
 file_path = f"./raw_data/{scenario}.nc"
 ds = xr.open_dataset(file_path)
-# print(ds.data_vars)
+print(ds.data_vars)
 
 var_keys = ["T", "RelHum", "WindSpd"]
 
@@ -31,7 +31,29 @@ def explore_variable(variable_name):
     print(f"Unique values for {variable_name}: {unique_values}")
     print(f"Number of unique values for {variable_name}: {len(unique_values)}")
 
-explore_variable("SoilProfileType")
+    target_value = 12.0
+    mask = variable.notnull() & (variable == target_value)
+
+    # Extract the indices (or coordinates) where this is true
+    coords = variable.where(mask, drop=True)
+
+    if coords.count() == 0:
+        print(f"No coordinates found with value {target_value} in {variable_name}.")
+        return None
+
+    # Convert to a dataframe for easier inspection
+    df = coords.to_dataframe().reset_index().dropna(subset=[variable_name])
+    
+    print(f"Found {len(df)} points with value {target_value} in {variable_name}.")
+    print("head")
+    print(df.head())  # show first few rows
+    print("tail")
+    print(df.tail())  # show last few rows
+
+    print("All GridsK values at these points:")
+    print(df["GridsK"].unique())
+
+explore_variable("Objects")
 
 def prettify_unit(unit: str) -> str:
     unit_mappings = {
