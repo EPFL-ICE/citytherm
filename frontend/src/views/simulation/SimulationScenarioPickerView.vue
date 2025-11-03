@@ -21,6 +21,7 @@ import {
 import { useRoute, useRouter } from 'vue-router'
 import InfoTooltip from '@/components/InfoTooltip.vue'
 import ToolSet from '@/components/ui/ToolSet.vue'
+import ResultGrid from '@/components/ui/ResultGrid.vue'
 
 const route = useRoute()
 const router = useRouter()

@@ -32,7 +32,7 @@ def process_netcdf(scenario_name: str, input_directory: str, output_directory: s
     save_plane_slices_for_multiple_vars_at_multiple_times(scenario_name, ds, output_directory, variable_names=var_keys, time_indices=[0, 4, 8, 12, 16, 20])
     print("Done processing simulation results slices.", end="\n\n")
 
-    print("Exporting time series points list...")
+    print("Exporting time series points list...") # defined in make_horizontal_time_series_points
     export_time_series_points_list(scenario_name, var_keys, output_directory)
     print("Done exporting time series points list.", end="\n\n")
 
@@ -56,7 +56,7 @@ def export_buildings_and_soil_maps_and_objects(scenario_name: str, ds, output_di
     st_dict = soiltype_dict(soil_profile_type)
 
     objects = ds.data_vars["Objects"]
-    obj_dict = objects_dict(objects)
+    obj_dict = objects_dict_scenarios(scenario_name, objects)
 
     # Save the processed data
     save_json_for_scenario(bh_dict, output_directory, scenario_name, "", "buildingMap", pretty=False)
@@ -114,6 +114,14 @@ def soiltype_dict(soil_profile_type):
         "anomalies": anomalies_dict
     }
 
+def objects_dict_scenarios(scenario_name: str, objects):
+    if scenario_name.startswith("S3_3"):
+        return objects_dict_trees(-2)
+    elif scenario_name.startswith("S3_4"):
+        return objects_dict_trees(-3)
+
+    return objects_dict(objects)
+
 def objects_dict(objects):
     first_time_slice = objects.isel(Time=0).sel(GridsK=1.0) # Only objects on the ground (on the 2m*2m square centered at height 1m so, so touching the ground)
     dataframe = first_time_slice.to_dataframe().reset_index().drop(columns=["Time","GridsK"]).rename(columns={"GridsI": "x", "GridsJ": "y", "Objects": "o"})
@@ -144,6 +152,73 @@ def objects_dict(objects):
     return {
         "defaultObject": int(most_common_object),
         "objects": records
+    }
+
+def objects_dict_trees(type: int = -2):
+    return {
+        "defaultObject": type,
+        "objects": [ # hardcoded list provided by Jaafar, values seem to be the index of the 2x2 square, so multiplied by 2 here
+            { "x": 31 * 2, "y": 28 * 2 },
+            { "x": 31 * 2, "y": 24 * 2 },
+            { "x": 31 * 2, "y": 20 * 2 },
+            { "x": 34 * 2, "y": 26 * 2 },
+            { "x": 34 * 2, "y": 22 * 2 },
+            { "x": 31 * 2, "y": 37 * 2 },
+            { "x": 31 * 2, "y": 41 * 2 },
+            { "x": 31 * 2, "y": 45 * 2 },
+            { "x": 34 * 2, "y": 43 * 2 },
+            { "x": 34 * 2, "y": 39 * 2 },
+            { "x": 31 * 2, "y": 55 * 2 },
+            { "x": 31 * 2, "y": 59 * 2 },
+            { "x": 31 * 2, "y": 63 * 2 },
+            { "x": 34 * 2, "y": 61 * 2 },
+            { "x": 34 * 2, "y": 57 * 2 },
+            { "x": 31 * 2, "y": 73 * 2 },
+            { "x": 31 * 2, "y": 77 * 2 },
+            { "x": 31 * 2, "y": 81 * 2 },
+            { "x": 34 * 2, "y": 79 * 2 },
+            { "x": 34 * 2, "y": 75 * 2 },
+            { "x": 49 * 2, "y": 73 * 2 },
+            { "x": 49 * 2, "y": 77 * 2 },
+            { "x": 49 * 2, "y": 81 * 2 },
+            { "x": 52 * 2, "y": 79 * 2 },
+            { "x": 52 * 2, "y": 75 * 2 },
+            { "x": 49 * 2, "y": 63 * 2 },
+            { "x": 49 * 2, "y": 59 * 2 },
+            { "x": 52 * 2, "y": 61 * 2 },
+            { "x": 49 * 2, "y": 55 * 2 },
+            { "x": 52 * 2, "y": 57 * 2 },
+            { "x": 49 * 2, "y": 45 * 2 },
+            { "x": 49 * 2, "y": 41 * 2 },
+            { "x": 49 * 2, "y": 37 * 2 },
+            { "x": 52 * 2, "y": 39 * 2 },
+            { "x": 52 * 2, "y": 44 * 2 },
+            { "x": 49 * 2, "y": 19 * 2 },
+            { "x": 49 * 2, "y": 23 * 2 },
+            { "x": 49 * 2, "y": 27 * 2 },
+            { "x": 52 * 2, "y": 25 * 2 },
+            { "x": 52 * 2, "y": 21 * 2 },
+            { "x": 67 * 2, "y": 27 * 2 },
+            { "x": 67 * 2, "y": 23 * 2 },
+            { "x": 67 * 2, "y": 19 * 2 },
+            { "x": 70 * 2, "y": 21 * 2 },
+            { "x": 70 * 2, "y": 25 * 2 },
+            { "x": 67 * 2, "y": 37 * 2 },
+            { "x": 67 * 2, "y": 41 * 2 },
+            { "x": 67 * 2, "y": 45 * 2 },
+            { "x": 70 * 2, "y": 43 * 2 },
+            { "x": 70 * 2, "y": 39 * 2 },
+            { "x": 67 * 2, "y": 55 * 2 },
+            { "x": 67 * 2, "y": 59 * 2 },
+            { "x": 67 * 2, "y": 63 * 2 },
+            { "x": 70 * 2, "y": 61 * 2 },
+            { "x": 70 * 2, "y": 57 * 2 },
+            { "x": 67 * 2, "y": 73 * 2 },
+            { "x": 67 * 2, "y": 77 * 2 },
+            { "x": 67 * 2, "y": 81 * 2 },
+            { "x": 70 * 2, "y": 79 * 2 },
+            { "x": 70 * 2, "y": 75 * 2 }
+        ]
     }
 
 # Export variable schemas in a json file for consumption by frontend
@@ -267,11 +342,15 @@ def make_horizontal_time_series_points(variable_names: list[str]):
         }
     ]
 
-    x = y = 100.0
+    xy_list = [
+        (120.0, 100.0),
+        (100.0, 120.0),
+    ]
 
     return [
         make_time_series_point([x, y, plane["height"]], variable_names, plane["plane"])
         for plane in height_per_plane
+        for (x, y) in xy_list
     ]
 
 def get_time_series_points_list(scenario: str, variables: list[str]):
