@@ -11,7 +11,8 @@ import { createOscillatingPlaneMaterial, createSoilMaterial } from '@/lib/3d/mat
 import {
   createBuildingInstancedMesh,
   createObjectsGroup,
-  createSoilGeometry
+  createSoilGeometry,
+  disposeObject3D
 } from '@/lib/3d/scenarioPreviewBuilders'
 import type { SimulationPlane } from '@/lib/simulation/simulationResultPlanesUtils'
 
@@ -38,6 +39,8 @@ let objects: THREE.Group | null = null
 
 const ready = ref(false)
 let loading = ref(true)
+
+let updateCallbacks: Array<() => void> = []
 
 onMounted(() => {
   scene = new THREE.Scene()
@@ -76,6 +79,7 @@ onMounted(() => {
   function animate() {
     requestAnimationFrame(animate)
     controls.update()
+    updateCallbacks.forEach((cb) => cb())
     renderer.render(scene, camera)
   }
   animate()
@@ -118,7 +122,10 @@ watch(
 
 function createPlane() {
   if (!props.plane) return
-  if (plane) scene.remove(plane)
+  if (plane) {
+    scene.remove(plane)
+    disposeObject3D(plane)
+  }
 
   const geometry = new THREE.PlaneGeometry(
     props.plane.size?.width ?? 200,
@@ -141,7 +148,10 @@ function createPlane() {
 
 function createSoil() {
   if (!scenario?.soil) return
-  if (soil) scene.remove(soil)
+  if (soil) {
+    scene.remove(soil)
+    disposeObject3D(soil)
+  }
 
   const geometry = createSoilGeometry(sceneSize, 2, scenario.soil)
 
@@ -156,7 +166,10 @@ function createSoil() {
 function createBuildings() {
   if (!scenario?.buildings) return
 
-  if (buildings) scene.remove(buildings)
+  if (buildings) {
+    scene.remove(buildings)
+    disposeObject3D(buildings)
+  }
 
   buildings = createBuildingInstancedMesh(scenario.buildings, sceneSize)
   scene.add(buildings)
@@ -164,9 +177,15 @@ function createBuildings() {
 
 function createObjects() {
   if (!scenario?.objects) return
-  if (objects) scene.remove(objects)
+  if (objects) {
+    scene.remove(objects)
+    disposeObject3D(objects)
+  }
 
-  objects = createObjectsGroup(scenario.objects, sceneSize)
+  const objectsGroup = createObjectsGroup(scenario.objects, sceneSize)
+  updateCallbacks = objectsGroup.updateCallbacks
+
+  objects = objectsGroup.group
   objects.position.add(new THREE.Vector3(-sceneSize.x / 2, 0, -sceneSize.y / 2))
   scene.add(objects)
 }
