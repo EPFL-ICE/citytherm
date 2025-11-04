@@ -8,6 +8,21 @@ import numpy as np
 import math
 
 human_height = 1.4000000953674316
+ground_level_variables = [
+    "TSurf",
+    "QSurf",
+    "UVSurf",
+    "SensHeatFlux",
+    "LatentHeatFlux",
+    "SoilHeatFlux",
+    "QSWDirHor",
+    "QSWDiffHor",
+    "QSWReflRecHor",
+    "QLWEmit",
+    "QLWBudget",
+    "QLWSumAllFluxes",
+    "SkyViewFactor",
+]
 
 def process_netcdf(scenario_name: str, input_directory: str, output_directory: str):
     print(f"========= Processing scenario: {scenario_name} =========")
@@ -22,7 +37,7 @@ def process_netcdf(scenario_name: str, input_directory: str, output_directory: s
     export_buildings_and_soil_maps_and_objects(scenario_name, ds, output_directory)
     print("Done processing building heights, soil types, and objects.", end="\n\n")
 
-    var_keys = ["T", "RelHum", "SpecHum", "WindSpd", "TMRT", "PET", "QSWDir", "QSWDiff", "QSWRefl"]
+    var_keys = ["T", "RelHum", "SpecHum", "WindSpd", "TMRT", "PET", "QSWDir", "QSWDiff", "QSWRefl"] + ground_level_variables
 
     print("Exporting variable attributes...")
     export_variable_attributes(var_keys, ds, output_directory)
@@ -115,15 +130,14 @@ def soiltype_dict(soil_profile_type):
     }
 
 def objects_dict_scenarios(scenario_name: str, objects):
-    """if scenario_name.startswith("S3_3"): # betula trees
+    if scenario_name.startswith("S3_3"): # betula trees
         return objects_dict_trees(-2)
     elif scenario_name.startswith("S3_4"): # acer trees
         return objects_dict_trees(-3)
     elif scenario_name.startswith("S4_1"): # mist nozzles
         return objects_dict_water_bodies(-10)
     elif scenario_name.startswith("S4_2"): # fountains
-        return objects_dict_water_bodies(-11)"""
-    return objects_dict_water_bodies(-10)
+        return objects_dict_water_bodies(-11)
 
     return objects_dict(objects)
 
@@ -490,6 +504,9 @@ def get_variable_attributes_in_dict(ds, variable_name):
     return {k: prettify_unit(overriden_attrs[k]) for k in overriden_attrs}
 
 def hardcoded_overrides(variable_name: str, attrs: dict):
+    if variable_name in ground_level_variables:
+        attrs["available_at"] = 0.2
+
     if variable_name == "T":
         attrs["long_name"] = "Air Temperature"
         attrs["valid_min"] = 10
@@ -507,6 +524,9 @@ def hardcoded_overrides(variable_name: str, attrs: dict):
 
 def save_plane_slices_for_multiple_vars_at_multiple_times(scenario: str, ds, output_directory: str, variable_names=["T", "RH", "WS", "WD"], time_indices=[0, 4, 8, 12, 16, 20]):
     for variable_name in variable_names:
+        if variable_name in ground_level_variables:
+            continue
+        
         for time_index in time_indices:
             print(f"Processing slices for variable '{variable_name}' at time index {time_index}...")
             save_plane_slices_for_var_at_time(scenario, ds, output_directory, variable_slug=variable_name, time_index=time_index)
@@ -586,11 +606,13 @@ def make_horizontal_time_series_points(variable_names: list[str]):
     height_per_plane = [
         {
             "plane": "horizontal_ground",
-            "height": 0.2
+            "height": 0.2,
+            "available_variables": variable_names # .filter(remove human height variables)
         },
         {
             "plane": "horizontal_human_height",
-            "height": human_height
+            "height": human_height,
+            "available_variables": list(filter(lambda var: var not in ground_level_variables, variable_names))
         }
     ]
 
@@ -600,7 +622,7 @@ def make_horizontal_time_series_points(variable_names: list[str]):
     ]
 
     return [
-        make_time_series_point([x, y, plane["height"]], variable_names, plane["plane"])
+        make_time_series_point([x, y, plane["height"]], plane["available_variables"], plane["plane"])
         for plane in height_per_plane
         for (x, y) in xy_list
     ]
@@ -631,9 +653,16 @@ def get_single_time_series_point_for_var_and_coords_dataframe(ds, variable_name:
     y = coords[1] + 1.0 if coords[1] % 2 != 0 else coords[1]
 
     variable = ds.data_vars[variable_name]
-    point_data = variable.sel(GridsI=x, GridsJ=y, GridsK=coords[2], method="nearest")
 
-    df = point_data.to_dataframe().reset_index().rename(columns={variable_name: "v"}).drop(columns=["GridsI", "GridsJ", "GridsK"])
+    selection = {"GridsI": x, "GridsJ": y}
+    columns_to_drop = ["GridsI", "GridsJ"]
+    if "GridsK" in variable.dims and len(coords) > 2:
+        selection["GridsK"] = coords[2]
+        columns_to_drop.append("GridsK")
+        
+    point_data = variable.sel(method="nearest", **selection)
+
+    df = point_data.to_dataframe().reset_index().rename(columns={variable_name: "v"}).drop(columns=columns_to_drop)
     df["t"] = df["Time"].dt.strftime('%H:%M:%S')
     df.drop(columns=["Time"], inplace=True)
 
