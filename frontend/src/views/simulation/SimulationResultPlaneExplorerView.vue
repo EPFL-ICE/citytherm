@@ -8,7 +8,6 @@ import SimulationResultPlaneHeatmap from '@/components/simulation/SimulationResu
 import { useRoute, useRouter } from 'vue-router'
 import {
   getSimulationPlaneAvailableTimeSlots,
-  getSimulationPlanePresetsForParameters,
   getSimulationPresetsForScenarioSlug,
   type SimulationPlanePresetsMap
 } from '@/lib/simulation/simulationResultPlanesUtils'
@@ -95,7 +94,7 @@ const pickerUrl = computed(() => {
 </script>
 
 <template>
-  <two-panes-layout title="Plane Data Explorer">
+  <two-panes-layout title="Plane Data Explorer" :disable-left-pane-padding="true">
     <template #subtitle>
       <v-btn :to="pickerUrl" :prepend-icon="mdiChevronLeft" color="primary" density="comfortable">
         Back to Scenarios
@@ -104,7 +103,7 @@ const pickerUrl = computed(() => {
     <template #left-pane>
       <tool-set>
         <template #header>
-          <div class="mb-8">
+          <div class="pa-4">
             <scenario-select
               :model-value="scenarioASlug"
               @update:model-value="goToUpdatedParams({ scenarioA: $event ?? undefined })"
@@ -143,16 +142,13 @@ const pickerUrl = computed(() => {
           </div>
         </template>
         <template #default>
-          <div>
-            <h3>Variables</h3>
-            <simulation-variable-list
-              :model-value="selectedVariables"
-              @update:model-value="goToUpdatedParams({ variables: $event })"
-            />
-          </div>
+          <simulation-variable-list
+            :model-value="selectedVariables"
+            @update:model-value="goToUpdatedParams({ variables: $event })"
+          />
         </template>
         <template #footer>
-          <div>
+          <div class="pa-4">
             <time-series-points-select
               :scenario-slug="scenarioASlug"
               label="Time series point to explore"
@@ -160,6 +156,7 @@ const pickerUrl = computed(() => {
             />
             <v-btn
               color="primary"
+              width="100%"
               :disabled="!selectedTimeSeriesPointSlug"
               :to="timeSeriesExplorerUrl!"
             >

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import TwoPanesLayout from '@/components/ui/TwoPanesLayout.vue'
 import ToolSet from '@/components/ui/ToolSet.vue'
-import { computed } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import SimulationVariableList from '@/components/simulation/pickers/SimulationVariableList.vue'
 import SimulationResultTimeSeriesChart from '@/components/simulation/SimulationResultTimeSeriesChart.vue'
@@ -13,7 +13,7 @@ import {
   makePathToTimeSeriesMerge,
   type TimeSeriesPageParams
 } from '@/lib/utils/routingUtils'
-import { useScenariosStore } from '@/stores/simulation/scenarios'
+import { useScenariosStore, type TimeSeriesPoint } from '@/stores/simulation/scenarios'
 import { mdiChevronLeft } from '@mdi/js'
 
 const route = useRoute()
@@ -28,6 +28,24 @@ const pointSlug = computed(() => route.params.point as string)
 const selectedVariables = computed(() => {
   const vars = route.query.vars as string | undefined
   return vars ? vars.split(',') : []
+})
+
+const point = ref<TimeSeriesPoint | null>(null)
+watch(
+  [scenarioASlug, pointSlug],
+  async () => {
+    point.value = await scenarioStore.getFullTimeSeriesPointFromSlug(
+      scenarioASlug.value,
+      pointSlug.value
+    )
+  },
+  { immediate: true }
+)
+const pointHeight = computed(() => {
+  if (point.value) {
+    return point.value.c[2]
+  }
+  return undefined
 })
 
 function goToUpdatedParams(params: Partial<TimeSeriesPageParams>) {
@@ -46,9 +64,7 @@ const planeExplorerUrl = computed(() => {
   return makePathToPlane({
     scenarioA: scenarioASlug.value,
     scenarioB: scenarioBSlug.value,
-    plane:
-      scenarioStore.getFullTimeSeriesPointFromSlugOrNull(scenarioASlug.value, pointSlug.value)?.p ??
-      'horizontal_ground',
+    plane: point.value?.p ?? 'horizontal_ground',
     time: 'time_12',
     variables: selectedVariables.value
   })
@@ -56,7 +72,7 @@ const planeExplorerUrl = computed(() => {
 </script>
 
 <template>
-  <two-panes-layout title="Time Series Data Explorer">
+  <two-panes-layout title="Time Series Data Explorer" :disable-left-pane-padding="true">
     <template #subtitle>
       <v-btn
         :to="planeExplorerUrl"
@@ -70,28 +86,31 @@ const planeExplorerUrl = computed(() => {
     <template #left-pane>
       <tool-set>
         <template #header>
-          <scenario-select
-            :model-value="scenarioASlug"
-            @update:model-value="goToUpdatedParams({ scenarioA: $event ?? undefined })"
-            label="Scenario A"
-          />
-          <scenario-select
-            :model-value="scenarioBSlug"
-            @update:model-value="goToUpdatedParams({ scenarioB: $event ?? undefined })"
-            label="Scenario B"
-            :compare-option="true"
-          />
-          <time-series-points-select
-            :scenario-slug="scenarioASlug"
-            :model-value="pointSlug"
-            @update:model-value="goToUpdatedParams({ point: $event ?? undefined })"
-            label="Time series point"
-          />
+          <div class="pa-4">
+            <scenario-select
+              :model-value="scenarioASlug"
+              @update:model-value="goToUpdatedParams({ scenarioA: $event ?? undefined })"
+              label="Scenario A"
+            />
+            <scenario-select
+              :model-value="scenarioBSlug"
+              @update:model-value="goToUpdatedParams({ scenarioB: $event ?? undefined })"
+              label="Scenario B"
+              :compare-option="true"
+            />
+            <time-series-points-select
+              :scenario-slug="scenarioASlug"
+              :model-value="pointSlug"
+              @update:model-value="goToUpdatedParams({ point: $event ?? undefined })"
+              label="Time series point"
+            />
+          </div>
         </template>
         <template #default>
           <div>
             <simulation-variable-list
               :model-value="selectedVariables"
+              :available-at="pointHeight"
               @update:model-value="goToUpdatedParams({ variables: $event })"
             />
           </div>

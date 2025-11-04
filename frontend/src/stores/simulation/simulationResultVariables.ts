@@ -13,6 +13,7 @@ export interface SimulationResultVariable {
   emVarDataType: number
   emVarIdx: number
   grid_mapping: GridMapping
+  available_at?: number
 }
 
 export type SluggedSimulationResultVariable = SimulationResultVariable & { slug: string }

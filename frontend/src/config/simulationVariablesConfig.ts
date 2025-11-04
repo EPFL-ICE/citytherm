@@ -35,7 +35,16 @@ export const simulationVariablesConfig: Record<string, ConfigForVariable> = {
   },
   default: {
     heatmap: {
-      colormap: ['#ffffd9', '#edf8b1', '#c7e9b4', '#7fcdbb', '#41b6c4', '#1d91c0', '#225ea8', '#0c2c84']
+      colormap: [
+        '#ffffd9',
+        '#edf8b1',
+        '#c7e9b4',
+        '#7fcdbb',
+        '#41b6c4',
+        '#1d91c0',
+        '#225ea8',
+        '#0c2c84'
+      ]
     }
   }
 }

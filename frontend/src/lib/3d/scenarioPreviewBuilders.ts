@@ -134,7 +134,10 @@ interface ObjectGroup {
   updateCallbacks: Array<() => void>
 }
 
-export function createObjectsGroup(objectsMap: SimulationObjectMap, sceneSize: Vector2): ObjectGroup {
+export function createObjectsGroup(
+  objectsMap: SimulationObjectMap,
+  sceneSize: Vector2
+): ObjectGroup {
   const group = new THREE.Group()
   const callbacks: Array<() => void> = []
 
@@ -211,60 +214,60 @@ function createMistNozzleGroup(): ObjectGroup {
   mesh.position.y = nozzleHeight
   group.add(mesh)
 
-  const particleCount = 150;
-  const vertices = [];
-  const velocities = new Float32Array(particleCount * 3);
+  const particleCount = 150
+  const vertices = []
+  const velocities = new Float32Array(particleCount * 3)
   for (let i = 0; i < particleCount; i++) {
-    const x = 0;
-    const y = Math.random() * nozzleHeight;
-    const z = 0;
-    vertices.push(x, y, z);
+    const x = 0
+    const y = Math.random() * nozzleHeight
+    const z = 0
+    vertices.push(x, y, z)
 
-    initVelocity(i);
+    initVelocity(i)
   }
 
   function initVelocity(index: number) {
-    const dir = new THREE.Vector3(Math.random() - 0.5, -0.1, Math.random() - 0.5).normalize();
-    velocities[index * 3] = dir.x;
-    velocities[index * 3 + 1] = dir.y;
-    velocities[index * 3 + 2] = dir.z;
+    const dir = new THREE.Vector3(Math.random() - 0.5, -0.1, Math.random() - 0.5).normalize()
+    velocities[index * 3] = dir.x
+    velocities[index * 3 + 1] = dir.y
+    velocities[index * 3 + 2] = dir.z
   }
 
-  const dropletsGeometry = new THREE.BufferGeometry();
-  dropletsGeometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
-  const dropletsMaterial = new THREE.PointsMaterial({ color: 0x55aaff });
-  const points = new THREE.Points(dropletsGeometry, dropletsMaterial);
-  points.material.size = 0.1;
-  points.material.sizeAttenuation = true;
-  group.add(points);
+  const dropletsGeometry = new THREE.BufferGeometry()
+  dropletsGeometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3))
+  const dropletsMaterial = new THREE.PointsMaterial({ color: 0x55aaff })
+  const points = new THREE.Points(dropletsGeometry, dropletsMaterial)
+  points.material.size = 0.1
+  points.material.sizeAttenuation = true
+  group.add(points)
 
   function updateWaterDroplets() {
-    const speedScale = 0.025;
-    const dampenLateral = 0.98;
-    const gravity = -0.01;
-    const pos = dropletsGeometry.attributes.position.array;
+    const speedScale = 0.025
+    const dampenLateral = 0.98
+    const gravity = -0.01
+    const pos = dropletsGeometry.attributes.position.array
 
     for (let i = 0; i < pos.length; i += 3) {
-      pos[i] += velocities[i] * speedScale;
-      pos[i + 1] += velocities[i + 1] * speedScale;
-      pos[i + 2] += velocities[i + 2] * speedScale;
+      pos[i] += velocities[i] * speedScale
+      pos[i + 1] += velocities[i + 1] * speedScale
+      pos[i + 2] += velocities[i + 2] * speedScale
 
       // Apply gravity
-      velocities[i + 1] += gravity;
+      velocities[i + 1] += gravity
       // Dampen lateral movement
-      velocities[i] *= dampenLateral;
-      velocities[i + 2] *= dampenLateral;
+      velocities[i] *= dampenLateral
+      velocities[i + 2] *= dampenLateral
 
       if (pos[i + 1] < 0) {
         // Reset droplet above nozzle
-        pos[i] = 0;
-        pos[i + 1] = nozzleHeight;
-        pos[i + 2] = 0;
+        pos[i] = 0
+        pos[i + 1] = nozzleHeight
+        pos[i + 2] = 0
 
-        initVelocity(i / 3);
+        initVelocity(i / 3)
       }
     }
-    dropletsGeometry.attributes.position.needsUpdate = true;
+    dropletsGeometry.attributes.position.needsUpdate = true
   }
 
   return { group, updateCallbacks: [updateWaterDroplets] }
@@ -290,61 +293,65 @@ function createFountainGroup(): ObjectGroup {
   waterMesh.position.y = 0.15
   group.add(waterMesh)
 
-  const particleCount = 350;
-  const vertices = [];
-  const velocities = new Float32Array(particleCount * 3);
+  const particleCount = 350
+  const vertices = []
+  const velocities = new Float32Array(particleCount * 3)
   for (let i = 0; i < particleCount; i++) {
-    const x = 0;
-    const y = Math.random() * 4;
-    const z = 0;
-    vertices.push(x, y, z);
+    const x = 0
+    const y = Math.random() * 4
+    const z = 0
+    vertices.push(x, y, z)
 
-    initVelocity(i, 0);
-    velocities[i * 3 + 1] = Math.random() - 0.5; // give some extra vertical boost
+    initVelocity(i, 0)
+    velocities[i * 3 + 1] = Math.random() - 0.5 // give some extra vertical boost
   }
 
   function initVelocity(index: number, verticalFactor = 1.0) {
-    const dir = new THREE.Vector3(Math.random() - 0.5, 1, Math.random() - 0.5).normalize();
-    velocities[index * 3] = dir.x;
-    velocities[index * 3 + 1] = dir.y * 1.6 * verticalFactor;
-    velocities[index * 3 + 2] = dir.z;
+    const dir = new THREE.Vector3(
+      Math.random() - 0.5,
+      0.6 + Math.random() * 0.4,
+      Math.random() - 0.5
+    ).normalize()
+    velocities[index * 3] = dir.x
+    velocities[index * 3 + 1] = dir.y * 1.6 * verticalFactor
+    velocities[index * 3 + 2] = dir.z
   }
 
-  const dropletsGeometry = new THREE.BufferGeometry();
-  dropletsGeometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
-  const dropletsMaterial = new THREE.PointsMaterial({ color: 0x55aaff });
-  const points = new THREE.Points(dropletsGeometry, dropletsMaterial);
-  points.material.size = 0.05;
-  points.material.sizeAttenuation = true;
-  group.add(points);
+  const dropletsGeometry = new THREE.BufferGeometry()
+  dropletsGeometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3))
+  const dropletsMaterial = new THREE.PointsMaterial({ color: 0x55aaff })
+  const points = new THREE.Points(dropletsGeometry, dropletsMaterial)
+  points.material.size = 0.05
+  points.material.sizeAttenuation = true
+  group.add(points)
 
   function updateWaterDroplets() {
-    const speedScale = 0.025;
-    const dampenLateral = 0.95;
-    const gravity = -0.01;
-    const pos = dropletsGeometry.attributes.position.array;
+    const speedScale = 0.025
+    const dampenLateral = 0.95
+    const gravity = -0.01
+    const pos = dropletsGeometry.attributes.position.array
 
     for (let i = 0; i < pos.length; i += 3) {
-      pos[i] += velocities[i] * speedScale;
-      pos[i + 1] += velocities[i + 1] * speedScale;
-      pos[i + 2] += velocities[i + 2] * speedScale;
+      pos[i] += velocities[i] * speedScale
+      pos[i + 1] += velocities[i + 1] * speedScale
+      pos[i + 2] += velocities[i + 2] * speedScale
 
       // Apply gravity
-      velocities[i + 1] += gravity;
+      velocities[i + 1] += gravity
       // Dampen lateral movement
-      velocities[i] *= dampenLateral;
-      velocities[i + 2] *= dampenLateral;
+      velocities[i] *= dampenLateral
+      velocities[i + 2] *= dampenLateral
 
       if (pos[i + 1] < 0) {
         // Reset droplet above nozzle
-        pos[i] = 0;
-        pos[i + 1] = nozzleHeight;
-        pos[i + 2] = 0;
+        pos[i] = (Math.random() - 0.5) * 0.2
+        pos[i + 1] = nozzleHeight
+        pos[i + 2] = (Math.random() - 0.5) * 0.2
 
-        initVelocity(i / 3);
+        initVelocity(i / 3)
       }
     }
-    dropletsGeometry.attributes.position.needsUpdate = true;
+    dropletsGeometry.attributes.position.needsUpdate = true
   }
 
   return { group, updateCallbacks: [updateWaterDroplets] }
@@ -366,7 +373,11 @@ function disposeMesh(mesh: THREE.Mesh | THREE.Points | THREE.Line) {
 
 export function disposeObject3D(object: THREE.Object3D) {
   object.traverse((child) => {
-    if (child instanceof THREE.Mesh || child instanceof THREE.Points || child instanceof THREE.Line) {
+    if (
+      child instanceof THREE.Mesh ||
+      child instanceof THREE.Points ||
+      child instanceof THREE.Line
+    ) {
       disposeMesh(child)
     }
   })
