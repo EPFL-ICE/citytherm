@@ -7,12 +7,25 @@ export type TimeSeriesDataPoint = {
   v: number
 }
 
-export type TimeSeriesData = TimeSeriesDataPoint[]
+export type TimeSeriesData = {
+  requested_coords?: { x: number; y: number; z: number }
+  true_coords?: { x: number; y: number; z: number }
+  data: TimeSeriesDataPoint[]
+}
 
 export interface SimulationResultTimeSeriesComparison {
-  scenarioA: TimeSeriesData
-  scenarioB?: TimeSeriesData | null
-  difference?: TimeSeriesData | null
+  requested_coords?: { x: number; y: number; z: number }
+  true_coords?: { x: number; y: number; z: number }
+
+  scenarioA: TimeSeriesDataPoint[]
+  scenarioB?: TimeSeriesDataPoint[] | null
+  difference?: TimeSeriesDataPoint[] | null
+}
+
+export type SimulationResultTimeSeriesMultiData = {
+  requested_coords?: { x: number; y: number; z: number }
+  true_coords?: { x: number; y: number; z: number }
+  scenarios: Record<string, TimeSeriesDataPoint[]> // key is slug
 }
 
 async function fetchSimulationResultTimeSeriesForScenarioVariableAndPoint(
@@ -44,8 +57,11 @@ export function makePointSlugArray(point: [number, number, number]): string {
   return makePointSlug(point[0], point[1], point[2])
 }
 
-function getDifferenceData(a: TimeSeriesData, b: TimeSeriesData): TimeSeriesData {
-  const diff: TimeSeriesData = []
+function getDifferenceData(
+  a: TimeSeriesDataPoint[],
+  b: TimeSeriesDataPoint[]
+): TimeSeriesDataPoint[] {
+  const diff: TimeSeriesDataPoint[] = []
   for (let i = 0; i < a.length; i++) {
     const va = a[i].v
     const vb = b[i].v
@@ -73,6 +89,14 @@ function makeSlugForComparisonScenario(
   pointSlug: string
 ): string {
   return makeCompositeKey([scenarioASlug, scenarioBSlug, variableSlug, pointSlug])
+}
+
+function makeSlugForMultiScenario(
+  scenarios: string[],
+  variableSlug: string,
+  pointSlug: string
+): string {
+  return makeCompositeKey([scenarios.join('-'), variableSlug, pointSlug])
 }
 
 // key is in the form `${scenarioSlug};${variableSlug};${pointSlug}`
@@ -105,12 +129,43 @@ export const useSimulationResultTimeSeriesStore = defineStore('simulationResultT
           : null
       ])
 
-      const differenceData = scenarioBData ? getDifferenceData(scenarioAData, scenarioBData) : null
+      const differenceData = scenarioBData
+        ? getDifferenceData(scenarioAData.data, scenarioBData.data)
+        : null
 
       return {
-        scenarioA: scenarioAData,
-        scenarioB: scenarioBData ?? null,
+        requested_coords: scenarioAData.requested_coords,
+        true_coords: scenarioAData.true_coords,
+        scenarioA: scenarioAData.data,
+        scenarioB: scenarioBData?.data ?? null,
         difference: differenceData
+      }
+    }
+  )
+
+  const simulationResultTimeSeriesMultiCache = new KeyedCache<
+    SimulationResultTimeSeriesMultiData,
+    Error
+  >(
+    // key is in the form `${scenarios};${variableSlug};${pointSlug}`
+    async (key: string) => {
+      const [scenariosSlugs, variableSlug, pointSlug] = parseCompositeKey(key)
+
+      const scenariosData: [string, TimeSeriesData][] = await Promise.all(
+        scenariosSlugs!.split('-').map(async (slug) => {
+          return [
+            slug,
+            await scenarioDataCache.get(makeSlugForSingleScenario(slug, variableSlug!, pointSlug!))
+          ]
+        })
+      )
+
+      const scenarioAData = scenariosData[0]
+
+      return {
+        requested_coords: scenarioAData[1].requested_coords,
+        true_coords: scenarioAData[1].true_coords,
+        scenarios: Object.fromEntries(scenariosData.map(([key, value]) => [key, value.data]))
       }
     }
   )
@@ -126,7 +181,18 @@ export const useSimulationResultTimeSeriesStore = defineStore('simulationResultT
     )
   }
 
+  async function getSimulationResultMultiTimeSeries(
+    scenarios: string[],
+    variableSlug: string,
+    pointSlug: string
+  ): Promise<SimulationResultTimeSeriesMultiData> {
+    return simulationResultTimeSeriesMultiCache.get(
+      makeSlugForMultiScenario(scenarios, variableSlug, pointSlug)
+    )
+  }
+
   return {
-    getSimulationResultTimeSeries
+    getSimulationResultTimeSeries,
+    getSimulationResultMultiTimeSeries
   }
 })

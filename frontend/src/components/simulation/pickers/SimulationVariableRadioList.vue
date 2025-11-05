@@ -63,33 +63,30 @@ const openedGroups = ref<number[]>([0])
 
 <template>
   <v-expansion-panels multiple v-model="openedGroups" flat>
-    <v-expansion-panel
-      v-for="group in groups"
-      :key="group.groupName"
-      :disabled="Array.isArray(groups) === false || group.variables.length === 0"
-    >
-      <v-expansion-panel-title class="group-name">{{ group.groupName }}</v-expansion-panel-title>
+    <v-radio-group v-model="model">
+      <v-expansion-panel
+        v-for="group in groups"
+        :key="group.groupName"
+        :disabled="Array.isArray(groups) === false || group.variables.length === 0"
+      >
+        <v-expansion-panel-title class="group-name">{{ group.groupName }}</v-expansion-panel-title>
 
-      <v-expansion-panel-text>
-        <template v-for="variable in group.variables" :key="variable.slug">
-          <v-checkbox
-            v-model="model"
-            :value="variable.slug"
-            density="comfortable"
-            :hide-details="true"
-          >
-            <template #label>
-              <div class="text-body-1 ml-1">
-                <span
-                  >{{ variable.long_name }}
-                  <span v-if="variable.units">({{ variable.units }})</span></span
-                >
-              </div>
-            </template>
-          </v-checkbox>
-        </template>
-      </v-expansion-panel-text>
-    </v-expansion-panel>
+        <v-expansion-panel-text>
+          <template v-for="variable in group.variables" :key="variable.slug">
+            <v-radio :value="variable.slug" density="comfortable" :hide-details="true">
+              <template #label>
+                <div class="text-body-1 ml-1">
+                  <span
+                    >{{ variable.long_name }}
+                    <span v-if="variable.units">({{ variable.units }})</span></span
+                  >
+                </div>
+              </template>
+            </v-radio>
+          </template>
+        </v-expansion-panel-text>
+      </v-expansion-panel>
+    </v-radio-group>
   </v-expansion-panels>
 </template>
 

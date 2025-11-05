@@ -1,5 +1,6 @@
 import { cdnUrl } from '@/config/layerTypes'
 import { KeyedCache, makeCompositeKey, parseCompositeKey } from '@/lib/utils/cache'
+import type { get } from 'lodash'
 import { defineStore } from 'pinia'
 
 export type SimulationResultPlaneAtomicData = (number | null)[][]
@@ -130,6 +131,17 @@ export const useSimulationResultPlaneStore = defineStore('simulationResultPlane'
     }
   )
 
+  async function getPlaneDataForScenario(
+    scenarioSlug: string,
+    planeSlug: string,
+    timeSliceSlug: string,
+    variableSlug: string
+  ): Promise<SimulationResultPlaneData> {
+    return scenarioDataCache.get(
+      makeSlugForSingleScenario(scenarioSlug, planeSlug, timeSliceSlug, variableSlug)
+    )
+  }
+
   async function getSimulationResultPlane(
     scenarioASlug: string,
     scenarioBSlug: string | null,
@@ -149,6 +161,7 @@ export const useSimulationResultPlaneStore = defineStore('simulationResultPlane'
   }
 
   return {
+    getPlaneDataForScenario,
     getSimulationResultPlane
   }
 })
