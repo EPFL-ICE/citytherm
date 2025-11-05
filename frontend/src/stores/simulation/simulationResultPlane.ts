@@ -1,3 +1,4 @@
+import { getMinMaxAcrossMultipleScenarios } from '@/components/simulation/heatmap/heatmapUtils'
 import { cdnUrl } from '@/config/layerTypes'
 import { KeyedCache, makeCompositeKey, parseCompositeKey } from '@/lib/utils/cache'
 import type { get } from 'lodash'
@@ -82,9 +83,9 @@ function makeSlugForComparisonScenario(
   return makeCompositeKey([scenarioASlug, scenarioBSlug, planeSlug, timeSliceSlug, variableSlug])
 }
 
-// key is in the form `${scenarioSlug};${variableSlug};${timeSliceSlug};${planeSlug}`
+// key is in the form `${scenarioSlug};${planeSlug};${timeSliceSlug};${variableSlug}`
 async function fetchSimulationResultPlaneData(key: string): Promise<SimulationResultPlaneData> {
-  const [scenarioASlug, variableSlug, timeSliceSlug, planeSlug] = parseCompositeKey(key)
+  const [scenarioASlug, planeSlug, timeSliceSlug, variableSlug] = parseCompositeKey(key)
   return fetchSimulationResultForScenarioPlaneTimeAndVariable(
     scenarioASlug!,
     planeSlug!,
@@ -99,9 +100,9 @@ export const useSimulationResultPlaneStore = defineStore('simulationResultPlane'
   )
 
   const simulationResultPlaneCache = new KeyedCache<SimulationResultPlaneValues, Error>(
-    // key is in the form `${scenarioASlug};${scenarioBSlug};${variableSlug};${timeSliceSlug};${planeSlug}`
+    // key is in the form `${scenarioASlug};${scenarioBSlug};${planeSlug};${timeSliceSlug};${variableSlug}`
     async (key: string) => {
-      const [scenarioASlug, scenarioBSlug, variableSlug, timeSliceSlug, planeSlug] =
+      const [scenarioASlug, scenarioBSlug, planeSlug, timeSliceSlug, variableSlug] =
         parseCompositeKey(key)
 
       const [scenarioAData, scenarioBData] = await Promise.all([
@@ -153,15 +154,33 @@ export const useSimulationResultPlaneStore = defineStore('simulationResultPlane'
       makeSlugForComparisonScenario(
         scenarioASlug,
         scenarioBSlug,
-        variableSlug,
+        planeSlug,
         timeSliceSlug,
-        planeSlug
+        variableSlug
       )
     )
   }
 
+  async function getMinMaxForMultipleScenariosSlugs(
+    scenarioSlugs: string[],
+    planeSlug: string,
+    timeSliceSlug: string,
+    variableSlug: string
+  ): Promise<{ min: number; max: number }> {
+    const allData: SimulationResultPlaneAtomicData[] = await Promise.all(
+      scenarioSlugs.map((scenarioSlug) =>
+        getPlaneDataForScenario(scenarioSlug, planeSlug, timeSliceSlug, variableSlug).then(
+          (res) => res.data
+        )
+      )
+    )
+
+    return getMinMaxAcrossMultipleScenarios(allData)
+  }
+
   return {
     getPlaneDataForScenario,
-    getSimulationResultPlane
+    getSimulationResultPlane,
+    getMinMaxForMultipleScenariosSlugs
   }
 })

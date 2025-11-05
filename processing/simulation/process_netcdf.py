@@ -89,10 +89,12 @@ def export_buildings_and_soil_maps_and_objects(scenario_name: str, ds, output_di
     save_json_for_scenario(obj_dict, output_directory, scenario_name, "", "objectsMap", pretty=False)
 
 def hardcoded_side_color(scenario_name: str):
-    if scenario_name.startswith("S1_5"):
-        return "#00e000"
-    elif scenario_name.startswith("S1_4"):
+    if scenario_name.startswith("S2_1"):
+        return "#eeeeee"
+    elif scenario_name.startswith("S2_2"):
         return "#8ad7dc"
+    elif scenario_name.startswith("S2_3"):
+        return "#00e000"
     return "#aaaaaa"
 
 def hardcoded_top_color(scenario_name: str):
@@ -140,19 +142,19 @@ def soiltype_dict(soil_profile_type):
     }
 
 def objects_dict_scenarios(scenario_name: str, objects):
-    if scenario_name.startswith("S3_3"): # betula trees
+    if scenario_name.startswith("S4_2"): # betula trees
         return objects_dict_trees(-2)
-    elif scenario_name.startswith("S3_4"): # acer trees
+    elif scenario_name.startswith("S4_3"): # acer trees
         return objects_dict_trees(-3)
-    elif scenario_name.startswith("S4_1"): # mist nozzles
+    elif scenario_name.startswith("S5_1"): # mist nozzles
         return objects_dict_water_bodies(-10)
-    elif scenario_name.startswith("S4_2"): # fountains
+    elif scenario_name.startswith("S5_2"): # fountains
         return objects_dict_water_bodies(-11)
 
     return objects_dict(objects)
 
 def objects_dict(objects):
-    first_time_slice = objects.isel(Time=0).sel(GridsK=1.0) # Only objects on the ground (on the 2m*2m square centered at height 1m so, so touching the ground)
+    first_time_slice = objects.isel(Time=0).sel(GridsK=0.2) # Only objects on the ground (on the 2m*2m square centered at height 1m so, so touching the ground)
     dataframe = first_time_slice.to_dataframe().reset_index().drop(columns=["Time","GridsK"]).rename(columns={"GridsI": "x", "GridsJ": "y", "Objects": "o"})
     print(dataframe)
     dataframe_cleaned = dataframe[dataframe["o"].notna() & (dataframe["o"] > 1)] # 0 is no object and 1 is building, already taken into account in building heights

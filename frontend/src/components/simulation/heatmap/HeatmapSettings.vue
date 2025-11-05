@@ -15,6 +15,7 @@ const props = defineProps<{
   scenarioASlug?: string
   scenarioBSlug?: string | null
   variableSlug: string
+  hideIndividualMinMax?: boolean
   forceMode?: DisplayMode
 }>()
 
@@ -71,6 +72,7 @@ const expectedValueRange = computed<ExpectedValueRange>(() => {
     <div class="toolbar">
       <div class="switches">
         <v-switch
+          v-if="!hideIndividualMinMax"
           v-model="inferMinMax"
           label="Infer min/max from data"
           class="ml-4"

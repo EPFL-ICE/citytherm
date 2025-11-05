@@ -69,3 +69,19 @@ export function getMinMax(data: SimulationResultPlaneAtomicData | undefined | nu
 
   return { min, max }
 }
+
+export function getMinMaxAcrossMultipleScenarios(data: SimulationResultPlaneAtomicData[]): {
+  min: number
+  max: number
+} {
+  let overallMin = Infinity
+  let overallMax = -Infinity
+
+  for (const scenarioData of data) {
+    const { min, max } = getMinMax(scenarioData)
+    if (min < overallMin) overallMin = min
+    if (max > overallMax) overallMax = max
+  }
+
+  return { min: overallMin, max: overallMax }
+}
