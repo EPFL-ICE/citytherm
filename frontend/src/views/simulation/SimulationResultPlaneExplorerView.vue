@@ -31,8 +31,10 @@ import {
   makePathToTimeSeriesExplorer
 } from '@/lib/utils/routingUtils'
 import { mdiChevronLeft } from '@mdi/js'
+import { useSimulationResultPlaneStore } from '@/stores/simulation/simulationResultPlane'
 
 const scenarioStore = useScenariosStore()
+const simulationResultStore = useSimulationResultPlaneStore()
 const route = useRoute()
 const router = useRouter()
 
@@ -123,6 +125,34 @@ function scenarioTitle(slug: string) {
   const scenario = allScenarios.value?.scenarios[slug]
   return `${scenario?.id} - ${scenario?.name}`
 }
+
+type ValueRangeOption = 'infer-individual' | 'infer-global' | 'fixed'
+const rangeOption = ref<ValueRangeOption>('infer-global')
+
+const rangeSelectOptions: { title: string; value: ValueRangeOption }[] = [
+  { title: 'Infer min/max per scenario', value: 'infer-individual' },
+  { title: 'Infer min/max across all scenarios', value: 'infer-global' },
+  { title: 'Fixed min/max', value: 'fixed' }
+]
+
+const globalMinMax = ref<{ min: number; max: number } | null>(null)
+watchEffect(() => {
+  globalMinMax.value = null
+  if (rangeOption.value !== 'infer-global') {
+    return
+  }
+
+  simulationResultStore
+    .getMinMaxForMultipleScenariosSlugs(
+      selectedScenarios.value,
+      planeSlug.value,
+      timeSlug.value,
+      variableSlug.value
+    )
+    .then((minMax) => {
+      globalMinMax.value = minMax
+    })
+})
 </script>
 
 <template>
@@ -165,6 +195,16 @@ function scenarioTitle(slug: string) {
               density="comfortable"
               class="mb-2"
             />
+            <v-select
+              :model-value="rangeOption"
+              :items="rangeSelectOptions"
+              @update:model-value="rangeOption = $event"
+              label="Value range mode"
+              single-line
+              :hide-details="true"
+              density="comfortable"
+              class="mb-2"
+            />
           </div>
         </template>
         <template #default>
@@ -194,11 +234,14 @@ function scenarioTitle(slug: string) {
 
     <template #default>
       <div v-if="selectedScenarios.length > 0" class="pa-4">
-        <heatmap-settings :variable-slug="variableSlug">
+        <heatmap-settings
+          :variable-slug="variableSlug"
+          :hide-individual-min-max="rangeOption !== 'infer-individual'"
+        >
           <template #right-toolbar>
-            <v-btn :to="comparatorUrl" :disabled="!comparatorUrl" color="primary"
-              >Compare scenarios ({{ pickedScenarios.length }}/2)</v-btn
-            >
+            <v-btn :to="comparatorUrl" :disabled="!comparatorUrl" color="primary">
+              Compare scenarios ({{ pickedScenarios.length }}/2)
+            </v-btn>
           </template>
           <template #default="{ expectedValueRange, inferMinMax, mode, showSpecialPoints }">
             <result-grid :numColumns="gridColumns" :rerender-on-columns-change="true">
@@ -226,7 +269,8 @@ function scenarioTitle(slug: string) {
                   :time-slice-slug="timeSlug"
                   :scenario-a-slug="scenario"
                   :expected-value-range="expectedValueRange"
-                  :infer-min-max="inferMinMax"
+                  :infer-min-max="inferMinMax && rangeOption === 'infer-individual'"
+                  :force-min-max="globalMinMax"
                   :mode="mode"
                   :show-special-points="showSpecialPoints"
                   @point-clicked="(point) => navigateToTimeSeriesPoint(point)"

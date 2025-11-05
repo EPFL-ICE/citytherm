@@ -10,7 +10,8 @@ import json
 from pathlib import Path
 import math
 
-scenario = "S3_3_Decidious_Trees"
+scenario = "S4_1_Hedges"
+# scenario = "S3_3_Grass_Cover"
 
 file_path = f"./raw_data/{scenario}.nc"
 ds = xr.open_dataset(file_path)
@@ -31,7 +32,7 @@ def explore_variable(variable_name):
     print(f"Unique values for {variable_name}: {unique_values}")
     print(f"Number of unique values for {variable_name}: {len(unique_values)}")
 
-    print("querying non-null values...")
+    """print("querying non-null values...")
     query = variable.where(variable.notnull(), drop=True)
     print("time_0 GridsK=1.45 non-null coordinates:")
     time_0 = query.isel(Time=0).sel(GridsJ=121, GridsI=93, method="nearest")
@@ -50,8 +51,8 @@ def explore_variable(variable_name):
     slice_df = slice.to_dataframe().reset_index()
     print(slice_df.head(100))
 
-    return
-    target_value = 12.0
+    return"""
+    target_value = 13.0
     mask = variable.notnull() & (variable == target_value)
 
     # Extract the indices (or coordinates) where this is true
@@ -74,7 +75,7 @@ def explore_variable(variable_name):
     print(df["GridsK"].unique())
 
 
-explore_variable("XFac_WallTempNode1Outside")
+explore_variable("Objects")
 
 def prettify_unit(unit: str) -> str:
     unit_mappings = {

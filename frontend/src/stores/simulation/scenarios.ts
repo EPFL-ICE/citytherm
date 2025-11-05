@@ -19,15 +19,9 @@ export interface BuildingMap {
   buildingsParts: BuildingPart[]
 }
 
-export interface SoilTypeAnomaly {
-  x: number
-  y: number
-  t: number // type of the anomaly
-}
-
 export interface SoilMap {
   defaultSoilType: number // of type number to match the code in the NetCDF data (2007 -> Asphalt, 2045 -> High albedo material, etc...)
-  anomalies: { [key: `${number};${number}`]: SoilTypeAnomaly }
+  anomalies: { [key: `${number};${number}`]: number }
 }
 
 export interface SimulationObject {
