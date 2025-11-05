@@ -1,7 +1,6 @@
 import { getMinMaxAcrossMultipleScenarios } from '@/components/simulation/heatmap/heatmapUtils'
 import { cdnUrl } from '@/config/layerTypes'
 import { KeyedCache, makeCompositeKey, parseCompositeKey } from '@/lib/utils/cache'
-import type { get } from 'lodash'
 import { defineStore } from 'pinia'
 
 export type SimulationResultPlaneAtomicData = (number | null)[][]
