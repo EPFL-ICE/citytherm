@@ -14,7 +14,7 @@ import {
   type SimulationPlanePresetsMap
 } from '@/lib/simulation/simulationResultPlanesUtils'
 import {
-  makePathToPlane,
+  makePathToPlaneComparator,
   makePathToScenarioPickerMerge,
   type ScenarioPickerParams
 } from '@/lib/utils/routingUtils'
@@ -65,7 +65,7 @@ function goToUpdatedParams(params: Partial<ScenarioPickerParams>) {
 const planeExplorerUrl = computed(() => {
   if (scenariosSlug.value.length === 0 || !planeSlug.value) return null
 
-  return makePathToPlane({
+  return makePathToPlaneComparator({
     scenarioA: scenariosSlug.value[0],
     scenarioB: null,
     plane: planeSlug.value,

@@ -8,7 +8,7 @@ import numpy as np
 import math
 
 human_height = 1.4000000953674316
-ground_level_variables = [
+surface_level_variables = [
     "TSurf",
     "QSurf",
     "UVSurf",
@@ -22,6 +22,16 @@ ground_level_variables = [
     "QLWBudget",
     "QLWSumAllFluxes",
     "SkyViewFactor",
+]
+building_data_variables = [
+    "$Fac_WallTempNode1Outside", # $ gets replaced by either X or Y depending on wall orientation
+    "$Fac_WallSystemLWEmitted",
+    "$Fac_WallSystemSWReceived",
+    "$Fac_WallSystemSWDirAbsorbed",
+    "$Fac_WallSystemLWIncoming",
+    "$Fac_WallSystemSWReflected",
+    "$Fac_WallSystemSHTransCoeffOutside",
+    "$Fac_WallSystemLWEnergyBalance",
 ]
 
 def process_netcdf(scenario_name: str, input_directory: str, output_directory: str):
@@ -37,7 +47,7 @@ def process_netcdf(scenario_name: str, input_directory: str, output_directory: s
     export_buildings_and_soil_maps_and_objects(scenario_name, ds, output_directory)
     print("Done processing building heights, soil types, and objects.", end="\n\n")
 
-    var_keys = ["T", "RelHum", "SpecHum", "WindSpd", "TMRT", "PET", "QSWDir", "QSWDiff", "QSWRefl"] + ground_level_variables
+    var_keys = ["T", "RelHum", "SpecHum", "WindSpd", "TMRT", "PET", "QSWDir", "QSWDiff", "QSWRefl"] + surface_level_variables + building_data_variables
 
     print("Exporting variable attributes...")
     export_variable_attributes(var_keys, ds, output_directory)
@@ -498,14 +508,17 @@ def export_variable_attributes(variable_names, ds, output_directory):
 
 
 def get_variable_attributes_in_dict(ds, variable_name):
-    variable = ds.data_vars[variable_name]
+    source_variable_name = variable_name.replace("$", "X")
+    variable = ds.data_vars[source_variable_name]
     attrs = variable.attrs
     overriden_attrs = hardcoded_overrides(variable_name, attrs.copy())
     return {k: prettify_unit(overriden_attrs[k]) for k in overriden_attrs}
 
 def hardcoded_overrides(variable_name: str, attrs: dict):
-    if variable_name in ground_level_variables:
+    if variable_name in surface_level_variables:
         attrs["available_at"] = 0.2
+    elif variable_name in building_data_variables:
+        attrs["available_at"] = human_height
 
     if variable_name == "T":
         attrs["long_name"] = "Air Temperature"
@@ -517,6 +530,22 @@ def hardcoded_overrides(variable_name: str, attrs: dict):
     elif variable_name == "WindSpd":
         attrs["valid_min"] = 0
         attrs["valid_max"] = 20
+    elif variable_name == "$Fac_WallTempNode1Outside":
+        attrs["long_name"] = "Wall Temperature"
+    elif variable_name == "$Fac_WallSystemLWEmitted":
+        attrs["long_name"] = "Emitted Longwave Radiation (Facade)"
+    elif variable_name == "$Fac_WallSystemSWReceived":
+        attrs["long_name"] = "Received Shortwave Radiation (Facade)"
+    elif variable_name == "$Fac_WallSystemSWAbsorbed":
+        attrs["long_name"] = "Absorbed Direct Shortwave Radiation (Facade)"
+    elif variable_name == "$Fac_WallSystemLWIncoming":
+        attrs["long_name"] = "Incoming Longwave Radiation (Facade)"
+    elif variable_name == "$Fac_WallSystemSWReflected":
+        attrs["long_name"] = "Reflected Shortwave Radiation (Facade)"
+    elif variable_name == "$Fac_WallSystemSHTransCoeffOutside":
+        attrs["long_name"] = "Sensible Heat Transmission Coefficient (Outside)"
+    elif variable_name == "$Fac_WallSystemLWEnergyBalance":
+        attrs["long_name"] = "Longwave Energy Balance (Facade)"
 
     return attrs
 
@@ -524,7 +553,7 @@ def hardcoded_overrides(variable_name: str, attrs: dict):
 
 def save_plane_slices_for_multiple_vars_at_multiple_times(scenario: str, ds, output_directory: str, variable_names=["T", "RH", "WS", "WD"], time_indices=[0, 4, 8, 12, 16, 20]):
     for variable_name in variable_names:
-        if variable_name in ground_level_variables:
+        if variable_name in surface_level_variables or variable_name in building_data_variables:
             continue
         
         for time_index in time_indices:
@@ -558,11 +587,11 @@ def slice_yz_plane_at_x(df, x_value):
 
 def get_plane_slicers_for_scenario(scenario: str):
     building_canopy_anomalies_per_scenario = {
-        "S1_Tall_Canyon_Scenario": 31.0,
+        "S1_1_Tall_Canyon_Scenario": 31.0,
     }
 
     mid_building_x_per_scenario = {
-        "S2_Wide_Canyon": 73.0,
+        "S1_2_Wide_Canyon": 73.0,
     }
 
     return [
@@ -607,12 +636,12 @@ def make_horizontal_time_series_points(variable_names: list[str]):
         {
             "plane": "horizontal_ground",
             "height": 0.2,
-            "available_variables": variable_names # .filter(remove human height variables)
+            "available_variables": list(filter(lambda var: var not in building_data_variables, variable_names))
         },
         {
             "plane": "horizontal_human_height",
             "height": human_height,
-            "available_variables": list(filter(lambda var: var not in ground_level_variables, variable_names))
+            "available_variables": list(filter(lambda var: var not in surface_level_variables, variable_names))
         }
     ]
 
@@ -644,11 +673,24 @@ def export_time_series_points(scenario: str, ds, points, output_directory: str):
         variable_names = point["v"]
         for variable_name in variable_names:
             print(f"Exporting time series for {variable_name} at {coords}")
+            is_building_data = "$" in variable_name
+            true_variable_name = variable_name
 
-            time_series = get_single_time_series_point_for_var_and_coords_dataframe(ds, variable_name, coords)
-            save_json_for_scenario(to_json_compatible(time_series.to_dict(orient="records")), output_directory, scenario, f"{variable_name}/timeSeries", f"{number_for_filename(coords[0])}-{number_for_filename(coords[1])}-{number_for_filename(coords[2])}")
+            if is_building_data:
+                if coords[1] == 120.0:
+                    true_variable_name = variable_name.replace("$", "X")
+                elif coords[0] == 120.0:
+                    true_variable_name = variable_name.replace("$", "Y")
 
-def get_single_time_series_point_for_var_and_coords_dataframe(ds, variable_name: str, coords: list[float]):
+            time_series, true_coords = get_single_time_series_point_for_var_and_coords_dataframe(ds, true_variable_name, coords, filter_nan=is_building_data)
+            record = {
+                "requested_coords": {"x": coords[0], "y": coords[1], "z": coords[2]},
+                "true_coords": true_coords,
+                "data": to_json_compatible(time_series.to_dict(orient="records")),
+            }
+            save_json_for_scenario(record, output_directory, scenario, f"{variable_name}/timeSeries", f"{number_for_filename(coords[0])}-{number_for_filename(coords[1])}-{number_for_filename(coords[2])}")
+
+def get_single_time_series_point_for_var_and_coords_dataframe(ds, variable_name: str, coords: list[float], filter_nan: bool = False):
     x = coords[0] + 1.0 if coords[0] % 2 != 0 else coords[0]
     y = coords[1] + 1.0 if coords[1] % 2 != 0 else coords[1]
 
@@ -659,14 +701,20 @@ def get_single_time_series_point_for_var_and_coords_dataframe(ds, variable_name:
     if "GridsK" in variable.dims and len(coords) > 2:
         selection["GridsK"] = coords[2]
         columns_to_drop.append("GridsK")
-        
-    point_data = variable.sel(method="nearest", **selection)
+
+    filtered = variable.where(variable.notnull(), drop=True) if filter_nan else variable
+    point_data = filtered.sel(method="nearest", **selection)
+    true_coords = {
+        "x": float(point_data["GridsI"].values),
+        "y": float(point_data["GridsJ"].values),
+        "z": float(point_data["GridsK"].values) if "GridsK" in point_data else None,
+    }
 
     df = point_data.to_dataframe().reset_index().rename(columns={variable_name: "v"}).drop(columns=columns_to_drop)
     df["t"] = df["Time"].dt.strftime('%H:%M:%S')
     df.drop(columns=["Time"], inplace=True)
 
-    return df
+    return df, true_coords
 
 # Utility functions
 

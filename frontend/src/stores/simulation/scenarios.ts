@@ -151,23 +151,29 @@ export const useScenariosStore = defineStore('scenarios', () => {
     return scenario
   }
 
-  async function getAvailableTimeSeriesPointsForScenario(slug: string): Promise<TimeSeriesPoint[]> {
-    return scenarioTimeSeriesCache.get(slug)
+  async function getAvailableTimeSeriesPointsForScenario(
+    slug?: string
+  ): Promise<TimeSeriesPoint[]> {
+    return scenarioTimeSeriesCache.get(slug ?? 'S0')
+  }
+
+  async function getDefaultTimeSeriesPoints(): Promise<TimeSeriesPoint[]> {
+    return getAvailableTimeSeriesPointsForScenario()
   }
 
   async function getFullTimeSeriesPointFromSlug(
-    scenarioSlug: string,
-    pointSlug: string
+    pointSlug: string,
+    scenarioSlug?: string
   ): Promise<TimeSeriesPoint | null> {
-    const points = await scenarioTimeSeriesCache.get(scenarioSlug)
+    const points = await getAvailableTimeSeriesPointsForScenario(scenarioSlug)
     return points.find((p) => makePointSlugArray(p.c) === pointSlug) ?? null
   }
 
   function getFullTimeSeriesPointFromSlugOrNull(
-    scenarioSlug: string,
-    pointSlug: string
+    pointSlug: string,
+    scenarioSlug?: string
   ): TimeSeriesPoint | null {
-    const points = scenarioTimeSeriesCache.getOrNull(scenarioSlug)
+    const points = scenarioTimeSeriesCache.getOrNull(scenarioSlug ?? 'S0')
     if (!points) return null
     return points.find((p) => makePointSlugArray(p.c) === pointSlug) ?? null
   }
@@ -176,6 +182,7 @@ export const useScenariosStore = defineStore('scenarios', () => {
     getScenarioDescriptions,
     getScenarioMap,
     getScenarioDescriptionBySlug,
+    getDefaultTimeSeriesPoints,
     getAvailableTimeSeriesPointsForScenario,
     getFullTimeSeriesPointFromSlug,
     getFullTimeSeriesPointFromSlugOrNull

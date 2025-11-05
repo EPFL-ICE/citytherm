@@ -31,6 +31,26 @@ def explore_variable(variable_name):
     print(f"Unique values for {variable_name}: {unique_values}")
     print(f"Number of unique values for {variable_name}: {len(unique_values)}")
 
+    print("querying non-null values...")
+    query = variable.where(variable.notnull(), drop=True)
+    print("time_0 GridsK=1.45 non-null coordinates:")
+    time_0 = query.isel(Time=0).sel(GridsJ=121, GridsI=93, method="nearest")
+    print(f"Number of non-null coordinates for {variable_name} at Time=0 and GridsK=1.45: {len(time_0)}")
+    coords_df = time_0.to_dataframe().reset_index().drop(columns=["Time"])
+    print(f"Coordinates with non-null values for {variable_name} (total {len(coords_df)}):")
+    
+    with pd.option_context("display.max_rows", 350):
+        print(coords_df.head(350))
+
+    return
+
+    slice = variable.isel(Time=0).sel(GridsJ=89, GridsK=0.2, method="nearest")
+    print(f"Slice at GridsJ=89 for {variable_name} at Time=0:")
+    print(slice)
+    slice_df = slice.to_dataframe().reset_index()
+    print(slice_df.head(100))
+
+    return
     target_value = 12.0
     mask = variable.notnull() & (variable == target_value)
 
@@ -53,7 +73,8 @@ def explore_variable(variable_name):
     print("All GridsK values at these points:")
     print(df["GridsK"].unique())
 
-explore_variable("Objects")
+
+explore_variable("XFac_WallTempNode1Outside")
 
 def prettify_unit(unit: str) -> str:
     unit_mappings = {

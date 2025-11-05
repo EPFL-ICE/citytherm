@@ -5,20 +5,24 @@
       "scenarios": ["S0"]
     },
     "Group1": {
-      "groupName": "Building Materials & Urban Form",
-      "scenarios": ["S1_1", "S1_2", "S1_3", "S1_4", "S1_5"]
+      "groupName": "Urban Form",
+      "scenarios": ["S1_1", "S1_2", "S1_3"]
     },
     "Group2": {
-      "groupName": "Ground Modification",
-      "scenarios": ["S2_1", "S2_2"]
+      "groupName": "Building Materials",
+      "scenarios": ["S2_1", "S2_2", "S2_3"]
     },
     "Group3": {
-      "groupName": "Vegetation Strategies",
-      "scenarios": ["S3_1", "S3_2", "S3_3", "S3_4"]
+      "groupName": "Ground Modification",
+      "scenarios": ["S3_1", "S3_2", "S3_3"]
     },
     "Group4": {
+      "groupName": "Vegetation Strategies",
+      "scenarios": ["S4_1", "S4_2", "S4_3"]
+    },
+    "Group5": {
       "groupName": "Water Bodies",
-      "scenarios": ["S4_1", "S4_2"]
+      "scenarios": ["S5_1", "S5_2", "S5_3"]
     }
   },
   "scenarios": {
@@ -26,7 +30,7 @@
       "id": "S0",
       "slug": "S0",
       "name": "Baseline",
-      "description": "Aligned grid of 4×4 buildings (LCZ 5). Building height 16 m, street width 16 m. Urban canyon aspect ratio 1. Concrete buildings, asphalt ground. No vegetation or water features.",
+      "description": "Aligned grid of 4×4 buildings (LCZ 5). Building height 16 m, street width 16 m. Urban canyon aspect ratio 1. Concrete buildings, asphalt ground. No vegetation, no water features.",
       "group": "Group0",
       "primaryAnalysisFocus": "Establish reference for fluxes, environmental conditions, and comfort metrics.",
       "relevantLectures": ["L6", "L7"]
@@ -58,93 +62,111 @@
       "primaryAnalysisFocus": "Changes in wind channeling and ventilation in canyons, surface temperatures.",
       "relevantLectures": ["L6"]
     },
-    "S1_4": {
-      "id": "S1.4",
-      "slug": "S1_4",
-      "name": "Glass Buildings",
-      "description": "Aligned grid of 4×4 buildings. Building height 16 m, street width 16 m. Building façade material: glass; roof is concrete. Asphalt ground. No vegetation.",
-      "group": "Group1",
-      "primaryAnalysisFocus": "Effect of shortwave and longwave radiation, heat storage, surface temperatures.",
-      "relevantLectures": ["L6"]
-    },
-    "S1_5": {
-      "id": "S1.5",
-      "slug": "S1_5",
-      "name": "Green Façades",
-      "description": "Aligned grid of 4×4 buildings. Building height 16 m, street width 16 m. Building façade: green walls; roof is concrete. Asphalt ground. No vegetation.",
-      "group": "Group1",
-      "primaryAnalysisFocus": "Cooling from evapotranspiration (Qₑ), surface temperatures, and longwave radiation.",
-      "relevantLectures": ["L6", "L8"]
-    },
     "S2_1": {
       "id": "S2.1",
       "slug": "S2_1",
-      "name": "High Albedo Pavement",
-      "description": "Aligned grid of 4×4 buildings. Building height 16 m, street width 16 m. Concrete buildings, ground surface: high-albedo pavement. No vegetation.",
+      "name": "Painted Façades",
+      "description": "Aligned grid of 4×4 buildings. Building height 16 m, street width 16 m. Building façade surface: white paint (roof is concrete). Asphalt ground. No vegetation.",
       "group": "Group2",
-      "primaryAnalysisFocus": "Effect of albedo on surface temperature, radiation balance (Q*), and stored heat (ΔQₛ).",
-      "relevantLectures": ["L7"]
+      "primaryAnalysisFocus": "Effect of shortwave and longwave radiation, surface temperatures.",
+      "relevantLectures": ["L6"]
     },
     "S2_2": {
       "id": "S2.2",
       "slug": "S2_2",
-      "name": "Sandy Loam Ground",
-      "description": "Aligned grid of 4×4 buildings. Building height 16 m, street width 16 m. Concrete buildings, ground surface: sandy loam soil. No vegetation.",
+      "name": "Glass Façades",
+      "description": "Aligned grid of 4×4 buildings. Building height 16 m, street width 16 m. Building façade material: glass (roof is concrete). Asphalt ground. No vegetation.",
       "group": "Group2",
-      "primaryAnalysisFocus": "Impact of changing from impervious to pervious surface, allowing for cooling from evapotranspiration (Qₑ) and ground temperature distribution.",
-      "relevantLectures": ["L7"]
+      "primaryAnalysisFocus": "Effect of shortwave and longwave radiation, heat storage, surface temperatures.",
+      "relevantLectures": ["L6"]
+    },
+    "S2_3": {
+      "id": "S2.3",
+      "slug": "S2_3",
+      "name": "Green Façades",
+      "description": "Aligned grid of 4×4 buildings. Building height 16 m, street width 16 m. Building façade: green walls (roof is concrete). Asphalt ground. No vegetation on the ground.",
+      "group": "Group2",
+      "primaryAnalysisFocus": "Cooling from evapotranspiration (Qₑ), surface temperatures, and longwave radiation.",
+      "relevantLectures": ["L6", "L8"]
     },
     "S3_1": {
       "id": "S3.1",
       "slug": "S3_1",
+      "name": "High Albedo Pavement",
+      "description": "Aligned grid of 4×4 buildings. Building height 16 m, street width 16 m. Concrete buildings, ground surface: high-albedo pavement. No vegetation.",
+      "group": "Group3",
+      "primaryAnalysisFocus": "Effect of albedo on surface temperature, radiation balance (Q*), and stored heat (ΔQₛ).",
+      "relevantLectures": ["L7"]
+    },
+    "S3_2": {
+      "id": "S3.2",
+      "slug": "S3_2",
+      "name": "Sandy Loam Ground",
+      "description": "Aligned grid of 4×4 buildings. Building height 16 m, street width 16 m. Concrete buildings, ground surface: sandy loam soil. No vegetation.",
+      "group": "Group3",
+      "primaryAnalysisFocus": "Impact of changing from impervious to pervious surface, allowing for cooling from evapotranspiration (Qₑ), ground temperatures at different depths.",
+      "relevantLectures": ["L7"]
+    },
+    "S3_3": {
+      "id": "S3.3",
+      "slug": "S3_3",
       "name": "Grass Cover",
       "description": "Aligned grid of 4×4 buildings. Building height 16 m, street width 16 m. Concrete buildings, ground cover: grass (height 25 cm).",
       "group": "Group3",
       "primaryAnalysisFocus": "Impact of a low, continuous vegetative cover on surface temperature and latent heat flux (Qₑ).",
       "relevantLectures": ["L7", "L9"]
     },
-    "S3_2": {
-      "id": "S3.2",
-      "slug": "S3_2",
-      "name": "Hedges",
-      "description": "Aligned grid of 4×4 buildings. Building height 16 m, street width 16 m. Concrete buildings, asphalt ground. Vegetation: hedges (height 1 m) along streets.",
-      "group": "Group3",
-      "primaryAnalysisFocus": "Effects of low, dense vegetation on near-ground wind flow, shading, and local humidity.",
-      "relevantLectures": ["L9"]
-    },
-    "S3_3": {
-      "id": "S3.3",
-      "slug": "S3_3",
-      "name": "Deciduous Trees",
-      "description": "Aligned grid of 4×4 buildings. Building height 16 m, street width 16 m. Concrete buildings, asphalt ground. Vegetation: deciduous trees (height 6 m) along streets.",
-      "group": "Group3",
-      "primaryAnalysisFocus": "Effect of shading and evapotranspiration from tree canopies on canyon climate.",
-      "relevantLectures": ["L9"]
-    },
-    "S3_4": {
-      "id": "S3.4",
-      "slug": "S3_4",
-      "name": "Evergreen Trees",
-      "description": "Aligned grid of 4×4 buildings. Building height 16 m, street width 16 m. Concrete buildings, asphalt ground. Vegetation: evergreen trees (height 6 m) along streets.",
-      "group": "Group3",
-      "primaryAnalysisFocus": "Effect of shading and evapotranspiration from tree canopies on canyon climate.",
-      "relevantLectures": ["L9"]
-    },
     "S4_1": {
       "id": "S4.1",
       "slug": "S4_1",
-      "name": "Mist Nozzles",
-      "description": "Aligned grid of 4×4 buildings. Building height 16 m, street width 16 m. Concrete buildings, asphalt ground. No vegetation. Water feature: active misting/spray system.",
+      "name": "Hedges",
+      "description": "Aligned grid of 4×4 buildings. Building height 16 m, street width 16 m. Concrete buildings, asphalt ground. Vegetation: hedges (height 1 m) along the streets.",
       "group": "Group4",
-      "primaryAnalysisFocus": "Intensive, localized evaporative cooling; impact on air temperature and humidity.",
-      "relevantLectures": ["L8"]
+      "primaryAnalysisFocus": "Effects of low, dense vegetation on near-ground wind flow, shading, and local humidity.",
+      "relevantLectures": ["L9"]
     },
     "S4_2": {
       "id": "S4.2",
       "slug": "S4_2",
-      "name": "Water Reservoir",
-      "description": "Aligned grid of 4×4 buildings. Building height 16 m, street width 16 m. Concrete buildings, asphalt ground. No vegetation. Water feature: central water reservoir.",
+      "name": "Trees (Betula)",
+      "description": "Aligned grid of 4×4 buildings. Building height 16 m, street width 16 m. Concrete buildings, asphalt ground. Vegetation: deciduous trees (Betula species) along the streets.",
       "group": "Group4",
+      "primaryAnalysisFocus": "Effect of shading and evapotranspiration from tree canopies on canyon climate.",
+      "relevantLectures": ["L9"]
+    },
+    "S4_3": {
+      "id": "S4.3",
+      "slug": "S4_3",
+      "name": "Trees (Acer)",
+      "description": "Aligned grid of 4×4 buildings. Building height 16 m, street width 16 m. Concrete buildings, asphalt ground. Vegetation: deciduous trees (Acer species) along the streets.",
+      "group": "Group4",
+      "primaryAnalysisFocus": "Effect of shading and evapotranspiration from tree canopies on canyon climate.",
+      "relevantLectures": ["L9"]
+    },
+    "S5_1": {
+      "id": "S5.1",
+      "slug": "S5_1",
+      "name": "Mist Nozzles",
+      "description": "Aligned grid of 4×4 buildings. Building height 16 m, street width 16 m. Concrete buildings, asphalt ground. No vegetation. Water feature: active misting/spray system at 3 m height along buildings.",
+      "group": "Group5",
+      "primaryAnalysisFocus": "Intensive, localized evaporative cooling; impact on air temperature and humidity.",
+      "relevantLectures": ["L8"]
+    },
+    "S5_2": {
+      "id": "S5.2",
+      "slug": "S5_2",
+      "name": "Water Fountains",
+      "description": "Aligned grid of 4×4 buildings. Building height 16 m, street width 16 m. Concrete buildings, asphalt ground. No vegetation. Water feature: fountains (height 4 m) along buildings.",
+      "group": "Group5",
+      "primaryAnalysisFocus": "Cooling from evaporation and the effect of water’s high thermal inertia.",
+      "relevantLectures": ["L8"]
+    },
+    "S5_3": {
+      "id": "S5.3",
+      "slug": "S5_3",
+      "name": "Water Reservoirs",
+      "description": "Aligned grid of 4×4 buildings. Building height 16 m, street width 16 m. Concrete buildings, asphalt ground. No vegetation. Water feature: reservoirs at ground level along buildings.",
+      "group": "Group5",
       "primaryAnalysisFocus": "Cooling from evaporation and the effect of water’s high thermal inertia.",
       "relevantLectures": ["L8"]
     }

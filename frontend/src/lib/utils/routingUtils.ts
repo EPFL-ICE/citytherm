@@ -19,7 +19,30 @@ export function makePathToScenarioPickerMerge(
   })
 }
 
-export interface PlanePageParams {
+export interface PlaneExplorerPageParams {
+  plane: string
+  time: string
+  variable: string
+  scenarios: string[]
+}
+
+export function makePathToPlaneExplorer(params: PlaneExplorerPageParams) {
+  return `/simulation/plane/explorer/${params.plane}/${params.time}/${params.variable}?scenarios=${encodeURIComponent(
+    params.scenarios.join(',')
+  )}`
+}
+
+export function makePathToPlaneExplorerMerge(
+  newParams: Partial<PlaneExplorerPageParams>,
+  oldParams: PlaneExplorerPageParams
+) {
+  return makePathToPlaneExplorer({
+    ...oldParams,
+    ...newParams
+  })
+}
+
+export interface PlaneComparatorPageParams {
   scenarioA: string
   scenarioB: string | null
   plane: string
@@ -27,40 +50,62 @@ export interface PlanePageParams {
   variables: string[]
 }
 
-export function makePathToPlane(params: PlanePageParams) {
-  return `/simulation/plane/${params.scenarioA}/${params.scenarioB ?? '_'}/${params.plane}/${
+export function makePathToPlaneComparator(params: PlaneComparatorPageParams) {
+  return `/simulation/plane/comparator/${params.scenarioA}/${params.scenarioB ?? '_'}/${params.plane}/${
     params.time
   }?vars=${encodeURIComponent(params.variables.join(','))}`
 }
 
-export function makePathToPlaneMerge(
-  newParams: Partial<PlanePageParams>,
-  oldParams: PlanePageParams
+export function makePathToPlaneComparatorMerge(
+  newParams: Partial<PlaneComparatorPageParams>,
+  oldParams: PlaneComparatorPageParams
 ) {
-  return makePathToPlane({
+  return makePathToPlaneComparator({
     ...oldParams,
     ...newParams
   })
 }
 
-export interface TimeSeriesPageParams {
+export interface TimeSeriesExplorerParams {
+  scenarios: string[]
+  variables: string[]
+  point: string
+}
+
+export function makePathToTimeSeriesExplorer(params: TimeSeriesExplorerParams) {
+  return `/simulation/timeSeries/explorer/${
+    params.point
+  }?vars=${encodeURIComponent(params.variables.join(','))}&scenarios=${encodeURIComponent(params.scenarios.join(','))}`
+}
+
+export function makePathToTimeSeriesExplorerMerge(
+  newParams: Partial<TimeSeriesExplorerParams>,
+  oldParams: TimeSeriesExplorerParams
+) {
+  return makePathToTimeSeriesExplorer({
+    ...oldParams,
+    ...newParams
+  })
+}
+
+export interface TimeSeriesComparatorParams {
   scenarioA: string
   scenarioB: string | null
   point: string
   variables: string[]
 }
 
-export function makePathToTimeSeries(params: TimeSeriesPageParams) {
-  return `/simulation/timeSeries/${params.scenarioA}/${params.scenarioB ?? '_'}/${
+export function makePathToTimeSeriesComparator(params: TimeSeriesComparatorParams) {
+  return `/simulation/timeSeries/comparator/${params.scenarioA}/${params.scenarioB ?? '_'}/${
     params.point
   }?vars=${encodeURIComponent(params.variables.join(','))}`
 }
 
-export function makePathToTimeSeriesMerge(
-  newParams: Partial<TimeSeriesPageParams>,
-  oldParams: TimeSeriesPageParams
+export function makePathToTimeSeriesComparatorMerge(
+  newParams: Partial<TimeSeriesComparatorParams>,
+  oldParams: TimeSeriesComparatorParams
 ) {
-  return makePathToTimeSeries({
+  return makePathToTimeSeriesComparator({
     ...oldParams,
     ...newParams
   })
