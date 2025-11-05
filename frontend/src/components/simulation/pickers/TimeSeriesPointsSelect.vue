@@ -11,7 +11,7 @@ import { makePointSlugArray } from '@/stores/simulation/simulationResultTimeSeri
 
 const scenarioStore = useScenariosStore()
 const props = defineProps<{
-  scenarioSlug: string
+  scenarioSlug?: string
   label: string
 }>()
 const model = defineModel<string | null>()

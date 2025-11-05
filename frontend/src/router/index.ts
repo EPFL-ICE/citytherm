@@ -1,8 +1,10 @@
-import SimulationResultTimeSeriesExplorer from '@/views/simulation/SimulationResultTimeSeriesExplorer.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 import ComparisonView from '../views/ComparisonView.vue'
-import SimulationResultPlaneExplorerView from '../views/simulation/SimulationResultPlaneExplorerView.vue'
 import SimulationScenarioPickerView from '../views/simulation/SimulationScenarioPickerView.vue'
+import SimulationResultPlaneExplorerView from '../views/simulation/SimulationResultPlaneExplorerView.vue'
+import SimulationResultPlaneComparatorView from '../views/simulation/SimulationResultPlaneComparatorView.vue'
+import SimulationResultTimeSeriesExplorer from '@/views/simulation/SimulationResultTimeSeriesExplorer.vue'
+import SimulationResultTimeSeriesComparator from '@/views/simulation/SimulationResultTimeSeriesComparator.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -18,14 +20,24 @@ const router = createRouter({
       component: SimulationScenarioPickerView
     },
     {
-      path: '/simulation/plane/:scenarioA/:scenarioB/:plane/:time',
+      path: '/simulation/plane/explorer/:plane/:time/:variable',
       name: 'simulation result plane explorer',
       component: SimulationResultPlaneExplorerView
     },
     {
-      path: '/simulation/timeSeries/:scenarioA/:scenarioB/:point',
+      path: '/simulation/plane/comparator/:scenarioA/:scenarioB/:plane/:time',
+      name: 'simulation result plane comparator',
+      component: SimulationResultPlaneComparatorView
+    },
+    {
+      path: '/simulation/timeSeries/explorer/:point',
       name: 'simulation result time series explorer',
       component: SimulationResultTimeSeriesExplorer
+    },
+    {
+      path: '/simulation/timeSeries/comparator/:scenarioA/:scenarioB/:point',
+      name: 'simulation result time series comparator',
+      component: SimulationResultTimeSeriesComparator
     }
   ]
 })

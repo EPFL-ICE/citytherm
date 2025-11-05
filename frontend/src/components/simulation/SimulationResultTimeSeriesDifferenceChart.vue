@@ -1,19 +1,19 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watchEffect } from 'vue'
+import { onMounted, ref, watchEffect } from 'vue'
 import {
   type SimulationResultVariable,
   useSimulationResultVariablesStore
 } from '@/stores/simulation/simulationResultVariables'
 import {
   useSimulationResultTimeSeriesStore,
-  type SimulationResultTimeSeriesComparison,
-  type SimulationResultTimeSeriesMultiData
+  type SimulationResultTimeSeriesComparison
 } from '@/stores/simulation/simulationResultTimeSeries'
 import LineChart from '../charts/LineChart.vue'
 import { useScenariosStore, type ScenarioDescription } from '@/stores/simulation/scenarios'
 
 const props = defineProps<{
-  scenarios: string[]
+  scenarioASlug: string
+  scenarioBSlug: string | null
   variableSlug: string
   pointSlug: string
 }>()
@@ -30,26 +30,36 @@ onMounted(async () => {
   })
 })
 
-const timeSeries = ref<SimulationResultTimeSeriesMultiData | null>(null)
+const timeSeries = ref<SimulationResultTimeSeriesComparison | null>(null)
 const scenarioADescription = ref<ScenarioDescription | null>(null)
 watchEffect(() => {
-  if (props.scenarios.length < 1) return
-
   timeSeries.value = null
   simulationResultTimeSeriesStore
-    .getSimulationResultMultiTimeSeries(props.scenarios, props.variableSlug, props.pointSlug)
+    .getSimulationResultTimeSeries(
+      props.scenarioASlug,
+      props.scenarioBSlug,
+      props.variableSlug,
+      props.pointSlug
+    )
     .then((result) => {
       timeSeries.value = result
     })
-
-  scenarioStore.getScenarioDescriptionBySlug(props.scenarios[0]).then((desc) => {
+  scenarioStore.getScenarioDescriptionBySlug(props.scenarioASlug).then((desc) => {
     scenarioADescription.value = desc
   })
 })
 
-const scenarioAData = computed(() =>
-  timeSeries.value ? Object.values(timeSeries.value.scenarios)[0] : null
-)
+const scenarioBDescription = ref<ScenarioDescription | null>(null)
+watchEffect(() => {
+  if (!props.scenarioBSlug) {
+    scenarioBDescription.value = null
+    return
+  }
+
+  scenarioStore.getScenarioDescriptionBySlug(props.scenarioBSlug).then((desc) => {
+    scenarioBDescription.value = desc
+  })
+})
 
 function areTrueCoordsDifferent(): boolean {
   if (!timeSeries.value) return false
@@ -77,13 +87,17 @@ function areTrueCoordsDifferent(): boolean {
       <line-chart
         :axis-x="{
           name: 'Time',
-          slots: scenarioAData?.map((slot) => ({ name: slot.t.slice(0, 5) })) ?? []
+          slots: timeSeries.scenarioA.map((slot) => ({ name: slot.t.slice(0, 5) }))
         }"
         :series="
-          Object.entries(timeSeries?.scenarios ?? {}).map(([slug, data]) => ({
-            name: slug,
-            data: data.map((slot) => slot.v)
-          }))
+          timeSeries.difference
+            ? [
+                {
+                  name: 'Difference',
+                  data: timeSeries.difference.map((slot) => slot.v)
+                }
+              ]
+            : []
         "
       />
     </div>

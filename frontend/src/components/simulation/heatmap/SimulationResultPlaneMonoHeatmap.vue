@@ -4,6 +4,7 @@ import { computed, onMounted, ref, watchEffect } from 'vue'
 import {
   useSimulationResultPlaneStore,
   type SimulationResultPlaneAtomicData,
+  type SimulationResultPlaneData,
   type SimulationResultPlaneValues
 } from '@/stores/simulation/simulationResultPlane'
 import {
@@ -21,10 +22,10 @@ import {
 import { useScenariosStore, type TimeSeriesPoint } from '@/stores/simulation/scenarios'
 import { makePointSlugArray } from '@/stores/simulation/simulationResultTimeSeries'
 import { simulationVariablesConfig } from '@/config/simulationVariablesConfig'
+import { dataToHeatmapData, getMinMax } from './heatmapUtils'
 
 const props = defineProps<{
-  scenarioASlug: string
-  scenarioBSlug: string | null
+  scenarioSlug: string
   planeSlug: string
   timeSliceSlug: string
   variableSlug: string
@@ -38,7 +39,7 @@ const simulationResultPlaneStore = useSimulationResultPlaneStore()
 const simulationResultsVariablesStore = useSimulationResultVariablesStore()
 const scenarioStore = useScenariosStore()
 
-const simulation = ref<SimulationResultPlaneValues | null>(null)
+const simulation = ref<SimulationResultPlaneData | null>(null)
 const variableAttributes = ref<SimulationResultVariable | null>(null)
 
 const showSpecialPoints = ref(true)
@@ -53,116 +54,45 @@ onMounted(async () => {
 watchEffect(() => {
   simulation.value = null
   simulationResultPlaneStore
-    .getSimulationResultPlane(
-      props.scenarioASlug,
-      props.scenarioBSlug,
-      props.variableSlug,
+    .getPlaneDataForScenario(
+      props.scenarioSlug,
+      props.planeSlug,
       props.timeSliceSlug,
-      props.planeSlug
+      props.variableSlug
     )
-    .then((result) => {
-      simulation.value = result
+    .then((data) => {
+      simulation.value = data
     })
 })
 
 const timeSeriesPointsList = ref<TimeSeriesPoint[] | null>(null)
 watchEffect(() => {
   timeSeriesPointsList.value = null
-  scenarioStore.getAvailableTimeSeriesPointsForScenario(props.scenarioASlug).then((tspl) => {
+  scenarioStore.getAvailableTimeSeriesPointsForScenario(props.scenarioSlug).then((tspl) => {
     timeSeriesPointsList.value = tspl
   })
 })
 
-function getMetadataForDataIndex(
-  indexX: number,
-  indexY: number
-): { pointSlug: string } | undefined {
-  if (!timeSeriesPointsList.value) return undefined
-
-  const { x: trueX, y: trueY } = getFinalPositionFromIndexAndAxes(
-    indexX,
-    indexY,
-    getGraphAxesForPlane(props.planeSlug),
-    false
-  )
-  const point = timeSeriesPointsList.value.find(
-    (point) => point.c[0] === trueX && point.c[1] === trueY
-  )
-  if (point) {
-    return { pointSlug: makePointSlugArray(point.c) }
-  }
-
-  return undefined
-}
-
-function dataToHeatmapData(data: (number | null)[][]): HeatmapData[] {
-  const heatmapData: HeatmapData[] = []
-  for (let i = 0; i < data.length; i++) {
-    for (let j = 0; j < data[i].length; j++) {
-      heatmapData.push({ value: [i, j, data[i][j]], metadata: getMetadataForDataIndex(i, j) })
-    }
-  }
-  return heatmapData
-}
-
-const mode = ref<'scenarioA' | 'scenarioB' | 'difference'>('scenarioA')
-
 const heatmapData = computed(() => {
   if (!simulation.value || !timeSeriesPointsList.value) return []
-
-  switch (mode.value) {
-    case 'scenarioA':
-      return dataToHeatmapData(simulation.value.data.scenarioA)
-    case 'scenarioB':
-      return simulation.value.data.scenarioB
-        ? dataToHeatmapData(simulation.value.data.scenarioB)
-        : []
-    case 'difference':
-      return simulation.value.data.difference
-        ? dataToHeatmapData(simulation.value.data.difference)
-        : []
-  }
+  return dataToHeatmapData(
+    simulation.value.data,
+    false,
+    props.planeSlug,
+    timeSeriesPointsList.value
+  )
 })
-
-function getMinMax(data: SimulationResultPlaneAtomicData | undefined | null): {
-  min: number
-  max: number
-} {
-  if (!data) return { min: 0, max: 100 }
-
-  let min = Infinity
-  let max = -Infinity
-
-  for (const row of data) {
-    for (const value of row) {
-      if (value === null) continue
-      if (value < min) min = value
-      if (value > max) max = value
-    }
-  }
-
-  return { min, max }
-}
 
 const minMaxOverriddenValues = computed(() => {
   if (!inferMinMax.value) return undefined
-
-  switch (mode.value) {
-    case 'scenarioA':
-      return getMinMax(simulation.value?.data.scenarioA)
-    case 'scenarioB':
-      return getMinMax(simulation.value?.data.scenarioB)
-    case 'difference':
-      return getMinMax(simulation.value?.data.difference)
-  }
+  return getMinMax(simulation.value?.data)
 })
 
 const graphAxes = computed<GraphAxes>(() => getGraphAxesForPlane(props.planeSlug))
 
 const expectedValueRange = computed<ExpectedValueRange>(() => {
   if (!variableAttributes.value) return { min: 0, max: 100 }
-
-  return getExpectedValueRangeForVariable(variableAttributes.value, mode.value === 'difference')
+  return getExpectedValueRangeForVariable(variableAttributes.value, false)
 })
 
 const graphAspectRatio = computed(() => {
@@ -183,17 +113,6 @@ const colormap = computed<string[]>(() => {
 <template>
   <div v-if="simulation && variableAttributes" class="pa-4 h-100">
     <h2>{{ variableAttributes.long_name }} ({{ variableAttributes.units }})</h2>
-    <v-btn-toggle
-      v-if="scenarioBSlug"
-      v-model="mode"
-      color="primary"
-      mandatory
-      density="comfortable"
-    >
-      <v-btn value="scenarioA">Scenario A ({{ scenarioASlug }})</v-btn>
-      <v-btn value="scenarioB">Scenario B ({{ scenarioBSlug }})</v-btn>
-      <v-btn value="difference">Signed difference (A - B)</v-btn>
-    </v-btn-toggle>
     <div class="switches">
       <v-switch
         v-model="inferMinMax"
