@@ -7,7 +7,6 @@ import type {
 } from '@/stores/simulation/scenarios'
 import * as THREE from 'three'
 import { createBuildingMaterial, simulationSoilTypeCodeToColor } from './materials'
-import { init } from 'echarts'
 
 export interface Vector2 {
   x: number
