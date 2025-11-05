@@ -22,6 +22,7 @@ const props = defineProps<{
   variableSlug: string
   showSpecialPoints: boolean
   inferMinMax: boolean
+  forceMinMax?: ExpectedValueRange | null
   expectedValueRange: ExpectedValueRange
   mode: DisplayMode
 }>()
@@ -41,9 +42,9 @@ watchEffect(() => {
     .getSimulationResultPlane(
       props.scenarioASlug,
       props.scenarioBSlug ?? null,
-      props.variableSlug,
+      props.planeSlug,
       props.timeSliceSlug,
-      props.planeSlug
+      props.variableSlug
     )
     .then((result) => {
       simulation.value = result
@@ -91,6 +92,7 @@ const heatmapData = computed(() => {
 })
 
 const minMaxOverriddenValues = computed(() => {
+  if (props.forceMinMax) return props.forceMinMax
   if (!props.inferMinMax) return undefined
 
   switch (props.mode) {

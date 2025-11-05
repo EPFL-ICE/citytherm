@@ -33,7 +33,7 @@ export function createSoilGeometry(sceneSize: Vector2, quadSize: number, soilMap
     const correspondingAnomaly = soilMap.anomalies[`${dataX};${dataY}`]
 
     const color = simulationSoilTypeCodeToColor(
-      correspondingAnomaly ? correspondingAnomaly.t : soilMap.defaultSoilType
+      correspondingAnomaly ? correspondingAnomaly : soilMap.defaultSoilType
     )
 
     // Push the same color for all 6 vertices of this quad
@@ -163,6 +163,10 @@ function createObjectGroup(object: SimulationObject, defaultType: number): Objec
     return createMistNozzleGroup() // Mist Nozzle
   } else if (o === -11) {
     return createFountainGroup() // Fountain
+  } else if (o === 11) {
+    return createVegetationCubeMesh(0.2, 2, 0x44cc9a) // Hedge
+  } else if (o === 13) {
+    return createVegetationCubeMesh(1, 2) // Hedge
   }
 
   // Default: simple cone as placeholder
@@ -171,6 +175,19 @@ function createObjectGroup(object: SimulationObject, defaultType: number): Objec
   const geometry = new THREE.ConeGeometry(1, 2, 8)
   const material = new THREE.MeshStandardMaterial({ color: 0x00ff00 })
   const mesh = new THREE.Mesh(geometry, material)
+  group.add(mesh)
+
+  return { group, updateCallbacks: [] }
+}
+
+function createVegetationCubeMesh(height: number, width: number, color = 0x228b22): ObjectGroup {
+  const group = new THREE.Group()
+
+  // Create hedge geometry
+  const geometry = new THREE.BoxGeometry(width, height, width)
+  const material = new THREE.MeshStandardMaterial({ color })
+  const mesh = new THREE.Mesh(geometry, material)
+  mesh.position.set(0, height / 2, 0)
   group.add(mesh)
 
   return { group, updateCallbacks: [] }
