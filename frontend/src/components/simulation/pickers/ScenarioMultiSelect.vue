@@ -9,6 +9,7 @@ import { computed, onMounted, ref } from 'vue'
 const scenarioStore = useScenariosStore()
 const props = defineProps<{
   label: string
+  forceChecked?: string[]
 }>()
 const model = defineModel<string[]>()
 
@@ -17,11 +18,6 @@ const scenariosCollection = ref<ScenarioCollection | null>(null)
 onMounted(async () => {
   scenariosCollection.value = await scenarioStore.getScenarioDescriptions()
 })
-
-function scenarioItemProps(item: ScenarioDescription | null) {
-  if (!item) return { title: 'No comparison', subtitle: 'Pick a scenario to compare', value: null }
-  return { title: `${item.id} - ${item.name}`, subtitle: item.description, value: item.slug }
-}
 
 interface AutocompleteValueItem {
   title: string
@@ -60,11 +56,16 @@ const items = computed(() => {
 
   return listItems
 })
+
+function isItemClosable(item: AutocompleteItem): boolean {
+  if (!props.forceChecked) return true
+  return !props.forceChecked.includes((item as AutocompleteValueItem).scenario?.slug ?? '')
+}
 </script>
 
 <template>
   <v-autocomplete
-    :label="label"
+    :label="props.label"
     :items="items"
     v-model="model"
     multiple
@@ -81,6 +82,7 @@ const items = computed(() => {
       <v-chip
         v-bind="props"
         :text="`${items.length > 0 ? (item.raw as AutocompleteValueItem).scenario.id : 'Loading...'}`"
+        :closable="isItemClosable(item.raw)"
       ></v-chip>
     </template>
   </v-autocomplete>

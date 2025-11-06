@@ -168,6 +168,7 @@ watchEffect(() => {
           <div class="pa-4">
             <scenario-multi-select
               label="Scenarios"
+              :force-checked="['S0']"
               :model-value="selectedScenarios"
               @update:model-value="goToUpdatedParams({ scenarios: $event })"
             />
@@ -243,7 +244,7 @@ watchEffect(() => {
               Compare scenarios ({{ pickedScenarios.length }}/2)
             </v-btn>
           </template>
-          <template #default="{ expectedValueRange, inferMinMax, mode, showSpecialPoints }">
+          <template #default="{ expectedValueRange, inferMinMax, mode, showSpecialPoints, flipX }">
             <result-grid :numColumns="gridColumns" :rerender-on-columns-change="true">
               <div
                 v-for="(scenario, i) in selectedScenarios"
@@ -271,6 +272,7 @@ watchEffect(() => {
                   :expected-value-range="expectedValueRange"
                   :infer-min-max="inferMinMax && rangeOption === 'infer-individual'"
                   :force-min-max="globalMinMax"
+                  :flip-x="flipX"
                   :mode="mode"
                   :show-special-points="showSpecialPoints"
                   @point-clicked="(point) => navigateToTimeSeriesPoint(point)"

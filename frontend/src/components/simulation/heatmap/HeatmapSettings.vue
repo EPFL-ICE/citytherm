@@ -26,6 +26,7 @@ const variableAttributes = ref<SimulationResultVariable | null>(null)
 
 const showSpecialPoints = ref(true)
 const inferMinMax = ref(true)
+const flipX = ref(true)
 
 watchEffect(() => {
   const slug = props.variableSlug // Needed for reactivity
@@ -86,6 +87,13 @@ const expectedValueRange = computed<ExpectedValueRange>(() => {
           density="comfortable"
           :hide-details="true"
         />
+        <v-switch
+          v-model="flipX"
+          label="Flip X Axis"
+          class="ml-4"
+          density="comfortable"
+          :hide-details="true"
+        />
       </div>
 
       <div class="switches">
@@ -99,6 +107,7 @@ const expectedValueRange = computed<ExpectedValueRange>(() => {
     :showSpecialPoints="showSpecialPoints"
     :mode="getMode()"
     :expectedValueRange="expectedValueRange"
+    :flipX="flipX"
   ></slot>
 </template>
 

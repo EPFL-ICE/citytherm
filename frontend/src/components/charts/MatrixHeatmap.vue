@@ -139,7 +139,8 @@ const chartOptions = computed<EChartsOption>(() => {
       itemHeight: 400,
       inRange: {
         color: props.colormap
-      }
+      },
+      formatter: (value: number) => value.toFixed(2)
     },
     series: [
       {

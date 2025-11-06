@@ -24,12 +24,18 @@ interface SimulationVariableGroup {
   variables: SluggedSimulationResultVariable[]
 }
 
+function hackComparison(availableAt: number) {
+  if (props.availableAt === 0.2) return availableAt === props.availableAt
+
+  return availableAt > 0.2
+}
+
 const groups = computed<SimulationVariableGroup[]>(() => {
   const commonVariables = allVariables.value.filter((variable) => !variable.available_at)
 
   if (props.availableAt) {
-    const heightVariables = allVariables.value.filter(
-      (variable) => variable.available_at === props.availableAt
+    const heightVariables = allVariables.value.filter((variable) =>
+      hackComparison(variable.available_at ?? 0.2)
     )
     return [
       {
