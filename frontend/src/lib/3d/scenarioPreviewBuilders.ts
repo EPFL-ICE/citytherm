@@ -163,7 +163,7 @@ function createObjectGroup(object: SimulationObject, defaultType: number): Objec
   } else if (o === -11) {
     return createFountainGroup() // Fountain
   } else if (o === 11) {
-    return createVegetationCubeMesh(0.2, 2, 0x44cc9a) // Hedge
+    return createVegetationCubeMesh(0.1, 2, 0x44cc9a) // grass
   } else if (o === 13) {
     return createVegetationCubeMesh(1, 2) // Hedge
   }
@@ -186,7 +186,7 @@ function createVegetationCubeMesh(height: number, width: number, color = 0x228b2
   const geometry = new THREE.BoxGeometry(width, height, width)
   const material = new THREE.MeshStandardMaterial({ color })
   const mesh = new THREE.Mesh(geometry, material)
-  mesh.position.set(0, height / 2, 0)
+  mesh.position.set(0, height / 2 - 0.3, 0)
   group.add(mesh)
 
   return { group, updateCallbacks: [] }

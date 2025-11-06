@@ -80,7 +80,7 @@ def export_buildings_and_soil_maps_and_objects(scenario_name: str, ds, output_di
     soil_profile_type = ds.data_vars["SoilProfileType"]
     st_dict = soiltype_dict(soil_profile_type)
     if scenario_name.startswith("S3_3"): # shitty hack for grass
-        st_dict["defaultSoilColor"] = "#0bbe29"
+        st_dict["defaultSoilType"] = 3000
     
     objects = ds.data_vars["Objects"]
     obj_dict = objects_dict_scenarios(scenario_name, objects)
