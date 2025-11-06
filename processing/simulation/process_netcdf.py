@@ -79,7 +79,9 @@ def export_buildings_and_soil_maps_and_objects(scenario_name: str, ds, output_di
 
     soil_profile_type = ds.data_vars["SoilProfileType"]
     st_dict = soiltype_dict(soil_profile_type)
-
+    if scenario_name.startswith("S3_3"): # shitty hack for grass
+        st_dict["defaultSoilColor"] = "#0bbe29"
+    
     objects = ds.data_vars["Objects"]
     obj_dict = objects_dict_scenarios(scenario_name, objects)
 
@@ -268,12 +270,12 @@ def objects_dict_water_bodies(type: int = -10):
             { "x": 51 * 2, "y": 19 * 2 },
             { "x": 66 * 2, "y": 19 * 2 },
             { "x": 69 * 2, "y": 19 * 2 },
-            { "x": 29 * 2, "y": 20 * 2 },
-            { "x": 32 * 2, "y": 20 * 2 },
-            { "x": 47 * 2, "y": 20 * 2 },
-            { "x": 50 * 2, "y": 20 * 2 },
-            { "x": 65 * 2, "y": 20 * 2 },
-            { "x": 68 * 2, "y": 20 * 2 },
+            { "x": 30 * 2, "y": 20 * 2 },
+            { "x": 33 * 2, "y": 20 * 2 },
+            { "x": 48 * 2, "y": 20 * 2 },
+            { "x": 51 * 2, "y": 20 * 2 },
+            { "x": 66 * 2, "y": 20 * 2 },
+            { "x": 69 * 2, "y": 20 * 2 },
             { "x": 30 * 2, "y": 21 * 2 },
             { "x": 33 * 2, "y": 21 * 2 },
             { "x": 48 * 2, "y": 21 * 2 },
@@ -292,12 +294,12 @@ def objects_dict_water_bodies(type: int = -10):
             { "x": 51 * 2, "y": 23 * 2 },
             { "x": 66 * 2, "y": 23 * 2 },
             { "x": 69 * 2, "y": 23 * 2 },
-            { "x": 29 * 2, "y": 24 * 2 },
-            { "x": 32 * 2, "y": 24 * 2 },
-            { "x": 47 * 2, "y": 24 * 2 },
-            { "x": 50 * 2, "y": 24 * 2 },
-            { "x": 65 * 2, "y": 24 * 2 },
-            { "x": 68 * 2, "y": 24 * 2 },
+            { "x": 30 * 2, "y": 24 * 2 },
+            { "x": 33 * 2, "y": 24 * 2 },
+            { "x": 48 * 2, "y": 24 * 2 },
+            { "x": 51 * 2, "y": 24 * 2 },
+            { "x": 66 * 2, "y": 24 * 2 },
+            { "x": 69 * 2, "y": 24 * 2 },
             { "x": 30 * 2, "y": 25 * 2 },
             { "x": 33 * 2, "y": 25 * 2 },
             { "x": 48 * 2, "y": 25 * 2 },
@@ -340,12 +342,12 @@ def objects_dict_water_bodies(type: int = -10):
             { "x": 51 * 2, "y": 39 * 2 },
             { "x": 66 * 2, "y": 39 * 2 },
             { "x": 69 * 2, "y": 39 * 2 },
-            { "x": 29 * 2, "y": 40 * 2 },
-            { "x": 32 * 2, "y": 40 * 2 },
-            { "x": 47 * 2, "y": 40 * 2 },
-            { "x": 50 * 2, "y": 40 * 2 },
-            { "x": 65 * 2, "y": 40 * 2 },
-            { "x": 68 * 2, "y": 40 * 2 },
+            { "x": 30 * 2, "y": 40 * 2 },
+            { "x": 33 * 2, "y": 40 * 2 },
+            { "x": 48 * 2, "y": 40 * 2 },
+            { "x": 51 * 2, "y": 40 * 2 },
+            { "x": 66 * 2, "y": 40 * 2 },
+            { "x": 69 * 2, "y": 40 * 2 },
             { "x": 30 * 2, "y": 41 * 2 },
             { "x": 33 * 2, "y": 41 * 2 },
             { "x": 48 * 2, "y": 41 * 2 },
@@ -496,7 +498,7 @@ def objects_dict_water_bodies(type: int = -10):
             { "x": 51 * 2, "y": 81 * 2 },
             { "x": 66 * 2, "y": 81 * 2 },
             { "x": 69 * 2, "y": 81 * 2 }
-            ]
+        ]
     }
 # Export variable schemas in a json file for consumption by frontend
 
@@ -532,6 +534,8 @@ def hardcoded_overrides(variable_name: str, attrs: dict):
     elif variable_name == "WindSpd":
         attrs["valid_min"] = 0
         attrs["valid_max"] = 20
+    elif variable_name == "PET":
+        attrs["long_name"] = "PET Default Person"
     elif variable_name == "$Fac_WallTempNode1Outside":
         attrs["long_name"] = "Wall Temperature"
     elif variable_name == "$Fac_WallSystemLWEmitted":
@@ -633,7 +637,7 @@ def make_time_series_point(coords: list[float], available_variables: list[str], 
         "p": corresponding_plane
     }
 
-def make_horizontal_time_series_points(variable_names: list[str]):
+def make_horizontal_time_series_points(variable_names: list[str], scenario_name: str):
     height_per_plane = [
         {
             "plane": "horizontal_ground",
@@ -644,12 +648,18 @@ def make_horizontal_time_series_points(variable_names: list[str]):
             "plane": "horizontal_human_height",
             "height": human_height,
             "available_variables": list(filter(lambda var: var not in surface_level_variables, variable_names))
+        },
+        {
+            "plane": "horizontal_building_canopy",
+            "height": 31.0 if scenario_name == "S1_1_Tall_Canyon_Scenario" else 17.0,
+            "available_variables": list(filter(lambda var: var not in surface_level_variables, variable_names))
         }
     ]
 
     xy_list = [
-        (120.0, 100.0),
-        (100.0, 120.0),
+        (118.0, 100.0),
+        (100.0, 118.0),
+        (118.0, 118.0),
     ]
 
     return [
@@ -659,7 +669,7 @@ def make_horizontal_time_series_points(variable_names: list[str]):
     ]
 
 def get_time_series_points_list(scenario: str, variables: list[str]):
-    points = make_horizontal_time_series_points(variables)
+    points = make_horizontal_time_series_points(variables, scenario)
     return points
 
 def export_time_series_points_list(scenario: str, variables: list[str], output_directory: str = "processed_data"):
@@ -679,9 +689,11 @@ def export_time_series_points(scenario: str, ds, points, output_directory: str):
             true_variable_name = variable_name
 
             if is_building_data:
-                if coords[1] == 120.0:
+                if coords[0] == 118.0 and coords[1] == 118.0:
+                    true_variable_name = variable_name.replace("$", "Z")
+                elif coords[1] == 118.0:
                     true_variable_name = variable_name.replace("$", "X")
-                elif coords[0] == 120.0:
+                elif coords[0] == 118.0:
                     true_variable_name = variable_name.replace("$", "Y")
 
             time_series, true_coords = get_single_time_series_point_for_var_and_coords_dataframe(ds, true_variable_name, coords, filter_nan=is_building_data)

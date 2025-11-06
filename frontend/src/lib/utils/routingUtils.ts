@@ -27,8 +27,12 @@ export interface PlaneExplorerPageParams {
 }
 
 export function makePathToPlaneExplorer(params: PlaneExplorerPageParams) {
+  const scenarios = [...params.scenarios]
+  if (!scenarios.includes('S0')) {
+    scenarios.unshift('S0')
+  }
   return `/simulation/plane/explorer/${params.plane}/${params.time}/${params.variable}?scenarios=${encodeURIComponent(
-    params.scenarios.join(',')
+    scenarios.join(',')
   )}`
 }
 
@@ -73,9 +77,13 @@ export interface TimeSeriesExplorerParams {
 }
 
 export function makePathToTimeSeriesExplorer(params: TimeSeriesExplorerParams) {
+  const scenarios = [...params.scenarios]
+  if (!scenarios.includes('S0')) {
+    scenarios.unshift('S0')
+  }
   return `/simulation/timeSeries/explorer/${
     params.point
-  }?vars=${encodeURIComponent(params.variables.join(','))}&scenarios=${encodeURIComponent(params.scenarios.join(','))}`
+  }?vars=${encodeURIComponent(params.variables.join(','))}&scenarios=${encodeURIComponent(scenarios.join(','))}`
 }
 
 export function makePathToTimeSeriesExplorerMerge(
