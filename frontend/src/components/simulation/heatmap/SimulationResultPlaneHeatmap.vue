@@ -25,6 +25,7 @@ const props = defineProps<{
   forceMinMax?: ExpectedValueRange | null
   expectedValueRange: ExpectedValueRange
   mode: DisplayMode
+  flipX?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -66,7 +67,7 @@ const heatmapData = computed(() => {
     case 'scenarioA':
       return dataToHeatmapData(
         simulation.value.data.scenarioA,
-        false,
+        !!props.flipX,
         props.planeSlug,
         timeSeriesPointsList.value
       )
@@ -74,7 +75,7 @@ const heatmapData = computed(() => {
       return simulation.value.data.scenarioB
         ? dataToHeatmapData(
             simulation.value.data.scenarioB,
-            false,
+            !!props.flipX,
             props.planeSlug,
             timeSeriesPointsList.value
           )
@@ -83,7 +84,7 @@ const heatmapData = computed(() => {
       return simulation.value.data.difference
         ? dataToHeatmapData(
             simulation.value.data.difference,
-            false,
+            !!props.flipX,
             props.planeSlug,
             timeSeriesPointsList.value
           )
