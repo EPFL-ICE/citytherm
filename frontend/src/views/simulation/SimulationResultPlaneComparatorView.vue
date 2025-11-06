@@ -194,7 +194,9 @@ function navigateToTimeSeriesPoint(pointSlug: string) {
               :scenario-b-slug="scenarioBSlug"
               :force-mode="'difference'"
             >
-              <template #default="{ expectedValueRange, inferMinMax, mode, showSpecialPoints }">
+              <template
+                #default="{ expectedValueRange, inferMinMax, mode, showSpecialPoints, flipX }"
+              >
                 <simulation-result-plane-heatmap
                   :plane-slug="planeSlug"
                   :variable-slug="variable"
@@ -205,6 +207,7 @@ function navigateToTimeSeriesPoint(pointSlug: string) {
                   :infer-min-max="inferMinMax"
                   :mode="mode"
                   :show-special-points="showSpecialPoints"
+                  :flip-x="flipX"
                   @point-clicked="(point) => navigateToTimeSeriesPoint(point)"
                 />
               </template>

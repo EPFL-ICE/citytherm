@@ -112,10 +112,11 @@ const planeExplorerUrl = computed(() => {
               :model-value="selectedScenarios"
               @update:model-value="goToUpdatedParams({ scenarios: $event })"
               label="Scenarios"
+              :force-checked="['S0']"
             />
-            <v-btn :to="comparatorUrl!" :disabled="!comparatorUrl" color="primary"
-              >Compare scenarios ({{ selectedScenarios.length }}/2)</v-btn
-            >
+            <v-btn :to="comparatorUrl!" :disabled="!comparatorUrl" color="primary">
+              Compare scenarios ({{ selectedScenarios.length }}/2)
+            </v-btn>
           </div>
         </template>
         <template #default>
@@ -142,6 +143,7 @@ const planeExplorerUrl = computed(() => {
               :scenarios="selectedScenarios"
               :point-slug="pointSlug"
               :variable-slug="variable"
+              :compare-to-scenario-slug="'S0'"
             />
           </div>
         </result-grid>

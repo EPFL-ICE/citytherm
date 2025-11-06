@@ -2,7 +2,6 @@ import { cdnUrl } from '@/config/layerTypes'
 import { KeyedCache } from '@/lib/utils/cache'
 import { defineStore } from 'pinia'
 import { makePointSlugArray } from './simulationResultTimeSeries'
-import type { get } from 'lodash'
 
 export interface BuildingPart {
   x: number
