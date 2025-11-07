@@ -28,9 +28,11 @@ const availablePlanes = computed<SimulationPlanePresetsMap>(() =>
 )
 
 function pointItemProps(item: TimeSeriesPoint) {
+  const xFlipped = 198 - item.c[0];
   return {
     title: `x: ${item.c[0]} ; y: ${item.c[1]} ; z: ${item.c[2].toFixed(1)}`,
-    subtitle: availablePlanes.value[item.p as SimulationPlanePreset].name,
+    // subtitle: availablePlanes.value[item.p as SimulationPlanePreset].name,
+    subtitle: `(Once flipped : x: ${xFlipped} ; y: ${item.c[1]} ; z: ${item.c[2].toFixed(1)})`,
     value: makePointSlugArray(item.c)
   }
 }
