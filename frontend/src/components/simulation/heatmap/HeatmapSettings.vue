@@ -17,6 +17,7 @@ const props = defineProps<{
   variableSlug: string
   hideIndividualMinMax?: boolean
   forceMode?: DisplayMode
+  forceFlip?: boolean
 }>()
 
 const simulationResultsVariablesStore = useSimulationResultVariablesStore()
@@ -88,6 +89,7 @@ const expectedValueRange = computed<ExpectedValueRange>(() => {
           :hide-details="true"
         />
         <v-switch
+          v-if="!forceFlip"
           v-model="flipX"
           label="Flip X Axis"
           class="ml-4"
@@ -107,7 +109,7 @@ const expectedValueRange = computed<ExpectedValueRange>(() => {
     :showSpecialPoints="showSpecialPoints"
     :mode="getMode()"
     :expectedValueRange="expectedValueRange"
-    :flipX="flipX"
+    :flipX="forceFlip || flipX"
   ></slot>
 </template>
 

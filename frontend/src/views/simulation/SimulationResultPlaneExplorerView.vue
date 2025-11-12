@@ -5,7 +5,7 @@ import {
   useScenariosStore
 } from '@/stores/simulation/scenarios'
 import TwoPanesLayout from '@/components/ui/TwoPanesLayout.vue'
-import { computed, onMounted, ref, watchEffect } from 'vue'
+import { computed, onMounted, ref, watch, watchEffect } from 'vue'
 import ToolSet from '@/components/ui/ToolSet.vue'
 import SimulationVariableRadioList from '@/components/simulation/pickers/SimulationVariableRadioList.vue'
 import SimulationResultPlaneHeatmap from '@/components/simulation/heatmap/SimulationResultPlaneHeatmap.vue'
@@ -13,6 +13,7 @@ import { useRoute, useRouter } from 'vue-router'
 import {
   getSimulationPlaneAvailableTimeSlots,
   getSimulationPresetsForScenarioSlug,
+  type SimulationPlanePreset,
   type SimulationPlanePresetsMap
 } from '@/lib/simulation/simulationResultPlanesUtils'
 import ScenarioSelect from '@/components/simulation/pickers/ScenarioSelect.vue'
@@ -42,7 +43,7 @@ const router = useRouter()
 const scenarioBSlug = computed(() =>
   route.params.scenarioB === '_' ? null : (route.params.scenarioB as string)
 )*/
-const planeSlug = computed(() => route.params.plane as string)
+const planeSlug = computed(() => route.params.plane as SimulationPlanePreset)
 const timeSlug = computed(() => route.params.time as string)
 const variableSlug = computed(() => route.params.variable as string)
 const selectedScenarios = computed(() => {
@@ -130,9 +131,9 @@ type ValueRangeOption = 'infer-individual' | 'infer-global' | 'fixed'
 const rangeOption = ref<ValueRangeOption>('infer-global')
 
 const rangeSelectOptions: { title: string; value: ValueRangeOption }[] = [
-  { title: 'Infer min/max per scenario', value: 'infer-individual' },
-  { title: 'Infer min/max across all scenarios', value: 'infer-global' },
-  { title: 'Fixed min/max', value: 'fixed' }
+  { title: 'Min/max per scenario', value: 'infer-individual' },
+  { title: 'Min/max across all scenarios', value: 'infer-global' },
+  { title: 'Min/max range predefined', value: 'fixed' }
 ]
 
 const globalMinMax = ref<{ min: number; max: number } | null>(null)
@@ -211,6 +212,7 @@ watchEffect(() => {
         <template #default>
           <simulation-variable-radio-list
             :model-value="variableSlug"
+            :rename-wall-and-facade-to-roof="planeSlug === 'horizontal_building_canopy'"
             @update:model-value="goToUpdatedParams({ variable: $event })"
           />
         </template>
@@ -238,6 +240,7 @@ watchEffect(() => {
         <heatmap-settings
           :variable-slug="variableSlug"
           :hide-individual-min-max="rangeOption !== 'infer-individual'"
+          :force-flip="true"
         >
           <template #right-toolbar>
             <v-btn :to="comparatorUrl" :disabled="!comparatorUrl" color="primary">
@@ -275,6 +278,7 @@ watchEffect(() => {
                   :flip-x="flipX"
                   :mode="mode"
                   :show-special-points="showSpecialPoints"
+                  :small="true"
                   @point-clicked="(point) => navigateToTimeSeriesPoint(point)"
                 />
               </div>

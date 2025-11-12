@@ -116,7 +116,7 @@ export const useSimulationResultPlaneStore = defineStore('simulationResultPlane'
       ])
 
       const differenceData = scenarioBData
-        ? getDifferenceData(scenarioAData.data, scenarioBData.data)
+        ? getDifferenceData(scenarioBData.data, scenarioAData.data) // b - a so that it's positive when scenarioB > scenarioA
         : null
 
       return {

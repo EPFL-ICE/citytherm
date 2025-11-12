@@ -9,6 +9,7 @@ import { useRoute, useRouter } from 'vue-router'
 import {
   getSimulationPlaneAvailableTimeSlots,
   getSimulationPresetsForScenarioSlug,
+  type SimulationPlanePreset,
   type SimulationPlanePresetsMap
 } from '@/lib/simulation/simulationResultPlanesUtils'
 import ScenarioSelect from '@/components/simulation/pickers/ScenarioSelect.vue'
@@ -18,7 +19,6 @@ import HeatmapSettings from '@/components/simulation/heatmap/HeatmapSettings.vue
 import {
   makePathToPlaneComparatorMerge,
   makePathToPlaneExplorer,
-  makePathToScenarioPicker,
   makePathToTimeSeriesComparator,
   type PlaneComparatorPageParams
 } from '@/lib/utils/routingUtils'
@@ -32,7 +32,7 @@ const scenarioASlug = computed(() => route.params.scenarioA as string)
 const scenarioBSlug = computed(() =>
   route.params.scenarioB === '_' ? null : (route.params.scenarioB as string)
 )
-const planeSlug = computed(() => route.params.plane as string)
+const planeSlug = computed(() => route.params.plane as SimulationPlanePreset)
 const timeSlug = computed(() => route.params.time as string)
 const selectedVariables = computed(() => {
   const vars = route.query.vars as string | undefined
@@ -157,6 +157,7 @@ function navigateToTimeSeriesPoint(pointSlug: string) {
         <template #default>
           <simulation-variable-list
             :model-value="selectedVariables"
+            :rename-wall-and-facade-to-roof="planeSlug === 'horizontal_building_canopy'"
             @update:model-value="goToUpdatedParams({ variables: $event })"
           />
         </template>
@@ -193,6 +194,7 @@ function navigateToTimeSeriesPoint(pointSlug: string) {
               :scenario-a-slug="scenarioASlug"
               :scenario-b-slug="scenarioBSlug"
               :force-mode="'difference'"
+              :force-flip="true"
             >
               <template
                 #default="{ expectedValueRange, inferMinMax, mode, showSpecialPoints, flipX }"
@@ -208,6 +210,7 @@ function navigateToTimeSeriesPoint(pointSlug: string) {
                   :mode="mode"
                   :show-special-points="showSpecialPoints"
                   :flip-x="flipX"
+                  :small="true"
                   @point-clicked="(point) => navigateToTimeSeriesPoint(point)"
                 />
               </template>

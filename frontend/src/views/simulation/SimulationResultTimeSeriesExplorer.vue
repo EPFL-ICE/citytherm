@@ -124,6 +124,7 @@ const planeExplorerUrl = computed(() => {
             <simulation-variable-list
               :model-value="selectedVariables"
               :available-at="pointHeight"
+              :rename-wall-and-facade-to-roof="(pointHeight ?? 0) >= 16"
               @update:model-value="goToUpdatedParams({ variables: $event })"
             />
           </div>

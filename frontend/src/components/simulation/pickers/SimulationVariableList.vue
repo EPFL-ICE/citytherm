@@ -4,9 +4,14 @@ import {
   type SluggedSimulationResultVariable
 } from '@/stores/simulation/simulationResultVariables'
 import { computed, onMounted, ref } from 'vue'
+import {
+  groupSimulationVariablesByAvailableAt,
+  type SimulationVariableGroup
+} from './simulationVariablesPickersUtils'
 
 const props = defineProps<{
   availableAt?: number
+  renameWallAndFacadeToRoof?: boolean
 }>()
 
 const model = defineModel()
@@ -19,50 +24,12 @@ onMounted(async () => {
   allVariables.value = all
 })
 
-interface SimulationVariableGroup {
-  groupName: string
-  variables: SluggedSimulationResultVariable[]
-}
-
-function hackComparison(availableAt: number) {
-  if (props.availableAt === 0.2) return availableAt === props.availableAt
-
-  return availableAt > 0.2
-}
-
 const groups = computed<SimulationVariableGroup[]>(() => {
-  const commonVariables = allVariables.value.filter((variable) => !variable.available_at)
-
-  if (props.availableAt) {
-    const heightVariables = allVariables.value.filter((variable) =>
-      hackComparison(variable.available_at ?? 0.2)
-    )
-    return [
-      {
-        groupName: 'Atmospheric data',
-        variables: commonVariables
-      },
-      {
-        groupName: `${heightToText(props.availableAt)} (${props.availableAt.toFixed(1)} m)`,
-        variables: heightVariables
-      }
-    ]
-  }
-
-  return [
-    {
-      groupName: 'Atmospheric data',
-      variables: commonVariables
-    }
-  ]
+  return groupSimulationVariablesByAvailableAt(allVariables.value, {
+    availableAt: props.availableAt,
+    renameWallAndFacadeToRoof: props.renameWallAndFacadeToRoof
+  })
 })
-
-function heightToText(height: number): string {
-  if (height <= 0.2) {
-    return 'Surface data'
-  }
-  return `Building data`
-}
 
 const openedGroups = ref<number[]>([0])
 </script>

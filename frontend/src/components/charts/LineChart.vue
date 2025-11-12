@@ -41,7 +41,8 @@ echarts.use([
 const chartOptions = computed<EChartsOption>(() => {
   return {
     tooltip: {
-      formatter: (p: any) => `<b>${p.seriesName}</b><br/>Time: ${p.name}<br/>Value: ${p.data}`
+      formatter: (p: any) =>
+        `<b>${p.seriesName}</b><br/>Time: ${p.name}<br/>Value: ${p.data.toFixed(2)}`
     },
     grid: {
       left: 20,

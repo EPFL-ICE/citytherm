@@ -26,6 +26,7 @@ const props = defineProps<{
   expectedValueRange: ExpectedValueRange
   mode: DisplayMode
   flipX?: boolean
+  small?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -115,7 +116,7 @@ const graphAxes = computed<GraphAxes>(() => getGraphAxesForPlane(props.planeSlug
 
 const graphAspectRatio = computed(() => {
   return (
-    (graphAxes.value.x.max * graphAxes.value.x.cellSize) /
+    (50 + graphAxes.value.x.max * graphAxes.value.x.cellSize) /
     (graphAxes.value.y.max * graphAxes.value.y.cellSize)
   )
 })
@@ -130,7 +131,10 @@ const colormap = computed<string[]>(() => {
 
 <template>
   <div v-if="simulation" class="h-100">
-    <div class="heatmap-container" :style="`aspect-ratio: ${graphAspectRatio}`">
+    <div
+      :class="['heatmap-container', { small: props.small }]"
+      :style="`aspect-ratio: ${graphAspectRatio}`"
+    >
       <matrix-heatmap
         v-if="simulation"
         :axisX="graphAxes.x"
@@ -154,5 +158,9 @@ const colormap = computed<string[]>(() => {
 .heatmap-container {
   max-width: 100%;
   max-height: 80vh;
+}
+
+.heatmap-container.small {
+  max-height: 45vh;
 }
 </style>
