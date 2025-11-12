@@ -705,9 +705,6 @@ def export_time_series_points_list(scenario: str, variables: list[str], output_d
 
 # Export time series points
 
-def plane_name_to_filename(plane_name: str) -> str:
-    return plane_name.replace(" ", "-").replace("(", "").replace(")", "").replace(".", "_").replace(",", "").lower()
-
 def export_time_series_points(scenario: str, ds, points, output_directory: str):
     for point in points:
         coords = point["c"]

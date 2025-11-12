@@ -5,12 +5,17 @@ import type { SimulationResultPlaneAtomicData } from '@/stores/simulation/simula
 
 export type DisplayMode = 'scenarioA' | 'scenarioB' | 'difference'
 
+export interface HeatmapMetadata {
+  pointSlug?: string
+  pointName?: string
+}
+
 export function getMetadataForDataIndex(
   indexX: number,
   indexY: number,
   planeSlug: string,
   timeSeriesPointsList?: TimeSeriesPoint[] | null
-): { pointSlug: string; pointName: string } | undefined {
+): HeatmapMetadata | undefined {
   if (!timeSeriesPointsList) return undefined
 
   const { x: trueX, y: trueY } = getFinalPositionFromIndexAndAxes(
