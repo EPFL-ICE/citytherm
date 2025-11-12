@@ -5,7 +5,7 @@ import {
   useScenariosStore
 } from '@/stores/simulation/scenarios'
 import TwoPanesLayout from '@/components/ui/TwoPanesLayout.vue'
-import { computed, onMounted, ref, watch, watchEffect } from 'vue'
+import { computed, onMounted, ref, watchEffect } from 'vue'
 import ToolSet from '@/components/ui/ToolSet.vue'
 import SimulationVariableRadioList from '@/components/simulation/pickers/SimulationVariableRadioList.vue'
 import SimulationResultPlaneHeatmap from '@/components/simulation/heatmap/SimulationResultPlaneHeatmap.vue'
@@ -16,18 +16,14 @@ import {
   type SimulationPlanePreset,
   type SimulationPlanePresetsMap
 } from '@/lib/simulation/simulationResultPlanesUtils'
-import ScenarioSelect from '@/components/simulation/pickers/ScenarioSelect.vue'
 import TimeSeriesPointsSelect from '@/components/simulation/pickers/TimeSeriesPointsSelect.vue'
 import ResultGrid from '@/components/ui/ResultGrid.vue'
 import HeatmapSettings from '@/components/simulation/heatmap/HeatmapSettings.vue'
 import ScenarioMultiSelect from '@/components/simulation/pickers/ScenarioMultiSelect.vue'
 import {
   makePathToPlaneComparator,
-  makePathToPlaneExplorer,
   makePathToPlaneExplorerMerge,
-  makePathToPlaneComparatorMerge,
   makePathToScenarioPicker,
-  makePathToTimeSeriesComparator,
   type PlaneExplorerPageParams,
   makePathToTimeSeriesExplorer
 } from '@/lib/utils/routingUtils'

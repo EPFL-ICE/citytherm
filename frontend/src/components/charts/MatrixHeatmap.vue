@@ -12,10 +12,7 @@ import {
 import { CanvasRenderer } from 'echarts/renderers'
 import type { EChartsOption } from 'echarts/types/dist/shared'
 import type { GraphAxis } from '@/lib/simulation/graphAxis'
-
-export interface HeatmapMetadata {
-  pointSlug?: string
-}
+import type { HeatmapMetadata } from '../simulation/heatmap/heatmapUtils'
 
 export interface HeatmapData {
   value: [number, number, number | null]

@@ -165,8 +165,6 @@ function createObjectGroup(object: SimulationObject, defaultType: number): Objec
     return createMistNozzleGroup() // Mist Nozzle
   } else if (o === -11) {
     return createFountainGroup() // Fountain
-  } else if (o === 11) {
-    // return createVegetationCubeMesh(0.1, 2, 0x44cc5a) // grass
   } else if (o === 13) {
     return createVegetationCubeMesh(1, 2) // Hedge
   }
@@ -398,18 +396,6 @@ export function disposeObject3D(object: THREE.Object3D) {
       child instanceof THREE.Line
     ) {
       disposeMesh(child)
-    } else if (child instanceof THREE.Group) {
-      child.children.forEach((groupChild) => {
-        disposeObject3D(groupChild)
-      })
     }
   })
-
-  if (
-    object instanceof THREE.Mesh ||
-    object instanceof THREE.Points ||
-    object instanceof THREE.Line
-  ) {
-    disposeMesh(object)
-  }
 }
