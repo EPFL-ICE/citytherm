@@ -75,7 +75,7 @@ def explore_variable(variable_name):
     print(df["GridsK"].unique())
 
 
-explore_variable("Objects")
+explore_variable("UTCI")
 
 def prettify_unit(unit: str) -> str:
     unit_mappings = {

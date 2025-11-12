@@ -49,14 +49,6 @@ function formatPointCoordinate(value: number): string {
   return value.toString().replace('.', '_')
 }
 
-export function makePointSlug(x: number, y: number, z: number): string {
-  return `${formatPointCoordinate(x)}-${formatPointCoordinate(y)}-${formatPointCoordinate(z)}`
-}
-
-export function makePointSlugArray(point: [number, number, number]): string {
-  return makePointSlug(point[0], point[1], point[2])
-}
-
 function getDifferenceData(
   a: TimeSeriesDataPoint[],
   b: TimeSeriesDataPoint[]
@@ -130,7 +122,7 @@ export const useSimulationResultTimeSeriesStore = defineStore('simulationResultT
       ])
 
       const differenceData = scenarioBData
-        ? getDifferenceData(scenarioAData.data, scenarioBData.data)
+        ? getDifferenceData(scenarioBData.data, scenarioAData.data) // b - a so that it's positive when scenarioB > scenarioA
         : null
 
       return {

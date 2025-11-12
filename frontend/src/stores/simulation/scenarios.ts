@@ -1,7 +1,6 @@
 import { cdnUrl } from '@/config/layerTypes'
 import { KeyedCache } from '@/lib/utils/cache'
 import { defineStore } from 'pinia'
-import { makePointSlugArray } from './simulationResultTimeSeries'
 
 export interface BuildingPart {
   x: number
@@ -105,6 +104,8 @@ async function fetchScenarioDescriptions(): Promise<ScenarioCollection> {
 }
 
 export interface TimeSeriesPoint {
+  n: string // name
+  s: string // slug
   c: [number, number, number] // coordinates
   v: string[] // available variables
   p: string // corresponding plane
@@ -159,7 +160,7 @@ export const useScenariosStore = defineStore('scenarios', () => {
     scenarioSlug?: string
   ): Promise<TimeSeriesPoint | null> {
     const points = await getAvailableTimeSeriesPointsForScenario(scenarioSlug)
-    return points.find((p) => makePointSlugArray(p.c) === pointSlug) ?? null
+    return points.find((p) => p.s === pointSlug) ?? null
   }
 
   function getFullTimeSeriesPointFromSlugOrNull(
@@ -168,7 +169,7 @@ export const useScenariosStore = defineStore('scenarios', () => {
   ): TimeSeriesPoint | null {
     const points = scenarioTimeSeriesCache.getOrNull(scenarioSlug ?? 'S0')
     if (!points) return null
-    return points.find((p) => makePointSlugArray(p.c) === pointSlug) ?? null
+    return points.find((p) => p.s === pointSlug) ?? null
   }
 
   return {

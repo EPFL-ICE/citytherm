@@ -142,6 +142,9 @@ export function createObjectsGroup(
 
   // Create objects based on the scenario data
   objectsMap.objects.forEach((object, i) => {
+    if (object.o ?? objectsMap.defaultObject === 11) {
+      return // skip grass to avoid creating too many meshes
+    }
     const objGroup = createObjectGroup(object, objectsMap.defaultObject)
     callbacks.push(...objGroup.updateCallbacks)
     objGroup.group.position.set(object.x, 0, object.y) // assuming y is up
@@ -163,7 +166,7 @@ function createObjectGroup(object: SimulationObject, defaultType: number): Objec
   } else if (o === -11) {
     return createFountainGroup() // Fountain
   } else if (o === 11) {
-    return createVegetationCubeMesh(0.1, 2, 0x44cc9a) // grass
+    // return createVegetationCubeMesh(0.1, 2, 0x44cc5a) // grass
   } else if (o === 13) {
     return createVegetationCubeMesh(1, 2) // Hedge
   }
@@ -186,7 +189,7 @@ function createVegetationCubeMesh(height: number, width: number, color = 0x228b2
   const geometry = new THREE.BoxGeometry(width, height, width)
   const material = new THREE.MeshStandardMaterial({ color })
   const mesh = new THREE.Mesh(geometry, material)
-  mesh.position.set(0, height / 2 - 0.3, 0)
+  mesh.position.set(0, height / 2, 0)
   group.add(mesh)
 
   return { group, updateCallbacks: [] }
@@ -395,6 +398,18 @@ export function disposeObject3D(object: THREE.Object3D) {
       child instanceof THREE.Line
     ) {
       disposeMesh(child)
+    } else if (child instanceof THREE.Group) {
+      child.children.forEach((groupChild) => {
+        disposeObject3D(groupChild)
+      })
     }
   })
+
+  if (
+    object instanceof THREE.Mesh ||
+    object instanceof THREE.Points ||
+    object instanceof THREE.Line
+  ) {
+    disposeMesh(object)
+  }
 }

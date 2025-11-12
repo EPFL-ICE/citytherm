@@ -36,23 +36,20 @@ export function getSimulationPlanePresetsForParameters(
   return {
     horizontal_ground: {
       slug: 'horizontal_ground',
-      name: 'Horizontal - Ground (0.2m)',
-      description:
-        'A horizontal plane at ground level (0.2m), useful for assessing surface temperatures.',
+      name: 'Horizontal - Ground',
+      description: 'A horizontal plane at ground level, useful for assessing surface temperatures.',
       plane: { rotation: { x: -Math.PI / 2 }, position: { x: 0, y: 0.2, z: 0 } }
     },
     horizontal_human_height: {
       slug: 'horizontal_human_height',
-      name: 'Horizontal - Human Height (1.4m)',
+      name: `Horizontal - Human Height (1.4m)`,
       description: 'A horizontal plane at 1.4m above ground, representing human height.',
       plane: { rotation: { x: -Math.PI / 2 }, position: { x: 0, y: 1.4, z: 0 } }
     },
     horizontal_building_canopy: {
       slug: 'horizontal_building_canopy',
-      name: `Horizontal - Building Canopy (${buildingCanopyHeight + 1}m)`,
-      description: `A horizontal plane 1m above the average building height (${
-        buildingCanopyHeight + 1
-      }m).`,
+      name: `Horizontal - Building Canopy (${buildingCanopyHeight + 1} m)`,
+      description: `A horizontal plane at the top of the buildings.`,
       plane: {
         rotation: { x: -Math.PI / 2 },
         position: { x: 0, y: buildingCanopyHeight + 1, z: 0 }

@@ -8,6 +8,18 @@ import numpy as np
 import math
 
 human_height = 1.4000000953674316
+ground_level_variables = [
+    "T",
+    "RelHum",
+    "SpecHum",
+    "WindSpd",
+    "TMRT",
+    "QSWDir",
+    "QSWDiff",
+    "QSWRefl",
+    "UTCI",
+    "PET",
+]
 surface_level_variables = [
     "TSurf",
     "QSurf",
@@ -21,7 +33,7 @@ surface_level_variables = [
     "QLWEmit",
     "QLWBudget",
     "QLWSumAllFluxes",
-    "SkyViewFactor",
+    # "SkyViewFactor", # Dolaana asked to remove this
 ]
 building_data_variables = [
     "$Fac_WallTempNode1Outside", # $ gets replaced by either X or Y depending on wall orientation
@@ -47,7 +59,7 @@ def process_netcdf(scenario_name: str, input_directory: str, output_directory: s
     export_buildings_and_soil_maps_and_objects(scenario_name, ds, output_directory)
     print("Done processing building heights, soil types, and objects.", end="\n\n")
 
-    var_keys = ["T", "RelHum", "SpecHum", "WindSpd", "TMRT", "PET", "QSWDir", "QSWDiff", "QSWRefl"] + surface_level_variables + building_data_variables
+    var_keys = ground_level_variables + surface_level_variables + building_data_variables
 
     print("Exporting variable attributes...")
     export_variable_attributes(var_keys, ds, output_directory)
@@ -519,10 +531,12 @@ def get_variable_attributes_in_dict(ds, variable_name):
     return {k: prettify_unit(overriden_attrs[k]) for k in overriden_attrs}
 
 def hardcoded_overrides(variable_name: str, attrs: dict):
-    if variable_name in surface_level_variables:
-        attrs["available_at"] = 0.2
+    if variable_name == "UTCI" or variable_name == "PET":
+        attrs["available_at"] = [0.2, human_height]
+    elif variable_name in surface_level_variables:
+        attrs["available_at"] = [0.2]
     elif variable_name in building_data_variables:
-        attrs["available_at"] = human_height
+        attrs["available_at"] = [human_height, 17.0, 31.0]
 
     if variable_name == "T":
         attrs["long_name"] = "Air Temperature"
@@ -535,23 +549,23 @@ def hardcoded_overrides(variable_name: str, attrs: dict):
         attrs["valid_min"] = 0
         attrs["valid_max"] = 20
     elif variable_name == "PET":
-        attrs["long_name"] = "PET Default Person"
+        attrs["long_name"] = "PET"
     elif variable_name == "$Fac_WallTempNode1Outside":
         attrs["long_name"] = "Wall Temperature"
     elif variable_name == "$Fac_WallSystemLWEmitted":
-        attrs["long_name"] = "Emitted Longwave Radiation (Facade)"
+        attrs["long_name"] = "Emitted LW Radiation (Facade)"
     elif variable_name == "$Fac_WallSystemSWReceived":
-        attrs["long_name"] = "Received Shortwave Radiation (Facade)"
+        attrs["long_name"] = "Received SW Radiation (Facade)"
     elif variable_name == "$Fac_WallSystemSWAbsorbed":
-        attrs["long_name"] = "Absorbed Direct Shortwave Radiation (Facade)"
+        attrs["long_name"] = "Absorbed Direct SW Radiation (Facade)"
     elif variable_name == "$Fac_WallSystemLWIncoming":
-        attrs["long_name"] = "Incoming Longwave Radiation (Facade)"
+        attrs["long_name"] = "Incoming LW Radiation (Facade)"
     elif variable_name == "$Fac_WallSystemSWReflected":
-        attrs["long_name"] = "Reflected Shortwave Radiation (Facade)"
+        attrs["long_name"] = "Reflected SW Radiation (Facade)"
     elif variable_name == "$Fac_WallSystemSHTransCoeffOutside":
         attrs["long_name"] = "Sensible Heat Transmission Coefficient (Outside)"
     elif variable_name == "$Fac_WallSystemLWEnergyBalance":
-        attrs["long_name"] = "Longwave Energy Balance (Facade)"
+        attrs["long_name"] = "LW Energy Balance (Facade)"
 
     return attrs
 
@@ -630,15 +644,17 @@ def get_plane_slicers_for_scenario(scenario: str):
 
 # Export time series points list
 
-def make_time_series_point(coords: list[float], available_variables: list[str], corresponding_plane: str):
+def make_time_series_point(name: str, slug: str, coords: list[float], available_variables: list[str], corresponding_plane: str):
     return {
+        "n": name,
+        "s": slug,
         "c": coords,
         "v": available_variables,
         "p": corresponding_plane
     }
 
 def make_horizontal_time_series_points(variable_names: list[str], scenario_name: str):
-    height_per_plane = [
+    """height_per_plane = [
         {
             "plane": "horizontal_ground",
             "height": 0.2,
@@ -666,6 +682,16 @@ def make_horizontal_time_series_points(variable_names: list[str], scenario_name:
         make_time_series_point([x, y, plane["height"]], plane["available_variables"], plane["plane"])
         for plane in height_per_plane
         for (x, y) in xy_list
+    ]"""
+
+    building_roof_height = 31.0 if scenario_name == "S1_1_Tall_Canyon_Scenario" else 17.0
+
+    return [
+        make_time_series_point("Urban canyon, windward (0.2 m)", "urban_canyon_windward_ground", [118.0, 100.0, 0.2], list(filter(lambda var: var not in building_data_variables, variable_names)), "horizontal_ground"),
+        make_time_series_point("Urban canyon, leeward (0.2 m)", "urban_canyon_leeward_ground", [100.0, 118.0, 0.2], list(filter(lambda var: var not in building_data_variables, variable_names)), "horizontal_ground"),
+        make_time_series_point("Urban canyon, windward (human height)", "urban_canyon_windward_human_height", [118.0, 100.0, human_height], list(filter(lambda var: var not in surface_level_variables, variable_names)), "horizontal_human_height"),
+        make_time_series_point("Urban canyon, leeward (human height)", "urban_canyon_leeward_human_height", [100.0, 118.0, human_height], list(filter(lambda var: var not in surface_level_variables, variable_names)), "horizontal_human_height"),
+        make_time_series_point(f"Building roof ({building_roof_height} m)", "building_roof", [118.0, 118.0, building_roof_height], list(filter(lambda var: var not in surface_level_variables, variable_names)), "horizontal_building_canopy"),
     ]
 
 def get_time_series_points_list(scenario: str, variables: list[str]):
@@ -678,6 +704,9 @@ def export_time_series_points_list(scenario: str, variables: list[str], output_d
 
 
 # Export time series points
+
+def plane_name_to_filename(plane_name: str) -> str:
+    return plane_name.replace(" ", "-").replace("(", "").replace(")", "").replace(".", "_").replace(",", "").lower()
 
 def export_time_series_points(scenario: str, ds, points, output_directory: str):
     for point in points:
@@ -702,7 +731,7 @@ def export_time_series_points(scenario: str, ds, points, output_directory: str):
                 "true_coords": true_coords,
                 "data": to_json_compatible(time_series.to_dict(orient="records")),
             }
-            save_json_for_scenario(record, output_directory, scenario, f"{variable_name}/timeSeries", f"{number_for_filename(coords[0])}-{number_for_filename(coords[1])}-{number_for_filename(coords[2])}")
+            save_json_for_scenario(record, output_directory, scenario, f"{variable_name}/timeSeries", point["s"])
 
 def get_single_time_series_point_for_var_and_coords_dataframe(ds, variable_name: str, coords: list[float], filter_nan: bool = False):
     x = coords[0] + 1.0 if coords[0] % 2 != 0 else coords[0]
@@ -736,11 +765,15 @@ def number_for_filename(n):
     return f"{n}".replace(".", "_")
 
 def prettify_unit(unit: str) -> str:
+    if type(unit) != str:
+        return unit
+    
     unit_mappings = {
         "degree Celsius": "°C",
         "m s-1": "m/s",
         "g kg-1": "g/kg",
         "W m-2": "W/m²",
+        "W m-2 K-1": "W/m²K",
     }
     return unit_mappings.get(unit, unit)
 
