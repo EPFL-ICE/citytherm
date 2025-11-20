@@ -2,19 +2,20 @@ import type { HeatmapData } from '@/components/charts/MatrixHeatmap.vue'
 import { getFinalPositionFromIndexAndAxes, getGraphAxesForPlane } from '@/lib/simulation/graphAxis'
 import type { TimeSeriesPoint } from '@/stores/simulation/scenarios'
 import type { SimulationResultPlaneAtomicData } from '@/stores/simulation/simulationResultPlane'
-import {
-  makePointSlugArray,
-  type TimeSeriesDataPoint
-} from '@/stores/simulation/simulationResultTimeSeries'
 
 export type DisplayMode = 'scenarioA' | 'scenarioB' | 'difference'
+
+export interface HeatmapMetadata {
+  pointSlug?: string
+  pointName?: string
+}
 
 export function getMetadataForDataIndex(
   indexX: number,
   indexY: number,
   planeSlug: string,
   timeSeriesPointsList?: TimeSeriesPoint[] | null
-): { pointSlug: string } | undefined {
+): HeatmapMetadata | undefined {
   if (!timeSeriesPointsList) return undefined
 
   const { x: trueX, y: trueY } = getFinalPositionFromIndexAndAxes(
@@ -25,7 +26,7 @@ export function getMetadataForDataIndex(
   )
   const point = timeSeriesPointsList.find((point) => point.c[0] === trueX && point.c[1] === trueY)
   if (point) {
-    return { pointSlug: makePointSlugArray(point.c) }
+    return { pointSlug: point.s, pointName: point.n }
   }
 
   return undefined
@@ -65,6 +66,12 @@ export function getMinMax(data: SimulationResultPlaneAtomicData | undefined | nu
       if (value < min) min = value
       if (value > max) max = value
     }
+  }
+
+  if (min === max) {
+    // avoid min=max situation
+    min = min - 0.1
+    max = max + 0.1
   }
 
   return { min, max }

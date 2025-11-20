@@ -92,8 +92,8 @@
     "S3_1": {
       "id": "S3.1",
       "slug": "S3_1",
-      "name": "High Albedo Pavement",
-      "description": "Aligned grid of 4×4 buildings. Building height 16 m, street width 16 m. Concrete buildings, ground surface: high-albedo pavement. No vegetation.",
+      "name": "Light concrete",
+      "description": "Aligned grid of 4×4 buildings. Building height 16 m, street width 16 m. Concrete buildings, ground surface: light concrete. No vegetation.",
       "group": "Group3",
       "primaryAnalysisFocus": "Effect of albedo on surface temperature, radiation balance (Q*), and stored heat (ΔQₛ).",
       "relevantLectures": ["L7"]

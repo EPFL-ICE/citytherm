@@ -12,10 +12,7 @@ import {
 import { CanvasRenderer } from 'echarts/renderers'
 import type { EChartsOption } from 'echarts/types/dist/shared'
 import type { GraphAxis } from '@/lib/simulation/graphAxis'
-
-export interface HeatmapMetadata {
-  pointSlug?: string
-}
+import type { HeatmapMetadata } from '../simulation/heatmap/heatmapUtils'
 
 export interface HeatmapData {
   value: [number, number, number | null]
@@ -65,7 +62,7 @@ function getTooltip(p: any): string {
 
   const specialPoint =
     props.showSpecialPoints && p.data.metadata?.pointSlug
-      ? '<br/><br/>Time series data available for this point !<br />Click to see the time series graph'
+      ? `<br/><br/><b>${p.data.metadata.pointName}</b><br/>Time series data available for this point !<br />Click to see the time series graph`
       : ''
 
   return (
@@ -92,9 +89,9 @@ const chartOptions = computed<EChartsOption>(() => {
     },
     grid: {
       left: 50,
-      right: 50,
-      bottom: 50,
-      top: 70
+      right: 90,
+      bottom: 0,
+      top: 0
     },
     xAxis: {
       type: 'category',
@@ -133,10 +130,10 @@ const chartOptions = computed<EChartsOption>(() => {
       max: props.overrideMinMax?.max ?? props.expectedValueRange?.max ?? 100,
       calculable: true,
       realtime: false,
-      orient: 'horizontal',
-      left: 'center',
-      top: 0,
-      itemHeight: 400,
+      orient: 'vertical',
+      right: 0,
+      top: 'center',
+      itemHeight: 200,
       inRange: {
         color: props.colormap
       },

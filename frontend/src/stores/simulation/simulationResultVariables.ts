@@ -13,7 +13,7 @@ export interface SimulationResultVariable {
   emVarDataType: number
   emVarIdx: number
   grid_mapping: GridMapping
-  available_at?: number
+  available_at?: number[] // heights in meters where the variable is available
 }
 
 export type SluggedSimulationResultVariable = SimulationResultVariable & { slug: string }

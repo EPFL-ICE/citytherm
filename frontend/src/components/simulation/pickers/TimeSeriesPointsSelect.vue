@@ -1,13 +1,6 @@
 <script setup lang="ts">
-import {
-  getSimulationPlanePresetsForParameters,
-  getSimulationPresetsForScenarioSlug,
-  type SimulationPlanePreset,
-  type SimulationPlanePresetsMap
-} from '@/lib/simulation/simulationResultPlanesUtils'
 import { useScenariosStore, type TimeSeriesPoint } from '@/stores/simulation/scenarios'
-import { computed, ref, watchEffect } from 'vue'
-import { makePointSlugArray } from '@/stores/simulation/simulationResultTimeSeries'
+import { ref, watchEffect } from 'vue'
 
 const scenarioStore = useScenariosStore()
 const props = defineProps<{
@@ -23,17 +16,12 @@ watchEffect(() => {
   })
 })
 
-const availablePlanes = computed<SimulationPlanePresetsMap>(() =>
-  getSimulationPresetsForScenarioSlug(props.scenarioSlug)
-)
-
 function pointItemProps(item: TimeSeriesPoint) {
   const xFlipped = 198 - item.c[0]
   return {
-    title: `x: ${item.c[0]} ; y: ${item.c[1]} ; z: ${item.c[2].toFixed(1)}`,
-    // subtitle: availablePlanes.value[item.p as SimulationPlanePreset].name,
-    subtitle: `(Once flipped : x: ${xFlipped} ; y: ${item.c[1]} ; z: ${item.c[2].toFixed(1)})`,
-    value: makePointSlugArray(item.c)
+    title: item.n,
+    subtitle: `(x: ${xFlipped} ; y: ${item.c[1]} ; z: ${item.c[2].toFixed(1)})`,
+    value: item.s
   }
 }
 </script>
