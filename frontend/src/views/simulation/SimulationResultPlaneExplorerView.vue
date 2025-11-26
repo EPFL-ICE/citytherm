@@ -35,10 +35,6 @@ const simulationResultStore = useSimulationResultPlaneStore()
 const route = useRoute()
 const router = useRouter()
 
-/* const scenarioASlug = computed(() => route.params.scenarioA as string)
-const scenarioBSlug = computed(() =>
-  route.params.scenarioB === '_' ? null : (route.params.scenarioB as string)
-)*/
 const planeSlug = computed(() => route.params.plane as SimulationPlanePreset)
 const timeSlug = computed(() => route.params.time as string)
 const variableSlug = computed(() => route.params.variable as string)

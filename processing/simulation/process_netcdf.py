@@ -532,7 +532,7 @@ def get_variable_attributes_in_dict(ds, variable_name):
 
 def hardcoded_overrides(variable_name: str, attrs: dict):
     if variable_name == "UTCI" or variable_name == "PET":
-        attrs["available_at"] = [0.2, human_height]
+        attrs["available_at"] = [human_height]
     elif variable_name in surface_level_variables:
         attrs["available_at"] = [0.2]
     elif variable_name in building_data_variables:
@@ -550,14 +550,34 @@ def hardcoded_overrides(variable_name: str, attrs: dict):
         attrs["valid_max"] = 20
     elif variable_name == "PET":
         attrs["long_name"] = "PET"
+    elif variable_name == "UTCI":
+        attrs["long_name"] = "UTCI"
+    elif variable_name == "QSWDir":
+        attrs["long_name"] = "Direct SW Radiation"
+    elif variable_name == "QSWDiff":
+        attrs["long_name"] = "Diffuse SW Radiation"
+    elif variable_name == "QSWRefl":
+        attrs["long_name"] = "Reflected SW Radiation"
+    elif variable_name == "QSWDirHor":
+        attrs["long_name"] = "Direct SW Radiation Horizontal"
+    elif variable_name == "QSWDiffHor":
+        attrs["long_name"] = "Diffuse SW Radiation Horizontal"
+    elif variable_name == "QSWReflRecHor":
+        attrs["long_name"] = "Reflected Received SW Radiation Horizontal"
+    elif variable_name == "QLWEmit":
+        attrs["long_name"] = "LW Radiation Emitted"
+    elif variable_name == "QLWBudget":
+        attrs["long_name"] = "LW Radiation Budget"
+    elif variable_name == "QLWSumAllFluxes":
+        attrs["long_name"] = "LW Radiation Sum All Fluxes"
     elif variable_name == "$Fac_WallTempNode1Outside":
         attrs["long_name"] = "Wall Temperature"
     elif variable_name == "$Fac_WallSystemLWEmitted":
         attrs["long_name"] = "Emitted LW Radiation (Facade)"
     elif variable_name == "$Fac_WallSystemSWReceived":
         attrs["long_name"] = "Received SW Radiation (Facade)"
-    elif variable_name == "$Fac_WallSystemSWAbsorbed":
-        attrs["long_name"] = "Absorbed Direct SW Radiation (Facade)"
+    elif variable_name == "$Fac_WallSystemSWDirAbsorbed":
+        attrs["long_name"] = "SW Radiation Absorbed for the Specified Facade Direction Type"
     elif variable_name == "$Fac_WallSystemLWIncoming":
         attrs["long_name"] = "Incoming LW Radiation (Facade)"
     elif variable_name == "$Fac_WallSystemSWReflected":
@@ -689,8 +709,8 @@ def make_horizontal_time_series_points(variable_names: list[str], scenario_name:
     return [
         make_time_series_point("Urban canyon, windward (0.2 m)", "urban_canyon_windward_ground", [118.0, 100.0, 0.2], list(filter(lambda var: var not in building_data_variables, variable_names)), "horizontal_ground"),
         make_time_series_point("Urban canyon, leeward (0.2 m)", "urban_canyon_leeward_ground", [100.0, 118.0, 0.2], list(filter(lambda var: var not in building_data_variables, variable_names)), "horizontal_ground"),
-        make_time_series_point("Urban canyon, windward (human height)", "urban_canyon_windward_human_height", [118.0, 100.0, human_height], list(filter(lambda var: var not in surface_level_variables, variable_names)), "horizontal_human_height"),
-        make_time_series_point("Urban canyon, leeward (human height)", "urban_canyon_leeward_human_height", [100.0, 118.0, human_height], list(filter(lambda var: var not in surface_level_variables, variable_names)), "horizontal_human_height"),
+        make_time_series_point("Urban canyon, windward (1.4m)", "urban_canyon_windward_human_height", [118.0, 100.0, human_height], list(filter(lambda var: var not in surface_level_variables, variable_names)), "horizontal_human_height"),
+        make_time_series_point("Urban canyon, leeward (1.4m)", "urban_canyon_leeward_human_height", [100.0, 118.0, human_height], list(filter(lambda var: var not in surface_level_variables, variable_names)), "horizontal_human_height"),
         make_time_series_point(f"Building roof ({building_roof_height} m)", "building_roof", [118.0, 118.0, building_roof_height], list(filter(lambda var: var not in surface_level_variables, variable_names)), "horizontal_building_canopy"),
     ]
 

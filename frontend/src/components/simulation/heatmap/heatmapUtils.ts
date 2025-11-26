@@ -24,7 +24,9 @@ export function getMetadataForDataIndex(
     getGraphAxesForPlane(planeSlug),
     false
   )
-  const point = timeSeriesPointsList.find((point) => point.c[0] === trueX && point.c[1] === trueY)
+  const point = timeSeriesPointsList.find(
+    (point) => point.c[0] === trueX && point.c[1] === trueY && point.p === planeSlug
+  )
   if (point) {
     return { pointSlug: point.s, pointName: point.n }
   }

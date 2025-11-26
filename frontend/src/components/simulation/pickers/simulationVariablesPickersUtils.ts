@@ -8,6 +8,7 @@ export interface SimulationVariableGroup {
 export interface GroupSimulationOptions {
   availableAt?: number
   renameWallAndFacadeToRoof?: boolean
+  putPETandUTCIinCommonGroup?: boolean
 }
 
 export function groupSimulationVariablesByAvailableAt(
@@ -17,9 +18,19 @@ export function groupSimulationVariablesByAvailableAt(
   const commonVariables = variables.filter((variable) => !variable.available_at)
 
   if (options.availableAt) {
-    const heightVariables = variables.filter((variable) =>
-      variable.available_at?.includes(options.availableAt!)
+    // Dirty special case for PET and UTCI
+    if (options.putPETandUTCIinCommonGroup) {
+      const petAndUtciVariables = variables.filter(
+        (variable) => variable.slug === 'PET' || variable.slug === 'UTCI'
+      )
+      commonVariables.push(...petAndUtciVariables)
+    }
+    const heightVariables = variables.filter(
+      (variable) =>
+        variable.available_at?.includes(options.availableAt!) &&
+        (options.putPETandUTCIinCommonGroup ? !['PET', 'UTCI'].includes(variable.slug) : true)
     )
+
     return [
       {
         groupName: 'Parameter',
