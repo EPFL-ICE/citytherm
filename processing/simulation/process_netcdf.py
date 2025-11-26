@@ -563,7 +563,7 @@ def hardcoded_overrides(variable_name: str, attrs: dict):
     elif variable_name == "QSWDiffHor":
         attrs["long_name"] = "Diffuse SW Radiation Horizontal"
     elif variable_name == "QSWReflRecHor":
-        attrs["long_name"] = "Reflected Recieved SW Radiation Horizontal"
+        attrs["long_name"] = "Reflected Received SW Radiation Horizontal"
     elif variable_name == "QLWEmit":
         attrs["long_name"] = "LW Radiation Emitted"
     elif variable_name == "QLWBudget":
