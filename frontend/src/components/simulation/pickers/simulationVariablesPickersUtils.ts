@@ -18,24 +18,18 @@ export function groupSimulationVariablesByAvailableAt(
   const commonVariables = variables.filter((variable) => !variable.available_at)
 
   if (options.availableAt) {
-    const heightVariables = variables.filter((variable) =>
-      variable.available_at?.includes(options.availableAt!)
-    )
-
-    // I want to puke here but it's not my fault if they want this special case
+    // Dirty special case for PET and UTCI
     if (options.putPETandUTCIinCommonGroup) {
-      const petAndUtciVariables = heightVariables.filter(
+      const petAndUtciVariables = variables.filter(
         (variable) => variable.slug === 'PET' || variable.slug === 'UTCI'
       )
       commonVariables.push(...petAndUtciVariables)
-      // Remove PET and UTCI from heightVariables
-      for (const variable of petAndUtciVariables) {
-        const index = heightVariables.indexOf(variable)
-        if (index > -1) {
-          heightVariables.splice(index, 1)
-        }
-      }
     }
+    const heightVariables = variables.filter(
+      (variable) =>
+        variable.available_at?.includes(options.availableAt!) &&
+        (options.putPETandUTCIinCommonGroup ? !['PET', 'UTCI'].includes(variable.slug) : true)
+    )
 
     return [
       {

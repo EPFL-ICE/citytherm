@@ -82,8 +82,9 @@ const chartOptions = computed<EChartsOption>(() => {
       orient: 'horizontal'
     },
     series: props.series.map((series) => {
-      if (!series.color) {
-        series.color = DEFAULT_PALETTE[autoColorIndex % DEFAULT_PALETTE.length]
+      let color = series.color
+      if (!color) {
+        color = DEFAULT_PALETTE[autoColorIndex % DEFAULT_PALETTE.length]
         autoColorIndex += 1
       }
 
@@ -97,7 +98,7 @@ const chartOptions = computed<EChartsOption>(() => {
           }
         },
         itemStyle: {
-          color: series.color
+          color
         },
         name: series.name
       }
