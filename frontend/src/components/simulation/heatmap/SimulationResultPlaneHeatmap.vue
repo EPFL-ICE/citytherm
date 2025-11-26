@@ -161,6 +161,6 @@ const colormap = computed<string[]>(() => {
 }
 
 .heatmap-container.small {
-  max-height: 45vh;
+  max-height: 43vh;
 }
 </style>

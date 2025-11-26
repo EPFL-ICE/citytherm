@@ -13,9 +13,22 @@ import {
 import { CanvasRenderer } from 'echarts/renderers'
 import type { EChartsOption } from 'echarts/types/dist/shared'
 
+const DEFAULT_PALETTE = [
+  '#5470c6',
+  '#91cc75',
+  '#fac858',
+  '#ee6666',
+  '#73c0de',
+  '#3ba272',
+  '#fc8452',
+  '#9a60b4',
+  '#ea7ccc'
+]
+
 interface Series {
   name: string
   data: number[]
+  color?: string
 }
 
 const props = defineProps<{
@@ -39,6 +52,8 @@ echarts.use([
 ])
 
 const chartOptions = computed<EChartsOption>(() => {
+  let autoColorIndex = 0
+
   return {
     tooltip: {
       formatter: (p: any) =>
@@ -66,17 +81,27 @@ const chartOptions = computed<EChartsOption>(() => {
       left: 'center',
       orient: 'horizontal'
     },
-    series: props.series.map((series, index) => ({
-      type: 'line',
-      data: series.data,
-      emphasis: {
+    series: props.series.map((series) => {
+      if (!series.color) {
+        series.color = DEFAULT_PALETTE[autoColorIndex % DEFAULT_PALETTE.length]
+        autoColorIndex += 1
+      }
+
+      return {
+        type: 'line',
+        data: series.data,
+        emphasis: {
+          itemStyle: {
+            shadowBlur: 10,
+            shadowColor: 'rgba(0, 0, 0, 0.5)'
+          }
+        },
         itemStyle: {
-          shadowBlur: 10,
-          shadowColor: 'rgba(0, 0, 0, 0.5)'
-        }
-      },
-      name: series.name
-    }))
+          color: series.color
+        },
+        name: series.name
+      }
+    })
   } as unknown as EChartsOption
 })
 </script>

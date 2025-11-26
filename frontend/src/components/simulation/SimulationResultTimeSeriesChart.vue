@@ -100,13 +100,14 @@ function areTrueCoordsDifferent(): boolean {
         :series="
           Object.entries(timeSeries?.scenarios ?? {}).map(([slug, data]) => ({
             name: slug,
-            data: data.map((slot) => slot.v)
+            data: data.map((slot) => slot.v),
+            color: slug === props.compareToScenarioSlug ? '#FFC0CB' : undefined
           }))
         "
       />
     </div>
     <div v-if="comparisonSeries && comparisonSeries.length > 0" class="comparison-container">
-      <h3>Comparison to {{ props.compareToScenarioSlug }}</h3>
+      <h3>Comparison to {{ props.compareToScenarioSlug }} (SX - {{ props.compareToScenarioSlug }})</h3>
       <line-chart
         :axis-x="{
           name: 'Time',
