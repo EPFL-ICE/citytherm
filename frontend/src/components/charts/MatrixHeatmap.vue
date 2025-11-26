@@ -73,12 +73,18 @@ function getTooltip(p: any): string {
   )
 }
 
-const reshapedData = computed(() => {
+// 1. Separate normal data
+const mainData = computed(() => {
   if (!props.showSpecialPoints) return props.data
+  return props.data.filter((d) => !d.metadata?.pointSlug)
+})
 
-  return props.data.map((d) => ({
+// 2. Separate special data
+const specialData = computed(() => {
+  if (!props.showSpecialPoints) return []
+  return props.data.filter((d) => d.metadata?.pointSlug).map((d) => ({
     ...d,
-    visualMap: !d.metadata?.pointSlug
+    visualMap: false // Exclude from visual map scaling
   }))
 })
 
@@ -137,24 +143,38 @@ const chartOptions = computed<EChartsOption>(() => {
       inRange: {
         color: props.colormap
       },
-      formatter: (value: number) => value.toFixed(2)
+      formatter: (value: number) => value.toFixed(2),
     },
     series: [
       {
+        name: 'Heatmap',
         type: 'heatmap',
-        data: reshapedData.value,
-        itemStyle: {
-          color: (params: { data: HeatmapData }) => {
-            if (params.data.metadata?.pointSlug) {
-              return '#ff13f0'
-            }
-            return undefined
-          }
-        },
+        data: mainData.value,
         emphasis: {
           itemStyle: {
             shadowBlur: 5,
             shadowColor: 'rgba(0, 0, 0, 0.5)'
+          }
+        }
+      },
+      // Series 1: Special Points (Overlay)
+      {
+        name: 'SpecialPoints',
+        type: 'heatmap',
+        data: specialData.value,
+        // 4. Force this series to sit on top of the other
+        z: 10,
+        // 5. Apply fixed styles specifically for this series
+        itemStyle: {
+          color: '#ff13f0',
+          borderColor: 'black',
+          borderWidth: 1,
+          borderType: 'solid'
+        },
+        emphasis: {
+          itemStyle: {
+            shadowBlur: 8,
+            shadowColor: 'rgba(0, 0, 0, 1)'
           }
         }
       }

@@ -27,7 +27,8 @@ onMounted(async () => {
 const groups = computed<SimulationVariableGroup[]>(() => {
   return groupSimulationVariablesByAvailableAt(allVariables.value, {
     availableAt: props.availableAt,
-    renameWallAndFacadeToRoof: props.renameWallAndFacadeToRoof
+    renameWallAndFacadeToRoof: props.renameWallAndFacadeToRoof,
+    putPETandUTCIinCommonGroup: true
   })
 })
 

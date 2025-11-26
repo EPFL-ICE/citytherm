@@ -8,6 +8,7 @@ export interface SimulationVariableGroup {
 export interface GroupSimulationOptions {
   availableAt?: number
   renameWallAndFacadeToRoof?: boolean
+  putPETandUTCIinCommonGroup?: boolean
 }
 
 export function groupSimulationVariablesByAvailableAt(
@@ -20,6 +21,20 @@ export function groupSimulationVariablesByAvailableAt(
     const heightVariables = variables.filter((variable) =>
       variable.available_at?.includes(options.availableAt!)
     )
+
+    // I want to puke here but it's not my fault if they want this special case
+    if (options.putPETandUTCIinCommonGroup) {
+      const petAndUtciVariables = heightVariables.filter((variable) => variable.slug === 'PET' || variable.slug === 'UTCI')
+      commonVariables.push(...petAndUtciVariables)
+      // Remove PET and UTCI from heightVariables
+      for (const variable of petAndUtciVariables) {
+        const index = heightVariables.indexOf(variable)
+        if (index > -1) {
+          heightVariables.splice(index, 1)
+        }
+      }
+    }
+
     return [
       {
         groupName: 'Parameter',
