@@ -24,7 +24,9 @@ export function groupSimulationVariablesByAvailableAt(
 
     // I want to puke here but it's not my fault if they want this special case
     if (options.putPETandUTCIinCommonGroup) {
-      const petAndUtciVariables = heightVariables.filter((variable) => variable.slug === 'PET' || variable.slug === 'UTCI')
+      const petAndUtciVariables = heightVariables.filter(
+        (variable) => variable.slug === 'PET' || variable.slug === 'UTCI'
+      )
       commonVariables.push(...petAndUtciVariables)
       // Remove PET and UTCI from heightVariables
       for (const variable of petAndUtciVariables) {

@@ -107,7 +107,9 @@ function areTrueCoordsDifferent(): boolean {
       />
     </div>
     <div v-if="comparisonSeries && comparisonSeries.length > 0" class="comparison-container">
-      <h3>Comparison to {{ props.compareToScenarioSlug }} (SX - {{ props.compareToScenarioSlug }})</h3>
+      <h3>
+        Comparison to {{ props.compareToScenarioSlug }} (SX - {{ props.compareToScenarioSlug }})
+      </h3>
       <line-chart
         :axis-x="{
           name: 'Time',

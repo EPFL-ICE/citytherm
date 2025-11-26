@@ -82,10 +82,12 @@ const mainData = computed(() => {
 // 2. Separate special data
 const specialData = computed(() => {
   if (!props.showSpecialPoints) return []
-  return props.data.filter((d) => d.metadata?.pointSlug).map((d) => ({
-    ...d,
-    visualMap: false // Exclude from visual map scaling
-  }))
+  return props.data
+    .filter((d) => d.metadata?.pointSlug)
+    .map((d) => ({
+      ...d,
+      visualMap: false // Exclude from visual map scaling
+    }))
 })
 
 const chartOptions = computed<EChartsOption>(() => {
@@ -143,7 +145,7 @@ const chartOptions = computed<EChartsOption>(() => {
       inRange: {
         color: props.colormap
       },
-      formatter: (value: number) => value.toFixed(2),
+      formatter: (value: number) => value.toFixed(2)
     },
     series: [
       {
