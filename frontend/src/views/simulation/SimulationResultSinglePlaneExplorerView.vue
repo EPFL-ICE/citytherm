@@ -21,17 +21,13 @@ import ResultGrid from '@/components/ui/ResultGrid.vue'
 import HeatmapSettings from '@/components/simulation/heatmap/HeatmapSettings.vue'
 import ScenarioSelect from '@/components/simulation/pickers/ScenarioSelect.vue'
 import {
-  makePathToPlaneComparator,
-  makePathToPlaneExplorerMerge,
   makePathToScenarioPicker,
-  type PlaneExplorerPageParams,
   makePathToTimeSeriesExplorer,
   makePathToPlaneSingleExplorerMerge,
   type PlaneSingleExplorerPageParams,
   makePathToPlaneExplorer
 } from '@/lib/utils/routingUtils'
 import { mdiChevronLeft } from '@mdi/js'
-import { useSimulationResultPlaneStore } from '@/stores/simulation/simulationResultPlane'
 
 const scenarioStore = useScenariosStore()
 const route = useRoute()
@@ -94,18 +90,6 @@ const pickerUrl = computed(() => {
   })
 })
 
-const comparatorUrl = computed(() => {
-  if (pickedScenarios.value.length !== 2) return ''
-
-  return makePathToPlaneComparator({
-    plane: planeSlug.value,
-    time: timeSlug.value,
-    variables: selectedVariables.value,
-    scenarioA: pickedScenarios.value[0],
-    scenarioB: pickedScenarios.value[1]
-  })
-})
-
 function goToUpdatedParams(params: Partial<PlaneSingleExplorerPageParams>) {
   const routePath = makePathToPlaneSingleExplorerMerge(params, {
     plane: planeSlug.value,
@@ -115,19 +99,10 @@ function goToUpdatedParams(params: Partial<PlaneSingleExplorerPageParams>) {
   })
   router.push(routePath)
 }
-
-function scenarioTitle(slug: string) {
-  const scenario = allScenarios.value?.scenarios[slug]
-  return `${scenario?.id} - ${scenario?.name}`
-}
-
-watchEffect(() => {
-  console.log(selectedVariables.value)
-})
 </script>
 
 <template>
-  <two-panes-layout title="Plane Data Explorer" :disable-left-pane-padding="true">
+  <two-panes-layout title="Plane Data Single Explorer" :disable-left-pane-padding="true">
     <template #subtitle>
       <v-btn :to="pickerUrl" :prepend-icon="mdiChevronLeft" color="primary" density="comfortable">
         Back to Scenarios

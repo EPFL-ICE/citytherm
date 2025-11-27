@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import TwoPanesLayout from '@/components/ui/TwoPanesLayout.vue'
 import ToolSet from '@/components/ui/ToolSet.vue'
-import { computed, ref, useTemplateRef, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import SimulationVariableList from '@/components/simulation/pickers/SimulationVariableList.vue'
 import SimulationVariableCategoryList from '@/components/simulation/pickers/SimulationVariableCategoryList.vue'
 import SimulationResultTimeSeriesChartCategory from '@/components/simulation/SimulationResultTimeSeriesChartCategory.vue'
 import ScenarioSelect from '@/components/simulation/pickers/ScenarioSelect.vue'
@@ -67,7 +66,7 @@ const explorerUrl = computed(() => {
 </script>
 
 <template>
-  <two-panes-layout title="Time Series Data Comparator" :disable-left-pane-padding="true">
+  <two-panes-layout title="Time Series Single Explorer" :disable-left-pane-padding="true">
     <template #subtitle>
       <v-btn :to="explorerUrl" :prepend-icon="mdiChevronLeft" color="primary" density="comfortable">
         Back to Explorer

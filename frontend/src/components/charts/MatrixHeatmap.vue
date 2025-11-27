@@ -191,8 +191,6 @@ function onClickHeatmap(params: echarts.ECElementEvent) {
   const metadata = (params.data as HeatmapData).metadata
   if (!metadata?.pointSlug) return
 
-  console.log('Clicked point slug:', metadata.pointSlug)
-
   emit('point-clicked', metadata.pointSlug)
 }
 
