@@ -46,6 +46,29 @@ export function makePathToPlaneExplorerMerge(
   })
 }
 
+export interface PlaneSingleExplorerPageParams {
+  plane: string
+  time: string
+  scenario: string
+  variables: string[]
+}
+
+export function makePathToPlaneSingleExplorer(params: PlaneSingleExplorerPageParams) {
+  return `/simulation/plane/single/${params.plane}/${params.time}/${params.scenario}?vars=${encodeURIComponent(
+    params.variables.join(',')
+  )}`
+}
+
+export function makePathToPlaneSingleExplorerMerge(
+  newParams: Partial<PlaneSingleExplorerPageParams>,
+  oldParams: PlaneSingleExplorerPageParams
+) {
+  return makePathToPlaneSingleExplorer({
+    ...oldParams,
+    ...newParams
+  })
+}
+
 export interface PlaneComparatorPageParams {
   scenarioA: string
   scenarioB: string | null
@@ -114,6 +137,28 @@ export function makePathToTimeSeriesComparatorMerge(
   oldParams: TimeSeriesComparatorParams
 ) {
   return makePathToTimeSeriesComparator({
+    ...oldParams,
+    ...newParams
+  })
+}
+
+export interface TimeSeriesSingleExplorerParams {
+  scenario: string
+  point: string
+  categories: string[]
+}
+
+export function makePathToTimeSeriesSingleExplorer(params: TimeSeriesSingleExplorerParams) {
+  return `/simulation/timeSeries/single/${params.scenario}/${params.point}?categories=${encodeURIComponent(
+    params.categories.join(',')
+  )}`
+}
+
+export function makePathToTimeSeriesSingleExplorerMerge(
+  newParams: Partial<TimeSeriesSingleExplorerParams>,
+  oldParams: TimeSeriesSingleExplorerParams
+) {
+  return makePathToTimeSeriesSingleExplorer({
     ...oldParams,
     ...newParams
   })

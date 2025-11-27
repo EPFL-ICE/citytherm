@@ -28,6 +28,12 @@ export type SimulationResultTimeSeriesMultiData = {
   scenarios: Record<string, TimeSeriesDataPoint[]> // key is slug
 }
 
+export type SimulationResultTimeSeriesMultiVariableData = {
+  requested_coords?: { x: number; y: number; z: number }
+  true_coords?: { x: number; y: number; z: number }
+  variables: Record<string, TimeSeriesDataPoint[]> // key is slug
+}
+
 async function fetchSimulationResultTimeSeriesForScenarioVariableAndPoint(
   scenarioSlug: string,
   variableSlug: string,
@@ -89,6 +95,14 @@ function makeSlugForMultiScenario(
   pointSlug: string
 ): string {
   return makeCompositeKey([scenarios.join('-'), variableSlug, pointSlug])
+}
+
+function makeSlugForMultiVariableScenario(
+  scenario: string,
+  variables: string[],
+  pointSlug: string
+): string {
+  return makeCompositeKey([scenario, variables.join('-'), pointSlug])
 }
 
 // key is in the form `${scenarioSlug};${variableSlug};${pointSlug}`
@@ -162,6 +176,33 @@ export const useSimulationResultTimeSeriesStore = defineStore('simulationResultT
     }
   )
 
+  const simulationResultTimeSeriesMultiVariableCache = new KeyedCache<
+    SimulationResultTimeSeriesMultiVariableData,
+    Error
+  >(
+    // key is in the form `${scenario};${variablesSlug};${pointSlug}`
+    async (key: string) => {
+      const [scenarioSlug, variablesSlug, pointSlug] = parseCompositeKey(key)
+
+      const variablesData: [string, TimeSeriesData][] = await Promise.all(
+        variablesSlug!.split('-').map(async (slug) => {
+          return [
+            slug,
+            await scenarioDataCache.get(makeSlugForSingleScenario(scenarioSlug!, slug, pointSlug!))
+          ]
+        })
+      )
+
+      const variableAData = variablesData[0]
+
+      return {
+        requested_coords: variableAData[1].requested_coords,
+        true_coords: variableAData[1].true_coords,
+        variables: Object.fromEntries(variablesData.map(([key, value]) => [key, value.data]))
+      }
+    }
+  )
+
   async function getSimulationResultTimeSeries(
     scenarioASlug: string,
     scenarioBSlug: string | null,
@@ -183,8 +224,19 @@ export const useSimulationResultTimeSeriesStore = defineStore('simulationResultT
     )
   }
 
+  async function getSimulationResultMultiVariableTimeSeries(
+    scenario: string,
+    variables: string[],
+    pointSlug: string
+  ): Promise<SimulationResultTimeSeriesMultiVariableData> {
+    return simulationResultTimeSeriesMultiVariableCache.get(
+      makeSlugForMultiVariableScenario(scenario, variables, pointSlug)
+    )
+  }
+
   return {
     getSimulationResultTimeSeries,
-    getSimulationResultMultiTimeSeries
+    getSimulationResultMultiTimeSeries,
+    getSimulationResultMultiVariableTimeSeries
   }
 })

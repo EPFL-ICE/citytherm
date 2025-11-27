@@ -59,23 +59,13 @@ function categoryName(categorySlug: string | undefined): string {
 
         <v-expansion-panel-text>
           <template v-for="category in group.categories" :key="category.categorySlug">
-            <div class="mb-4">
-              <div v-if="group.categories.length > 1" class="text-subtitle-1 font-weight-medium">
-                {{ categoryName(category.categorySlug) }}
-              </div>
-              <template v-for="variable in category.variables" :key="variable.slug">
-                <v-radio :value="variable.slug" density="comfortable" :hide-details="true">
-                  <template #label>
-                    <div class="text-body-1 ml-1">
-                      <span
-                        >{{ variable.long_name }}
-                        <span v-if="variable.units">({{ variable.units }})</span></span
-                      >
-                    </div>
-                  </template>
-                </v-radio>
+            <v-radio :value="category.categorySlug" density="comfortable" :hide-details="true">
+              <template #label>
+                <div class="text-body-1 ml-1">
+                  <span>{{ categoryName(category.categorySlug) }}</span>
+                </div>
               </template>
-            </div>
+            </v-radio>
           </template>
         </v-expansion-panel-text>
       </v-expansion-panel>

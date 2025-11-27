@@ -14,7 +14,9 @@ import {
   makePathToTimeSeriesExplorerMerge,
   makePathToTimeSeriesComparatorMerge,
   type TimeSeriesExplorerParams,
-  makePathToTimeSeriesComparator
+  makePathToTimeSeriesComparator,
+  makePathToPlaneSingleExplorer,
+  makePathToTimeSeriesSingleExplorer
 } from '@/lib/utils/routingUtils'
 import ScenarioMultiSelect from '@/components/simulation/pickers/ScenarioMultiSelect.vue'
 import { useScenariosStore, type TimeSeriesPoint } from '@/stores/simulation/scenarios'
@@ -84,6 +86,12 @@ const planeExplorerUrl = computed(() => {
     variable: selectedVariables.value[0]
   })
 })
+
+const singleExplorerUrl = makePathToTimeSeriesSingleExplorer({
+  scenario: selectedScenarios.value[0],
+  point: pointSlug.value,
+  categories: []
+})
 </script>
 
 <template>
@@ -114,8 +122,11 @@ const planeExplorerUrl = computed(() => {
               label="Scenarios"
               :force-checked="['S0']"
             />
-            <v-btn :to="comparatorUrl!" :disabled="!comparatorUrl" color="primary">
+            <v-btn :to="comparatorUrl!" :disabled="!comparatorUrl" color="primary" class="mb-2">
               Compare scenarios ({{ selectedScenarios.length }}/2)
+            </v-btn>
+            <v-btn :to="singleExplorerUrl" color="primary" variant="outlined">
+              Analyze single scenario
             </v-btn>
           </div>
         </template>
