@@ -73,7 +73,6 @@ export function heightToText(height: number): string {
 export function divideGroupIntoCategories(
   variables: SluggedSimulationResultVariable[]
 ): CategorizedSimulationVariableSubgroup[] {
-  console.log('Dividing group into categories', variables)
   const categorizedVariablesMap = new Map<
     string | undefined,
     CategorizedSimulationVariableSubgroup
