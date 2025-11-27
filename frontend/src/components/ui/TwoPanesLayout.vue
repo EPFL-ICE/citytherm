@@ -26,7 +26,7 @@ const props = defineProps<{
 
 <style>
 .scaffold {
-  --left-bar-width: min(max(300px, 25vw), 350px);
+  --left-bar-width: min(max(300px, 25vw), 370px);
   display: grid;
   grid-template-areas: 'left-bar content';
   grid-template-columns: var(--left-bar-width) calc(100vw - var(--left-bar-width));

@@ -14,11 +14,27 @@ export interface SimulationResultVariable {
   emVarIdx: number
   grid_mapping: GridMapping
   available_at?: number[] // heights in meters where the variable is available
+  category_slug?: string
 }
 
 export type SluggedSimulationResultVariable = SimulationResultVariable & { slug: string }
 
-async function fetchVariablesAttributes(): Promise<{ [key: string]: SimulationResultVariable }> {
+export interface VariableAttributes {
+  categories: {
+    [key: string]: {
+      name: string
+      variables: string[]
+    }
+  }
+  variables: { [key: string]: SimulationResultVariable }
+}
+
+export type SluggedVariableAttributes = {
+  categories: VariableAttributes['categories']
+  variables: SluggedSimulationResultVariable[]
+}
+
+async function fetchVariablesAttributes(): Promise<VariableAttributes> {
   const response = await fetch(`${cdnUrl}/simulation/variablesAttributes.json`)
   if (!response.ok) {
     throw new Error(`Failed to fetch variable attributes: ${response.statusText}`)
@@ -27,15 +43,25 @@ async function fetchVariablesAttributes(): Promise<{ [key: string]: SimulationRe
 }
 
 export const useSimulationResultVariablesStore = defineStore('simulationResultVariables', () => {
-  const simulationResultVariablesCache = new KeyedCache<
-    { [key: string]: SimulationResultVariable },
-    Error
-  >(fetchVariablesAttributes)
+  const simulationResultVariablesCache = new KeyedCache<VariableAttributes, Error>(
+    fetchVariablesAttributes
+  )
 
-  async function getSimulationResultVariables(): Promise<{
-    [key: string]: SimulationResultVariable
-  }> {
+  async function getVariableAttributes(): Promise<VariableAttributes> {
     return simulationResultVariablesCache.get('all') // TODO: make cache without key ?
+  }
+
+  async function getSimulationResultVariables(): Promise<VariableAttributes['variables']> {
+    return (await simulationResultVariablesCache.get('all')).variables // TODO: make cache without key ?
+  }
+
+  async function getVarriableAttributesSlugged(): Promise<SluggedVariableAttributes> {
+    const attributes = await getVariableAttributes()
+
+    return {
+      categories: attributes.categories,
+      variables: Object.entries(attributes.variables).map(([slug, data]) => ({ ...data, slug }))
+    }
   }
 
   async function getSimulationResultVariablesList(): Promise<SluggedSimulationResultVariable[]> {
@@ -44,7 +70,9 @@ export const useSimulationResultVariablesStore = defineStore('simulationResultVa
   }
 
   return {
+    getVariableAttributes,
     getSimulationResultVariables,
+    getVarriableAttributesSlugged,
     getSimulationResultVariablesList
   }
 })

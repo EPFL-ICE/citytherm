@@ -2,6 +2,11 @@ import type { SluggedSimulationResultVariable } from '@/stores/simulation/simula
 
 export interface SimulationVariableGroup {
   groupName: string
+  categories: CategorizedSimulationVariableSubgroup[]
+}
+
+export interface CategorizedSimulationVariableSubgroup {
+  categorySlug?: string
   variables: SluggedSimulationResultVariable[]
 }
 
@@ -31,19 +36,21 @@ export function groupSimulationVariablesByAvailableAt(
         (options.putPETandUTCIinCommonGroup ? !['PET', 'UTCI'].includes(variable.slug) : true)
     )
 
+    const renamed = options.renameWallAndFacadeToRoof
+      ? heightVariables.map((variable) => ({
+          ...variable,
+          long_name: variable.long_name.replace('Wall', 'Roof').replace('Facade', 'Roof')
+        }))
+      : heightVariables
+
     return [
       {
         groupName: 'Parameter',
-        variables: commonVariables
+        categories: divideGroupIntoCategories(commonVariables)
       },
       {
         groupName: `${heightToText(options.availableAt!)} (${options.availableAt!.toFixed(1)} m)`,
-        variables: options.renameWallAndFacadeToRoof
-          ? heightVariables.map((variable) => ({
-              ...variable,
-              long_name: variable.long_name.replace('Wall', 'Roof').replace('Facade', 'Roof')
-            }))
-          : heightVariables
+        categories: divideGroupIntoCategories(renamed)
       }
     ]
   }
@@ -51,7 +58,7 @@ export function groupSimulationVariablesByAvailableAt(
   return [
     {
       groupName: 'Parameter',
-      variables: commonVariables
+      categories: divideGroupIntoCategories(commonVariables)
     }
   ]
 }
@@ -61,4 +68,33 @@ export function heightToText(height: number): string {
     return 'Surface data'
   }
   return `Building data`
+}
+
+export function divideGroupIntoCategories(
+  variables: SluggedSimulationResultVariable[]
+): CategorizedSimulationVariableSubgroup[] {
+  console.log('Dividing group into categories', variables)
+  const categorizedVariablesMap = new Map<
+    string | undefined,
+    CategorizedSimulationVariableSubgroup
+  >()
+
+  variables.forEach((variable) => {
+    if (!categorizedVariablesMap.get(variable.category_slug)) {
+      categorizedVariablesMap.set(variable.category_slug, {
+        categorySlug: variable.category_slug,
+        variables: []
+      })
+    }
+    categorizedVariablesMap.get(variable.category_slug)!.variables.push(variable)
+  })
+
+  return Array.from(categorizedVariablesMap.values())
+}
+
+export function getAllVariablesInCategory(
+  categorySlug: string | undefined,
+  variablesList: SluggedSimulationResultVariable[]
+): SluggedSimulationResultVariable[] {
+  return variablesList.filter((variable) => variable.category_slug === categorySlug)
 }

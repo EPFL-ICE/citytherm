@@ -8,6 +8,42 @@ import numpy as np
 import math
 
 human_height = 1.4000000953674316
+
+variable_categories = {
+    "heat_fluxes": {
+        "name": "Heat Fluxes",
+        "variables": [
+            "SensHeatFlux",
+            "LatentHeatFlux",
+            "SoilHeatFlux",
+        ]
+    },
+    "sw_radiation": {
+        "name": "SW Radiation",
+        "variables": [
+            "QSWDir",
+            "QSWDiff",
+            "QSWRefl",
+        ]
+    },
+    "sw_radiation_horizontal": {
+        "name": "SW Radiation Horizontal",
+        "variables": [
+            "QSWDirHor",
+            "QSWDiffHor",
+            "QSWReflRecHor",
+        ]
+    },
+    "lw_radiation": {
+        "name": "LW Radiation",
+        "variables": [
+            "QLWEmit",
+            "QLWBudget",
+            "QLWSumAllFluxes",
+        ]
+    },
+}
+
 ground_level_variables = [
     "T",
     "RelHum",
@@ -520,15 +556,27 @@ def export_variable_attributes(variable_names, ds, output_directory):
         attrs_dict = get_variable_attributes_in_dict(ds, variable_name)
         vars[variable_name] = attrs_dict
 
-    save_json(to_json_compatible(vars), f"{output_directory}/variablesAttributes.json")
+    variable_attributes = {
+        "categories": variable_categories,
+        "variables": vars
+    }
+    save_json(to_json_compatible(variable_attributes), f"{output_directory}/variablesAttributes.json")
 
 
 def get_variable_attributes_in_dict(ds, variable_name):
     source_variable_name = variable_name.replace("$", "X")
     variable = ds.data_vars[source_variable_name]
-    attrs = variable.attrs
+    attrs = attach_category_slug_to_variable_attrs(variable_name, variable.attrs)
     overriden_attrs = hardcoded_overrides(variable_name, attrs.copy())
+
     return {k: prettify_unit(overriden_attrs[k]) for k in overriden_attrs}
+
+def attach_category_slug_to_variable_attrs(variable_name: str, attrs: dict):
+    for category_slug, category in variable_categories.items():
+        if variable_name in category["variables"]:
+            attrs["category_slug"] = category_slug
+            break
+    return attrs
 
 def hardcoded_overrides(variable_name: str, attrs: dict):
     if variable_name == "UTCI" or variable_name == "PET":
