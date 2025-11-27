@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import {
   useSimulationResultVariablesStore,
-  type SluggedSimulationResultVariable,
-  type VariableAttributes
+  type VariableAttributes,
+  type SluggedSimulationResultVariable
 } from '@/stores/simulation/simulationResultVariables'
 import { computed, onMounted, ref } from 'vue'
 import {
@@ -15,7 +15,7 @@ const props = defineProps<{
   renameWallAndFacadeToRoof?: boolean
 }>()
 
-const model = defineModel()
+const model = defineModel<string[]>()
 
 const simulationResultsVariablesStore = useSimulationResultVariablesStore()
 const variableAttributes = ref<VariableAttributes | null>(null)
@@ -49,37 +49,35 @@ function categoryName(categorySlug: string | undefined): string {
 
 <template>
   <v-expansion-panels multiple v-model="openedGroups" flat>
-    <v-radio-group v-model="model">
-      <v-expansion-panel
-        v-for="group in groups"
-        :key="group.groupName"
-        :disabled="Array.isArray(groups) === false || group.categories.length === 0"
-      >
-        <v-expansion-panel-title class="group-name">{{ group.groupName }}</v-expansion-panel-title>
+    <v-expansion-panel
+      v-for="group in groups"
+      :key="group.groupName"
+      :disabled="Array.isArray(groups) === false || group.categories.length === 0"
+    >
+      <v-expansion-panel-title class="group-name">{{ group.groupName }}</v-expansion-panel-title>
 
-        <v-expansion-panel-text>
-          <template v-for="category in group.categories" :key="category.categorySlug">
-            <div class="mb-4">
-              <div v-if="group.categories.length > 1" class="text-subtitle-1 font-weight-medium">
-                {{ categoryName(category.categorySlug) }}
-              </div>
-              <template v-for="variable in category.variables" :key="variable.slug">
-                <v-radio :value="variable.slug" density="comfortable" :hide-details="true">
-                  <template #label>
-                    <div class="text-body-1 ml-1">
-                      <span
-                        >{{ variable.long_name }}
-                        <span v-if="variable.units">({{ variable.units }})</span></span
-                      >
-                    </div>
-                  </template>
-                </v-radio>
+      <v-expansion-panel-text>
+        <template
+          v-for="category in group.categories.filter((category) => !!category.categorySlug)"
+          :key="category.categorySlug"
+        >
+          <div v-if="group.categories.length > 1">
+            <v-checkbox
+              v-model="model"
+              :value="category.categorySlug"
+              density="comfortable"
+              :hide-details="true"
+            >
+              <template #label>
+                <div class="text-subtitle-1 font-weight-medium ml-1">
+                  {{ categoryName(category.categorySlug) }}
+                </div>
               </template>
-            </div>
-          </template>
-        </v-expansion-panel-text>
-      </v-expansion-panel>
-    </v-radio-group>
+            </v-checkbox>
+          </div>
+        </template>
+      </v-expansion-panel-text>
+    </v-expansion-panel>
   </v-expansion-panels>
 </template>
 

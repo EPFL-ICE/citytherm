@@ -1,3 +1,11 @@
 html {
   overflow-y: auto;
 }
+
+.v-expansion-panel-title {
+  padding-left: 16px !important;
+}
+
+.v-expansion-panel-text__wrapper {
+  padding-left: 16px !important;
+}

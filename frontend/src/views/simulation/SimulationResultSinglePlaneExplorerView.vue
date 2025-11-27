@@ -7,7 +7,7 @@ import {
 import TwoPanesLayout from '@/components/ui/TwoPanesLayout.vue'
 import { computed, onMounted, ref, watchEffect } from 'vue'
 import ToolSet from '@/components/ui/ToolSet.vue'
-import SimulationVariableRadioList from '@/components/simulation/pickers/SimulationVariableRadioList.vue'
+import SimulationVariableList from '@/components/simulation/pickers/SimulationVariableList.vue'
 import SimulationResultPlaneHeatmap from '@/components/simulation/heatmap/SimulationResultPlaneHeatmap.vue'
 import { useRoute, useRouter } from 'vue-router'
 import {
@@ -19,29 +19,30 @@ import {
 import TimeSeriesPointsSelect from '@/components/simulation/pickers/TimeSeriesPointsSelect.vue'
 import ResultGrid from '@/components/ui/ResultGrid.vue'
 import HeatmapSettings from '@/components/simulation/heatmap/HeatmapSettings.vue'
-import ScenarioMultiSelect from '@/components/simulation/pickers/ScenarioMultiSelect.vue'
+import ScenarioSelect from '@/components/simulation/pickers/ScenarioSelect.vue'
 import {
   makePathToPlaneComparator,
   makePathToPlaneExplorerMerge,
   makePathToScenarioPicker,
   type PlaneExplorerPageParams,
   makePathToTimeSeriesExplorer,
-  makePathToPlaneSingleExplorer
+  makePathToPlaneSingleExplorerMerge,
+  type PlaneSingleExplorerPageParams,
+  makePathToPlaneExplorer
 } from '@/lib/utils/routingUtils'
 import { mdiChevronLeft } from '@mdi/js'
 import { useSimulationResultPlaneStore } from '@/stores/simulation/simulationResultPlane'
 
 const scenarioStore = useScenariosStore()
-const simulationResultStore = useSimulationResultPlaneStore()
 const route = useRoute()
 const router = useRouter()
 
 const planeSlug = computed(() => route.params.plane as SimulationPlanePreset)
 const timeSlug = computed(() => route.params.time as string)
-const variableSlug = computed(() => route.params.variable as string)
-const selectedScenarios = computed(() => {
-  const scenarios = route.query.scenarios as string | undefined
-  return scenarios ? scenarios.split(',') : []
+const scenarioSlug = computed(() => route.params.scenario as string)
+const selectedVariables = computed(() => {
+  const variables = route.query.vars as string | undefined
+  return variables ? variables.split(',') : []
 })
 
 const timeSeriesPointsList = ref<TimeSeriesPoint[] | null>(null)
@@ -64,31 +65,31 @@ const availablePlanes = computed<SimulationPlanePresetsMap>(() =>
 const planesSelectOptions = computed(() => Object.values(availablePlanes.value))
 const availableTimeSlots = computed(() => getSimulationPlaneAvailableTimeSlots())
 
-const gridColumns = computed(() => Math.min(2, selectedScenarios.value.length))
+const gridColumns = computed(() => Math.min(3, selectedVariables.value.length))
 
 const pickedScenarios = ref<string[]>([])
 
 const timeSeriesExplorerUrl = computed(() => {
   if (!selectedTimeSeriesPointSlug.value) return null
   return makePathToTimeSeriesExplorer({
-    scenarios: selectedScenarios.value,
+    scenarios: [scenarioSlug.value],
     point: selectedTimeSeriesPointSlug.value,
-    variables: [variableSlug.value]
+    variables: selectedVariables.value
   })
 })
 
 function navigateToTimeSeriesPoint(pointSlug: string) {
   const routePath = makePathToTimeSeriesExplorer({
-    scenarios: selectedScenarios.value,
+    scenarios: [scenarioSlug.value],
     point: pointSlug,
-    variables: [variableSlug.value]
+    variables: selectedVariables.value
   })
   router.push(routePath)
 }
 
 const pickerUrl = computed(() => {
   return makePathToScenarioPicker({
-    scenario: selectedScenarios.value[0] ?? null,
+    scenario: scenarioSlug.value,
     plane: planeSlug.value
   })
 })
@@ -99,18 +100,18 @@ const comparatorUrl = computed(() => {
   return makePathToPlaneComparator({
     plane: planeSlug.value,
     time: timeSlug.value,
-    variables: [variableSlug.value],
+    variables: selectedVariables.value,
     scenarioA: pickedScenarios.value[0],
     scenarioB: pickedScenarios.value[1]
   })
 })
 
-function goToUpdatedParams(params: Partial<PlaneExplorerPageParams>) {
-  const routePath = makePathToPlaneExplorerMerge(params, {
+function goToUpdatedParams(params: Partial<PlaneSingleExplorerPageParams>) {
+  const routePath = makePathToPlaneSingleExplorerMerge(params, {
     plane: planeSlug.value,
     time: timeSlug.value,
-    variable: variableSlug.value,
-    scenarios: selectedScenarios.value
+    variables: selectedVariables.value,
+    scenario: scenarioSlug.value
   })
   router.push(routePath)
 }
@@ -120,32 +121,8 @@ function scenarioTitle(slug: string) {
   return `${scenario?.id} - ${scenario?.name}`
 }
 
-type ValueRangeOption = 'infer-individual' | 'infer-global' | 'fixed'
-const rangeOption = ref<ValueRangeOption>('infer-global')
-
-const rangeSelectOptions: { title: string; value: ValueRangeOption }[] = [
-  { title: 'Min/max per scenario', value: 'infer-individual' },
-  { title: 'Min/max across all scenarios', value: 'infer-global' },
-  { title: 'Min/max range predefined', value: 'fixed' }
-]
-
-const globalMinMax = ref<{ min: number; max: number } | null>(null)
 watchEffect(() => {
-  globalMinMax.value = null
-  if (rangeOption.value !== 'infer-global') {
-    return
-  }
-
-  simulationResultStore
-    .getMinMaxForMultipleScenariosSlugs(
-      selectedScenarios.value,
-      planeSlug.value,
-      timeSlug.value,
-      variableSlug.value
-    )
-    .then((minMax) => {
-      globalMinMax.value = minMax
-    })
+  console.log(selectedVariables.value)
 })
 </script>
 
@@ -160,11 +137,10 @@ watchEffect(() => {
       <tool-set>
         <template #header>
           <div class="pa-4">
-            <scenario-multi-select
-              label="Scenarios"
-              :force-checked="['S0']"
-              :model-value="selectedScenarios"
-              @update:model-value="goToUpdatedParams({ scenarios: $event })"
+            <scenario-select
+              label="Scenario"
+              :model-value="scenarioSlug"
+              @update:model-value="goToUpdatedParams({ scenario: $event ?? undefined })"
             />
             <v-select
               :model-value="planeSlug"
@@ -190,23 +166,13 @@ watchEffect(() => {
               density="comfortable"
               class="mb-2"
             />
-            <v-select
-              :model-value="rangeOption"
-              :items="rangeSelectOptions"
-              @update:model-value="rangeOption = $event"
-              label="Value range mode"
-              single-line
-              :hide-details="true"
-              density="comfortable"
-              class="mb-2"
-            />
           </div>
         </template>
         <template #default>
-          <simulation-variable-radio-list
-            :model-value="variableSlug"
+          <simulation-variable-list
+            :model-value="selectedVariables"
             :rename-wall-and-facade-to-roof="planeSlug === 'horizontal_building_canopy'"
-            @update:model-value="goToUpdatedParams({ variable: $event })"
+            @update:model-value="goToUpdatedParams({ variables: $event })"
           />
         </template>
         <template #footer>
@@ -229,74 +195,57 @@ watchEffect(() => {
     </template>
 
     <template #default>
-      <div v-if="selectedScenarios.length > 0" class="pa-4">
-        <heatmap-settings
-          :variable-slug="variableSlug"
-          :hide-individual-min-max="rangeOption !== 'infer-individual'"
-          :force-flip="true"
-        >
-          <template #right-toolbar>
-            <v-btn :to="comparatorUrl" :disabled="!comparatorUrl" color="primary">
-              Compare scenarios ({{ pickedScenarios.length }}/2)
-            </v-btn>
-          </template>
-          <template #default="{ expectedValueRange, inferMinMax, mode, showSpecialPoints, flipX }">
-            <result-grid :numColumns="gridColumns" :rerender-on-columns-change="true">
-              <div
-                v-for="(scenario, i) in selectedScenarios"
-                :key="scenario"
-                :class="{
-                  'right-border': i % gridColumns < gridColumns - 1,
-                  grayed: pickedScenarios.length > 0 && !pickedScenarios.includes(scenario),
-                  'scenario-wrapper': true
-                }"
-              >
-                <h3
-                  class="px-4 py-2 d-flex align-center justify-space-between"
-                  style="max-width: 55vh"
+      <div v-if="scenarioSlug" class="pa-4">
+        <result-grid :numColumns="gridColumns" :rerender-on-columns-change="true">
+          <div
+            v-for="(variable, i) in selectedVariables"
+            :key="variable"
+            :class="{
+              'right-border': i % gridColumns < gridColumns - 1,
+              grayed: pickedScenarios.length > 0 && !pickedScenarios.includes(variable),
+              'scenario-wrapper': true
+            }"
+          >
+            <heatmap-settings
+              :variable-slug="variable"
+              :hide-individual-min-max="false"
+              :force-flip="true"
+            >
+              <template #right-toolbar>
+                <v-btn
+                  :to="
+                    makePathToPlaneExplorer({
+                      plane: planeSlug,
+                      time: timeSlug,
+                      variable,
+                      scenarios: [scenarioSlug]
+                    })
+                  "
+                  color="primary"
                 >
-                  <div class="d-flex align-center">
-                    <v-checkbox
-                      v-model="pickedScenarios"
-                      density="comfortable"
-                      hide-details
-                      :value="scenario"
-                    />
-                    <span class="ml-1">{{ scenarioTitle(scenario) }}</span>
-                  </div>
-
-                  <v-btn
-                    :to="
-                      makePathToPlaneSingleExplorer({
-                        plane: planeSlug,
-                        scenario: scenario,
-                        time: timeSlug,
-                        variables: [variableSlug]
-                      })
-                    "
-                    color="primary"
-                  >
-                    Analyze scenario
-                  </v-btn>
-                </h3>
+                  Compare this variable across scenarios
+                </v-btn>
+              </template>
+              <template
+                #default="{ expectedValueRange, inferMinMax, mode, showSpecialPoints, flipX }"
+              >
                 <simulation-result-plane-heatmap
                   :plane-slug="planeSlug"
-                  :variable-slug="variableSlug"
+                  :variable-slug="variable"
                   :time-slice-slug="timeSlug"
-                  :scenario-a-slug="scenario"
+                  :scenario-a-slug="scenarioSlug"
                   :expected-value-range="expectedValueRange"
-                  :infer-min-max="inferMinMax && rangeOption === 'infer-individual'"
-                  :force-min-max="globalMinMax"
+                  :infer-min-max="inferMinMax"
                   :flip-x="flipX"
                   :mode="mode"
                   :show-special-points="showSpecialPoints"
                   :small="true"
                   @point-clicked="(point) => navigateToTimeSeriesPoint(point)"
                 />
-              </div>
-            </result-grid>
-          </template>
-        </heatmap-settings>
+              </template>
+            </heatmap-settings>
+          </div>
+        </result-grid>
       </div>
       <div v-else class="d-flex h-100 align-center justify-center">
         <div class="text-h4">No scenarios picked</div>
