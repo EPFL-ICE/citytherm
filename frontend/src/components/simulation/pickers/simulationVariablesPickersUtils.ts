@@ -11,56 +11,59 @@ export interface CategorizedSimulationVariableSubgroup {
 }
 
 export interface GroupSimulationOptions {
-  availableAt?: number
+  availableAt?: number[]
+  omitGroups?: string[]
   renameWallAndFacadeToRoof?: boolean
-  putPETandUTCIinCommonGroup?: boolean
+}
+
+function hasOverlap(arr1: number[] | undefined, arr2: number[] | undefined): boolean {
+  if (!arr1 || !arr2) return false
+  return arr1.some((item) => arr2.includes(item))
 }
 
 export function groupSimulationVariablesByAvailableAt(
   variables: SluggedSimulationResultVariable[],
   options: GroupSimulationOptions
 ): SimulationVariableGroup[] {
-  const commonVariables = variables.filter((variable) => !variable.available_at)
-
-  if (options.availableAt) {
-    // Dirty special case for PET and UTCI
-    if (options.putPETandUTCIinCommonGroup) {
-      const petAndUtciVariables = variables.filter(
-        (variable) => variable.slug === 'PET' || variable.slug === 'UTCI'
-      )
-      commonVariables.push(...petAndUtciVariables)
-    }
-    const heightVariables = variables.filter(
-      (variable) =>
-        variable.available_at?.includes(options.availableAt!) &&
-        (options.putPETandUTCIinCommonGroup ? !['PET', 'UTCI'].includes(variable.slug) : true)
-    )
-
-    const renamed = options.renameWallAndFacadeToRoof
-      ? heightVariables.map((variable) => ({
-          ...variable,
-          long_name: variable.long_name.replace('Wall', 'Roof').replace('Facade', 'Roof')
-        }))
-      : heightVariables
-
-    return [
-      {
-        groupName: 'Parameter',
-        categories: divideGroupIntoCategories(commonVariables)
-      },
-      {
-        groupName: `${heightToText(options.availableAt!)} (${options.availableAt!.toFixed(1)} m)`,
-        categories: divideGroupIntoCategories(renamed)
+  console.log('==========================')
+  console.log(variables)
+  console.log(options)
+  const grouped = new Map<string, SluggedSimulationResultVariable[]>()
+  const groupsToOmit = options.omitGroups ?? []
+  const filtered = options.availableAt
+    ? variables.filter((variable) => hasOverlap(variable.available_at, options.availableAt))
+    : variables
+  console.log(filtered)
+  for (const variable of filtered) {
+    const key = variable.group ?? 'parameters'
+    if (!groupsToOmit.includes(key)) {
+      if (!grouped.has(key)) {
+        grouped.set(key, [])
       }
-    ]
+      grouped.get(key)!.push(variable)
+    }
   }
 
-  return [
-    {
-      groupName: 'Parameter',
-      categories: divideGroupIntoCategories(commonVariables)
-    }
-  ]
+  console.log(grouped)
+
+  return Array.from(grouped.entries()).map(([groupSlug, vars]) => ({
+    groupName: groupSlugToDisplayName(groupSlug),
+    categories: divideGroupIntoCategories(vars)
+  }))
+}
+
+function groupSlugToDisplayName(slug: string): string {
+  const dict = {
+    parameters: 'Parameters',
+    surface_level: 'Surface Level',
+    building_data: 'Building Data',
+    underground_level: 'Underground Level',
+    thermal_comfort_indices: 'Thermal Comfort Indices'
+  }
+  return (
+    dict[slug as keyof typeof dict] ||
+    slug.charAt(0).toUpperCase() + slug.slice(1).replaceAll('_', ' ')
+  )
 }
 
 export function heightToText(height: number): string {

@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { useScenariosStore, type TimeSeriesPoint } from '@/stores/simulation/scenarios'
-import { ref, watchEffect } from 'vue'
+import { computed, ref, watchEffect } from 'vue'
 
 const scenarioStore = useScenariosStore()
 const props = defineProps<{
   scenarioSlug?: string
   label: string
+  aboveOrBelowGround?: 'both' | 'above-only' | 'below-only'
 }>()
 const model = defineModel<string | null>()
 
@@ -14,6 +15,19 @@ watchEffect(() => {
   scenarioStore.getAvailableTimeSeriesPointsForScenario(props.scenarioSlug).then((tspl) => {
     timeSeriesPointsList.value = tspl
   })
+})
+
+const filteredTimeSeriesPointsList = computed(() => {
+  if (!timeSeriesPointsList.value) return []
+
+  console.log(props.aboveOrBelowGround)
+  if (props.aboveOrBelowGround === 'above-only') {
+    return timeSeriesPointsList.value.filter((v) => v.c[2] > 0)
+  } else if (props.aboveOrBelowGround === 'below-only') {
+    return timeSeriesPointsList.value.filter((v) => v.c[2] < 0)
+  }
+
+  return timeSeriesPointsList.value
 })
 
 function pointItemProps(item: TimeSeriesPoint) {
@@ -30,7 +44,7 @@ function pointItemProps(item: TimeSeriesPoint) {
   <v-select
     v-if="timeSeriesPointsList"
     v-model="model"
-    :items="timeSeriesPointsList ?? []"
+    :items="filteredTimeSeriesPointsList"
     :item-props="pointItemProps"
     label="Time series point"
     single-line

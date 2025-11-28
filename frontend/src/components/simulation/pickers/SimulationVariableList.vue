@@ -11,7 +11,8 @@ import {
 } from './simulationVariablesPickersUtils'
 
 const props = defineProps<{
-  availableAt?: number
+  availableAt?: number | number[]
+  omitGroups?: string[]
   renameWallAndFacadeToRoof?: boolean
 }>()
 
@@ -45,9 +46,13 @@ const allVariables = computed<SluggedSimulationResultVariable[]>(() => {
 
 const groups = computed<SimulationVariableGroup[]>(() => {
   return groupSimulationVariablesByAvailableAt(allVariables.value, {
-    availableAt: props.availableAt,
+    availableAt: Array.isArray(props.availableAt)
+      ? props.availableAt
+      : props.availableAt !== undefined
+        ? [props.availableAt]
+        : undefined,
     renameWallAndFacadeToRoof: props.renameWallAndFacadeToRoof,
-    putPETandUTCIinCommonGroup: true
+    omitGroups: props.omitGroups
   })
 })
 

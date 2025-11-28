@@ -86,6 +86,7 @@ const explorerUrl = computed(() => {
               :model-value="pointSlug"
               @update:model-value="goToUpdatedParams({ point: $event ?? undefined })"
               label="Time series point"
+              above-or-below-ground="above-only"
             />
           </div>
         </template>

@@ -4,7 +4,7 @@ import ToolSet from '@/components/ui/ToolSet.vue'
 import { computed, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import SimulationVariableList from '@/components/simulation/pickers/SimulationVariableList.vue'
-import SimulationResultTimeSeriesChart from '@/components/simulation/SimulationResultTimeSeriesChart.vue'
+import SimulationResultTimeSeriesDepthChart from '@/components/simulation/SimulationResultTimeSeriesDepthChart.vue'
 import ScenarioSelect from '@/components/simulation/pickers/ScenarioSelect.vue'
 import TimeSeriesPointsSelect from '@/components/simulation/pickers/TimeSeriesPointsSelect.vue'
 import ResultGrid from '@/components/ui/ResultGrid.vue'
@@ -17,7 +17,8 @@ import {
   makePathToTimeSeriesComparator,
   makePathToPlaneSingleExplorer,
   makePathToTimeSeriesSingleExplorer,
-  makePathToTimeSeriesDepthExplorer
+  makePathToTimeSeriesDepthExplorerMerge,
+  type TimeSeriesDepthExplorerParams
 } from '@/lib/utils/routingUtils'
 import ScenarioMultiSelect from '@/components/simulation/pickers/ScenarioMultiSelect.vue'
 import { useScenariosStore, type TimeSeriesPoint } from '@/stores/simulation/scenarios'
@@ -32,20 +33,17 @@ const selectedVariables = computed(() => {
   const vars = route.query.vars as string | undefined
   return vars ? vars.split(',') : []
 })
-const selectedScenarios = computed(() => {
-  const scenarios = route.query.scenarios as string | undefined
-  return scenarios ? scenarios.split(',') : []
-})
+const scenarioSlug = computed(() => route.params.scenario as string)
 
 const point = ref<TimeSeriesPoint | null>(null)
 watch(
-  [selectedScenarios, pointSlug],
+  [scenarioSlug, pointSlug],
   async () => {
-    if (selectedScenarios.value.length < 1) return
+    if (!scenarioSlug.value) return
 
     point.value = await scenarioStore.getFullTimeSeriesPointFromSlug(
       pointSlug.value,
-      selectedScenarios.value[0]
+      scenarioSlug.value
     )
   },
   { immediate: true }
@@ -57,17 +55,17 @@ const pointHeight = computed(() => {
   return undefined
 })
 
-function goToUpdatedParams(params: Partial<TimeSeriesExplorerParams>) {
-  const routePath = makePathToTimeSeriesExplorerMerge(params, {
+function goToUpdatedParams(params: Partial<TimeSeriesDepthExplorerParams>) {
+  const routePath = makePathToTimeSeriesDepthExplorerMerge(params, {
     point: pointSlug.value,
     variables: selectedVariables.value,
-    scenarios: selectedScenarios.value
+    scenario: scenarioSlug.value
   })
   router.push(routePath)
 }
 
 const gridColumns = computed(() => Math.min(2, selectedVariables.value.length))
-
+/*
 const comparatorUrl = computed(() => {
   if (selectedScenarios.value.length !== 2) return null
   return makePathToTimeSeriesComparator({
@@ -77,31 +75,22 @@ const comparatorUrl = computed(() => {
     scenarioB: selectedScenarios.value[1]
   })
 })
-
+*/
 const planeExplorerUrl = computed(() => {
   if (selectedVariables.value.length < 1) return null
   return makePathToPlaneExplorer({
-    scenarios: selectedScenarios.value,
+    scenarios: [scenarioSlug.value],
     plane: point.value?.p ?? 'horizontal_ground',
     time: 'time_12',
     variable: selectedVariables.value[0]
   })
 })
-
-const singleExplorerUrl = computed(() => {
-  if ((pointHeight.value ?? 0) < 0) {
-    return makePathToTimeSeriesDepthExplorer({
-      scenario: selectedScenarios.value[0],
-      point: pointSlug.value,
-      variables: []
-    })
-  }
-  return makePathToTimeSeriesSingleExplorer({
-    scenario: selectedScenarios.value[0],
-    point: pointSlug.value,
-    categories: []
-  })
-})
+/*
+const singleExplorerUrl = makePathToTimeSeriesSingleExplorer({
+  scenario: selectedScenarios.value[0],
+  point: pointSlug.value,
+  categories: []
+})*/
 </script>
 
 <template>
@@ -125,19 +114,14 @@ const singleExplorerUrl = computed(() => {
               :model-value="pointSlug"
               @update:model-value="goToUpdatedParams({ point: $event ?? undefined })"
               label="Time series point"
+              above-or-below-ground="below-only"
             />
-            <scenario-multi-select
-              :model-value="selectedScenarios"
-              @update:model-value="goToUpdatedParams({ scenarios: $event })"
-              label="Scenarios"
+            <scenario-select
+              :model-value="scenarioSlug"
+              @update:model-value="goToUpdatedParams({ scenario: $event ?? undefined })"
+              label="Scenario"
               :force-checked="['S0']"
             />
-            <v-btn :to="comparatorUrl!" :disabled="!comparatorUrl" color="primary" class="mb-2">
-              Compare scenarios ({{ selectedScenarios.length }}/2)
-            </v-btn>
-            <v-btn :to="singleExplorerUrl" color="primary" variant="outlined">
-              {{ (pointHeight ?? 0) < 0 ? 'Analyze depth values' : 'Analyze single scenario' }}
-            </v-btn>
           </div>
         </template>
         <template #default>
@@ -154,18 +138,17 @@ const singleExplorerUrl = computed(() => {
     </template>
 
     <template #default>
-      <template v-if="selectedVariables.length > 0 && selectedScenarios.length > 0">
+      <template v-if="selectedVariables.length > 0 && scenarioSlug">
         <result-grid :numColumns="gridColumns" :rerender-on-columns-change="true">
           <div
             v-for="(variable, i) in selectedVariables"
             :key="variable"
             :class="{ 'right-border': i % gridColumns < gridColumns - 1 && i < gridColumns - 1 }"
           >
-            <simulation-result-time-series-chart
-              :scenarios="selectedScenarios"
+            <simulation-result-time-series-depth-chart
+              :scenario="scenarioSlug"
               :point-slug="pointSlug"
               :variable-slug="variable"
-              :compare-to-scenario-slug="'S0'"
             />
           </div>
         </result-grid>

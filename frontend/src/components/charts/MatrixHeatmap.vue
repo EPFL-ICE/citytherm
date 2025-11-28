@@ -201,7 +201,6 @@ watch(
 
     const chart = heatmapChart.value
     if (chart) {
-      console.log(chart)
       if (props.resetVisualMapRangeOnDataChange) {
         chart.dispatchAction({
           type: 'selectDataRange',

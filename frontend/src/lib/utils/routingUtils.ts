@@ -1,3 +1,8 @@
+import {
+  variableForPlaneOrFallback,
+  type SimulationPlanePreset
+} from '../simulation/simulationResultPlanesUtils'
+
 export interface ScenarioPickerParams {
   scenario: string | null
   plane: string | null
@@ -31,7 +36,8 @@ export function makePathToPlaneExplorer(params: PlaneExplorerPageParams) {
   if (!scenarios.includes('S0')) {
     scenarios.unshift('S0')
   }
-  return `/simulation/plane/explorer/${params.plane}/${params.time}/${params.variable}?scenarios=${encodeURIComponent(
+  const v = variableForPlaneOrFallback(params.plane as SimulationPlanePreset, params.variable)
+  return `/simulation/plane/explorer/${params.plane}/${params.time}/${v}?scenarios=${encodeURIComponent(
     scenarios.join(',')
   )}`
 }
@@ -54,8 +60,13 @@ export interface PlaneSingleExplorerPageParams {
 }
 
 export function makePathToPlaneSingleExplorer(params: PlaneSingleExplorerPageParams) {
+  const vars = new Set(
+    params.variables.map((v) =>
+      variableForPlaneOrFallback(params.plane as SimulationPlanePreset, v)
+    )
+  )
   return `/simulation/plane/single/${params.plane}/${params.time}/${params.scenario}?vars=${encodeURIComponent(
-    params.variables.join(',')
+    Array.from(vars).join(',')
   )}`
 }
 
@@ -78,9 +89,14 @@ export interface PlaneComparatorPageParams {
 }
 
 export function makePathToPlaneComparator(params: PlaneComparatorPageParams) {
+  const vars = new Set(
+    params.variables.map((v) =>
+      variableForPlaneOrFallback(params.plane as SimulationPlanePreset, v)
+    )
+  )
   return `/simulation/plane/comparator/${params.scenarioA}/${params.scenarioB ?? '_'}/${params.plane}/${
     params.time
-  }?vars=${encodeURIComponent(params.variables.join(','))}`
+  }?vars=${encodeURIComponent(Array.from(vars).join(','))}`
 }
 
 export function makePathToPlaneComparatorMerge(
@@ -100,13 +116,14 @@ export interface TimeSeriesExplorerParams {
 }
 
 export function makePathToTimeSeriesExplorer(params: TimeSeriesExplorerParams) {
+  const vars = new Set(params.variables.map((v) => variableForPointOrFallback(params.point, v)))
   const scenarios = [...params.scenarios]
   if (!scenarios.includes('S0')) {
     scenarios.unshift('S0')
   }
   return `/simulation/timeSeries/explorer/${
     params.point
-  }?vars=${encodeURIComponent(params.variables.join(','))}&scenarios=${encodeURIComponent(scenarios.join(','))}`
+  }?vars=${encodeURIComponent(Array.from(vars).join(','))}&scenarios=${encodeURIComponent(scenarios.join(','))}`
 }
 
 export function makePathToTimeSeriesExplorerMerge(
@@ -127,9 +144,10 @@ export interface TimeSeriesComparatorParams {
 }
 
 export function makePathToTimeSeriesComparator(params: TimeSeriesComparatorParams) {
+  const vars = new Set(params.variables.map((v) => variableForPointOrFallback(params.point, v)))
   return `/simulation/timeSeries/comparator/${params.scenarioA}/${params.scenarioB ?? '_'}/${
     params.point
-  }?vars=${encodeURIComponent(params.variables.join(','))}`
+  }?vars=${encodeURIComponent(Array.from(vars).join(','))}`
 }
 
 export function makePathToTimeSeriesComparatorMerge(
@@ -150,7 +168,7 @@ export interface TimeSeriesSingleExplorerParams {
 
 export function makePathToTimeSeriesSingleExplorer(params: TimeSeriesSingleExplorerParams) {
   return `/simulation/timeSeries/single/${params.scenario}/${params.point}?categories=${encodeURIComponent(
-    params.categories.join(',')
+    ensureAllCategoriesAreAvailableForPoint(params.point, params.categories).join(',')
   )}`
 }
 
@@ -162,4 +180,51 @@ export function makePathToTimeSeriesSingleExplorerMerge(
     ...oldParams,
     ...newParams
   })
+}
+
+export interface TimeSeriesDepthExplorerParams {
+  scenario: string
+  point: string
+  variables: string[]
+}
+
+export function makePathToTimeSeriesDepthExplorer(params: TimeSeriesDepthExplorerParams) {
+  const vars = new Set(params.variables.map((v) => variableForPointOrFallback(params.point, v)))
+  return `/simulation/timeSeries/depth/${params.scenario}/${params.point}?vars=${encodeURIComponent(
+    Array.from(vars).join(',')
+  )}`
+}
+
+export function makePathToTimeSeriesDepthExplorerMerge(
+  newParams: Partial<TimeSeriesDepthExplorerParams>,
+  oldParams: TimeSeriesDepthExplorerParams
+) {
+  return makePathToTimeSeriesDepthExplorer({
+    ...oldParams,
+    ...newParams
+  })
+}
+
+export function variableForPointOrFallback(point: string, variableSlug?: string): string {
+  const height = point.includes('underground') ? -1 : 1
+
+  if (height < 0) {
+    return 'SoilTemp'
+  }
+  if (variableSlug === 'SoilTemp') {
+    return 'T'
+  }
+  return variableSlug ?? 'T'
+}
+
+export function ensureAllCategoriesAreAvailableForPoint(
+  pointSlug: string,
+  categories: string[]
+): string[] {
+  const notAboveGround = ['heat_fluxes', 'sw_radiation_horizontal', 'lw_radiation']
+  if (!pointSlug.includes('ground')) {
+    return categories.filter((c) => !notAboveGround.includes(c))
+  }
+
+  return categories
 }

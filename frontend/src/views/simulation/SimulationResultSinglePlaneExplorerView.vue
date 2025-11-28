@@ -9,6 +9,7 @@ import { computed, onMounted, ref, watchEffect } from 'vue'
 import ToolSet from '@/components/ui/ToolSet.vue'
 import SimulationVariableList from '@/components/simulation/pickers/SimulationVariableList.vue'
 import SimulationResultPlaneHeatmap from '@/components/simulation/heatmap/SimulationResultPlaneHeatmap.vue'
+import { getPlaneAvailableHeightLevels } from '@/lib/simulation/simulationResultPlanesUtils'
 import { useRoute, useRouter } from 'vue-router'
 import {
   getSimulationPlaneAvailableTimeSlots,
@@ -147,6 +148,8 @@ function goToUpdatedParams(params: Partial<PlaneSingleExplorerPageParams>) {
           <simulation-variable-list
             :model-value="selectedVariables"
             :rename-wall-and-facade-to-roof="planeSlug === 'horizontal_building_canopy'"
+            :available-at="getPlaneAvailableHeightLevels(planeSlug)"
+            :omit-groups="['surface_level', 'building_data']"
             @update:model-value="goToUpdatedParams({ variables: $event })"
           />
         </template>

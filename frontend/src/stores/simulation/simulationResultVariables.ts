@@ -14,6 +14,7 @@ export interface SimulationResultVariable {
   emVarIdx: number
   grid_mapping: GridMapping
   available_at?: number[] // heights in meters where the variable is available
+  group?: string
   category_slug?: string
 }
 

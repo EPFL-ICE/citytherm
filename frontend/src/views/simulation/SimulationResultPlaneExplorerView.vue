@@ -11,6 +11,7 @@ import SimulationVariableRadioList from '@/components/simulation/pickers/Simulat
 import SimulationResultPlaneHeatmap from '@/components/simulation/heatmap/SimulationResultPlaneHeatmap.vue'
 import { useRoute, useRouter } from 'vue-router'
 import {
+  getPlaneAvailableHeightLevels,
   getSimulationPlaneAvailableTimeSlots,
   getSimulationPresetsForScenarioSlug,
   type SimulationPlanePreset,
@@ -206,6 +207,8 @@ watchEffect(() => {
           <simulation-variable-radio-list
             :model-value="variableSlug"
             :rename-wall-and-facade-to-roof="planeSlug === 'horizontal_building_canopy'"
+            :available-at="getPlaneAvailableHeightLevels(planeSlug)"
+            :omit-groups="['surface_level', 'building_data']"
             @update:model-value="goToUpdatedParams({ variable: $event })"
           />
         </template>

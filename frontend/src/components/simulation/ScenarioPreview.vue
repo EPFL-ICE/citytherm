@@ -7,7 +7,11 @@ import {
 } from '@/stores/simulation/scenarios'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
-import { createOscillatingPlaneMaterial, createSoilMaterial } from '@/lib/3d/materials'
+import {
+  createGroundMaterial,
+  createOscillatingPlaneMaterial,
+  createSoilMaterial
+} from '@/lib/3d/materials'
 import {
   createBuildingInstancedMesh,
   createObjectsGroup,
@@ -15,6 +19,7 @@ import {
   disposeObject3D
 } from '@/lib/3d/scenarioPreviewBuilders'
 import type { SimulationPlane } from '@/lib/simulation/simulationResultPlanesUtils'
+import { create } from 'lodash'
 
 const props = defineProps<{
   scenarioId: string
@@ -34,6 +39,7 @@ let controls: OrbitControls
 let scenario: ScenarioMap | null = null
 let buildings: THREE.InstancedMesh | null = null
 let soil: THREE.Mesh | null = null
+let ground: THREE.Mesh | null = null
 let plane: THREE.Mesh | null = null
 let objects: THREE.Group | null = null
 
@@ -101,6 +107,7 @@ watch(
     scenario = await scenarioStore.getScenarioMap(props.scenarioId)
 
     createSoil()
+    createGround()
     createBuildings()
     createObjects()
 
@@ -116,6 +123,10 @@ watch(
     if (newPlane === oldPlane) return
 
     createPlane()
+    if (ground?.material) {
+      ;(ground.material as THREE.ShaderMaterial).uniforms.uOpacity.value =
+        (props.plane?.position.y ?? 0) < 0 ? 0.5 : 1.0
+    }
   },
   { immediate: true }
 )
@@ -143,6 +154,8 @@ function createPlane() {
   if (props.plane.position.z !== undefined) mesh.position.z = props.plane.position.z
   scene.add(mesh)
 
+  mesh.renderOrder = 1
+
   plane = mesh
 }
 
@@ -160,6 +173,22 @@ function createSoil() {
   scene.add(mesh)
 
   soil = mesh
+}
+
+function createGround() {
+  if (!scenario?.soil) return
+  if (ground) {
+    scene.remove(ground)
+    disposeObject3D(ground)
+  }
+
+  const geometry = new THREE.BoxGeometry(sceneSize.x, 30, sceneSize.y, 1, 1, 1)
+
+  const mesh = new THREE.Mesh(geometry, createGroundMaterial())
+  mesh.position.y = -15.1
+  scene.add(mesh)
+
+  ground = mesh
 }
 
 // Create or update buildings
@@ -224,6 +253,7 @@ function makeTextSprite(
 
   canvas.width = textWidth
   canvas.height = fontSize * 1.2 // some padding
+  context.clearRect(0, 0, canvas.width, canvas.height)
 
   // Redraw with correct size
   context.font = `${fontSize}px ${fontFace}`
@@ -233,6 +263,7 @@ function makeTextSprite(
   const texture = new THREE.CanvasTexture(canvas)
   const material = new THREE.SpriteMaterial({ map: texture, transparent: true })
   const sprite = new THREE.Sprite(material)
+  sprite.renderOrder = 100
 
   // scale sprite so text isn't huge
   sprite.scale.set(canvas.width / 100, canvas.height / 100, 1)
