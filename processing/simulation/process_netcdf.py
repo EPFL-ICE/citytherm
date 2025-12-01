@@ -60,7 +60,7 @@ variable_categories = {
         ]
     },
     "facade": {
-        "name": "Facade Data",
+        "name": "Façade Data",
         "variables": [
             "$Fac_WallTempNode1Outside",
             "$Fac_WallSystemLWEmitted",
@@ -669,15 +669,15 @@ def hardcoded_overrides(variable_name: str, attrs: dict):
     elif variable_name == "$Fac_WallTempNode1Outside":
         attrs["long_name"] = "Wall Temperature"
     elif variable_name == "$Fac_WallSystemLWEmitted":
-        attrs["long_name"] = "Outgoing LW Radiation (Facade)"
+        attrs["long_name"] = "Outgoing LW Radiation (Façade)"
     elif variable_name == "$Fac_WallSystemSWReceived":
-        attrs["long_name"] = "Received SW Radiation (Facade)"
+        attrs["long_name"] = "Received SW Radiation (Façade)"
     elif variable_name == "$Fac_WallSystemSWDirAbsorbed":
         attrs["long_name"] = "Absorbed SW Radiation (Façade)"
     elif variable_name == "$Fac_WallSystemLWIncoming":
-        attrs["long_name"] = "Incoming LW Radiation (Facade)"
+        attrs["long_name"] = "Incoming LW Radiation (Façade)"
     elif variable_name == "$Fac_WallSystemSWReflected":
-        attrs["long_name"] = "Reflected SW Radiation (Facade)"
+        attrs["long_name"] = "Reflected SW Radiation (Façade)"
     elif variable_name == "$Fac_WallSystemSHTransCoeffOutside":
         attrs["long_name"] = "Convective Heat Transfer Coefficient"
     elif variable_name == "$Fac_WallSystemLWEnergyBalance":

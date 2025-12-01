@@ -19,7 +19,6 @@ export type SimulationPlanePreset =
   | 'vertical_mid_building'
   | 'horizontal_underground'
   | 'horizontal_underground_deep'
-  | 'horizontal_underground_deep'
   | 'vertical_mid_canyon_underground'
   | 'vertical_mid_building_underground'
 

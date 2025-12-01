@@ -73,26 +73,26 @@ function categorySubVariables(categorySlug: string | undefined): string {
           v-for="category in group.categories.filter((category) => !!category.categorySlug)"
           :key="category.categorySlug"
         >
-          <div v-if="group.categories.length > 1">
-            <v-checkbox
-              v-model="model"
-              :value="category.categorySlug"
-              density="comfortable"
-              :hide-details="true"
-              class="box-top"
-            >
-              <template #label>
-                <div class="ml-1">
-                  <div class="text-subtitle-1 font-weight-medium">
-                    {{ categoryName(category.categorySlug) }}
-                  </div>
-                  <div class="text-caption font-weight-light">
-                    {{ categorySubVariables(category.categorySlug) }}
+          <v-checkbox
+            v-model="model"
+            :value="category.categorySlug"
+            density="default"
+            :hide-details="true"
+            class="box-top mb-2"
+          >
+            <template #label>
+              <div class="ml-1 mt-1">
+                <div class="text-subtitle-1 font-weight-medium">
+                  {{ categoryName(category.categorySlug) }}
+                </div>
+                <div class="text-caption font-weight-light" style="line-height: 1.1;">
+                  <div v-for="v in variableAttributes?.categories[category.categorySlug ?? '']?.variables ?? []">
+                    {{ variableAttributes?.variables[v]?.long_name }}
                   </div>
                 </div>
-              </template>
-            </v-checkbox>
-          </div>
+              </div>
+            </template>
+          </v-checkbox>
         </template>
       </v-expansion-panel-text>
     </v-expansion-panel>

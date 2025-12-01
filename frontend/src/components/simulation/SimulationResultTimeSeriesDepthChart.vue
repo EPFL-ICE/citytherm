@@ -1,22 +1,15 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watchEffect } from 'vue'
+import { onMounted, ref, watchEffect } from 'vue'
 import {
   type SimulationResultVariable,
   useSimulationResultVariablesStore
 } from '@/stores/simulation/simulationResultVariables'
-import {
-  useSimulationResultTimeSeriesStore,
-  type SimulationResultTimeSeriesComparison,
-  type SimulationResultTimeSeriesMultiData
-} from '@/stores/simulation/simulationResultTimeSeries'
-import LineChart from '../charts/LineChart.vue'
 import DepthChart from '../charts/DepthChart.vue'
 import { useScenariosStore, type ScenarioDescription } from '@/stores/simulation/scenarios'
 import {
   useSimulationResultTimeSeriesDepthStore,
   type TimeSeriesDepthData
 } from '@/stores/simulation/simulationResultTimeSeriesDepth'
-import { time } from 'echarts'
 
 const props = defineProps<{
   scenario: string

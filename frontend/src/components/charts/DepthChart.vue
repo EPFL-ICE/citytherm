@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 import VChart from 'vue-echarts'
 import * as echarts from 'echarts/core'
 import { LineChart } from 'echarts/charts'

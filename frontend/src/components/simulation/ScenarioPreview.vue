@@ -2,7 +2,6 @@
 import { defineProps, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import {
   useScenariosStore,
-  type BuildingPart,
   type ScenarioMap
 } from '@/stores/simulation/scenarios'
 import * as THREE from 'three'
@@ -19,7 +18,6 @@ import {
   disposeObject3D
 } from '@/lib/3d/scenarioPreviewBuilders'
 import type { SimulationPlane } from '@/lib/simulation/simulationResultPlanesUtils'
-import { create } from 'lodash'
 
 const props = defineProps<{
   scenarioId: string
