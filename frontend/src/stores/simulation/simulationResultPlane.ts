@@ -55,7 +55,8 @@ async function fetchSimulationResultForScenarioPlaneTimeAndVariable(
   variableSlug: string
 ): Promise<SimulationResultPlaneData> {
   const response = await fetch(
-    `${cdnUrl}/simulation/scenarios/${scenarioSlug}/${variableSlug}/${timeSliceSlug}/${planeSlug}.json`
+    `${cdnUrl}/simulation/scenarios/${scenarioSlug}/${variableSlug}/${timeSliceSlug}/${planeSlug}.json`,
+    { cache: 'no-store' }
   )
   if (!response.ok) {
     throw new Error(`Failed to fetch simulation result: ${response.statusText}`)

@@ -40,7 +40,9 @@ export type ScenarioMap = {
 }
 
 async function fetchBuilding(key: string): Promise<BuildingMap> {
-  const response = await fetch(`${cdnUrl}/simulation/scenarios/${key}/buildingMap.json`)
+  const response = await fetch(`${cdnUrl}/simulation/scenarios/${key}/buildingMap.json`, {
+    cache: 'no-store'
+  })
   if (!response.ok) {
     throw new Error(`Failed to fetch building map: ${response.statusText}`)
   }
@@ -48,7 +50,9 @@ async function fetchBuilding(key: string): Promise<BuildingMap> {
 }
 
 async function fetchSoilMap(key: string): Promise<SoilMap> {
-  const response = await fetch(`${cdnUrl}/simulation/scenarios/${key}/soilMap.json`)
+  const response = await fetch(`${cdnUrl}/simulation/scenarios/${key}/soilMap.json`, {
+    cache: 'no-store'
+  })
   if (!response.ok) {
     throw new Error(`Failed to fetch soil map: ${response.statusText}`)
   }
@@ -56,7 +60,9 @@ async function fetchSoilMap(key: string): Promise<SoilMap> {
 }
 
 async function fetchObjectsMap(key: string): Promise<SimulationObjectMap> {
-  const response = await fetch(`${cdnUrl}/simulation/scenarios/${key}/objectsMap.json`)
+  const response = await fetch(`${cdnUrl}/simulation/scenarios/${key}/objectsMap.json`, {
+    cache: 'no-store'
+  })
   if (!response.ok) {
     throw new Error(`Failed to fetch objects map: ${response.statusText}`)
   }
@@ -96,7 +102,9 @@ export interface ScenarioCollection {
 }
 
 async function fetchScenarioDescriptions(): Promise<ScenarioCollection> {
-  const response = await fetch(`${cdnUrl}/simulation/scenarios/scenarios.json`)
+  const response = await fetch(`${cdnUrl}/simulation/scenarios/scenarios.json`, {
+    cache: 'no-store'
+  })
   if (!response.ok) {
     throw new Error(`Failed to fetch scenario descriptions: ${response.statusText}`)
   }
@@ -112,7 +120,9 @@ export interface TimeSeriesPoint {
 }
 
 async function fetchScenarioTimeSeriesPoints(scenario: string): Promise<TimeSeriesPoint[]> {
-  const response = await fetch(`${cdnUrl}/simulation/scenarios/${scenario}/timeSeriesPoints.json`)
+  const response = await fetch(`${cdnUrl}/simulation/scenarios/${scenario}/timeSeriesPoints.json`, {
+    cache: 'no-store'
+  })
   if (!response.ok) {
     throw new Error(`Failed to fetch scenario descriptions: ${response.statusText}`)
   }

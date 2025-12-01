@@ -2,10 +2,22 @@ html {
   overflow-y: auto;
 }
 
+.v-expansion-panel {
+  max-height: min-content !important;
+}
+
+.v-expansion-panel__shadow {
+  display: none !important;
+}
+
 .v-expansion-panel-title {
   padding-left: 16px !important;
 }
 
 .v-expansion-panel-text__wrapper {
   padding-left: 16px !important;
+}
+
+.box-top .v-checkbox-btn {
+  align-items: flex-start !important;
 }

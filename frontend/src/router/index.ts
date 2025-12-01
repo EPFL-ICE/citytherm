@@ -7,6 +7,7 @@ import SimulationResultPlaneComparatorView from '../views/simulation/SimulationR
 import SimulationResultTimeSeriesExplorer from '@/views/simulation/SimulationResultTimeSeriesExplorer.vue'
 import SimulationResultTimeSeriesComparator from '@/views/simulation/SimulationResultTimeSeriesComparator.vue'
 import SimulationResultTimeSeriesSingleExplorer from '@/views/simulation/SimulationResultTimeSeriesSingleExplorer.vue'
+import SimulationResultTimeSeriesDepthExplorer from '@/views/simulation/SimulationResultTimeSeriesDepthExplorer.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -50,6 +51,11 @@ const router = createRouter({
       path: '/simulation/timeSeries/single/:scenario/:point',
       name: 'simulation result time series single explorer',
       component: SimulationResultTimeSeriesSingleExplorer
+    },
+    {
+      path: '/simulation/timeSeries/depth/:scenario/:point',
+      name: 'simulation result time series depth explorer',
+      component: SimulationResultTimeSeriesDepthExplorer
     }
   ]
 })

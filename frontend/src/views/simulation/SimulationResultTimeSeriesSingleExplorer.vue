@@ -66,7 +66,7 @@ const explorerUrl = computed(() => {
 </script>
 
 <template>
-  <two-panes-layout title="Time Series Single Explorer" :disable-left-pane-padding="true">
+  <two-panes-layout title="Time Series Single" :disable-left-pane-padding="true">
     <template #subtitle>
       <v-btn :to="explorerUrl" :prepend-icon="mdiChevronLeft" color="primary" density="comfortable">
         Back to Explorer
@@ -86,6 +86,7 @@ const explorerUrl = computed(() => {
               :model-value="pointSlug"
               @update:model-value="goToUpdatedParams({ point: $event ?? undefined })"
               label="Time series point"
+              above-or-below-ground="above-only"
             />
           </div>
         </template>

@@ -11,7 +11,8 @@ import {
 } from './simulationVariablesPickersUtils'
 
 const props = defineProps<{
-  availableAt?: number
+  availableAt?: number | number[]
+  omitGroups?: string[]
   renameWallAndFacadeToRoof?: boolean
 }>()
 
@@ -33,9 +34,13 @@ const allVariables = computed<SluggedSimulationResultVariable[]>(() => {
 
 const groups = computed<SimulationVariableGroup[]>(() => {
   return groupSimulationVariablesByAvailableAt(allVariables.value, {
-    availableAt: props.availableAt,
+    availableAt: Array.isArray(props.availableAt)
+      ? props.availableAt
+      : props.availableAt !== undefined
+        ? [props.availableAt]
+        : undefined,
     renameWallAndFacadeToRoof: props.renameWallAndFacadeToRoof,
-    putPETandUTCIinCommonGroup: true
+    omitGroups: props.omitGroups
   })
 })
 
@@ -67,10 +72,10 @@ function categoryName(categorySlug: string | undefined): string {
                 <v-radio :value="variable.slug" density="comfortable" :hide-details="true">
                   <template #label>
                     <div class="text-body-1 ml-1">
-                      <span
-                        >{{ variable.long_name }}
-                        <span v-if="variable.units">({{ variable.units }})</span></span
-                      >
+                      <span>
+                        {{ variable.long_name }}
+                        <span v-if="variable.units">({{ variable.units }})</span>
+                      </span>
                     </div>
                   </template>
                 </v-radio>

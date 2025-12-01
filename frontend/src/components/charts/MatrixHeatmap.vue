@@ -131,7 +131,8 @@ const chartOptions = computed<EChartsOption>(() => {
             : getGraduationValue(val, props.axisY.cellSize) // convert 0–99 to meters
       },
       nameLocation: 'middle',
-      nameGap: 40
+      nameGap: 40,
+      inverse: props.axisY.inversed ?? false
     },
     visualMap: {
       min: props.overrideMinMax?.min ?? props.expectedValueRange?.min ?? 0,
@@ -201,7 +202,6 @@ watch(
 
     const chart = heatmapChart.value
     if (chart) {
-      console.log(chart)
       if (props.resetVisualMapRangeOnDataChange) {
         chart.dispatchAction({
           type: 'selectDataRange',

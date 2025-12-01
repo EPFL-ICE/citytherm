@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { defineProps, onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import {
-  useScenariosStore,
-  type BuildingPart,
-  type ScenarioMap
-} from '@/stores/simulation/scenarios'
+import { useScenariosStore, type ScenarioMap } from '@/stores/simulation/scenarios'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
-import { createOscillatingPlaneMaterial, createSoilMaterial } from '@/lib/3d/materials'
+import {
+  createGroundMaterial,
+  createOscillatingPlaneMaterial,
+  createSoilMaterial
+} from '@/lib/3d/materials'
 import {
   createBuildingInstancedMesh,
   createObjectsGroup,
@@ -34,6 +34,7 @@ let controls: OrbitControls
 let scenario: ScenarioMap | null = null
 let buildings: THREE.InstancedMesh | null = null
 let soil: THREE.Mesh | null = null
+let ground: THREE.Mesh | null = null
 let plane: THREE.Mesh | null = null
 let objects: THREE.Group | null = null
 
@@ -101,6 +102,7 @@ watch(
     scenario = await scenarioStore.getScenarioMap(props.scenarioId)
 
     createSoil()
+    createGround()
     createBuildings()
     createObjects()
 
@@ -116,6 +118,10 @@ watch(
     if (newPlane === oldPlane) return
 
     createPlane()
+    if (ground?.material) {
+      ;(ground.material as THREE.ShaderMaterial).uniforms.uOpacity.value =
+        (props.plane?.position.y ?? 0) < 0 ? 0.5 : 1.0
+    }
   },
   { immediate: true }
 )
@@ -143,6 +149,8 @@ function createPlane() {
   if (props.plane.position.z !== undefined) mesh.position.z = props.plane.position.z
   scene.add(mesh)
 
+  mesh.renderOrder = 1
+
   plane = mesh
 }
 
@@ -160,6 +168,22 @@ function createSoil() {
   scene.add(mesh)
 
   soil = mesh
+}
+
+function createGround() {
+  if (!scenario?.soil) return
+  if (ground) {
+    scene.remove(ground)
+    disposeObject3D(ground)
+  }
+
+  const geometry = new THREE.BoxGeometry(sceneSize.x, 10, sceneSize.y, 1, 1, 1)
+
+  const mesh = new THREE.Mesh(geometry, createGroundMaterial())
+  mesh.position.y = -5.1
+  scene.add(mesh)
+
+  ground = mesh
 }
 
 // Create or update buildings
@@ -224,6 +248,7 @@ function makeTextSprite(
 
   canvas.width = textWidth
   canvas.height = fontSize * 1.2 // some padding
+  context.clearRect(0, 0, canvas.width, canvas.height)
 
   // Redraw with correct size
   context.font = `${fontSize}px ${fontFace}`
@@ -233,6 +258,7 @@ function makeTextSprite(
   const texture = new THREE.CanvasTexture(canvas)
   const material = new THREE.SpriteMaterial({ map: texture, transparent: true })
   const sprite = new THREE.Sprite(material)
+  sprite.renderOrder = 100
 
   // scale sprite so text isn't huge
   sprite.scale.set(canvas.width / 100, canvas.height / 100, 1)
@@ -246,9 +272,11 @@ function createAxis(
   label: string,
   labelsColor: string,
   graduationStep = 20,
-  graduationOffset: THREE.Vector3 = new THREE.Vector3(0, 0, -5)
+  graduationOffset: THREE.Vector3 = new THREE.Vector3(0, 0, -5),
+  scale = 1
 ) {
   const group = new THREE.Group()
+  length *= scale
 
   const arrowX = createArrow(length, 1, color)
   group.add(arrowX)
@@ -257,10 +285,10 @@ function createAxis(
   xLabel.position.set(0, length / 2 + 5, 0)
   group.add(xLabel)
 
-  for (let i = graduationStep; i <= length; i += graduationStep) {
+  for (let i = graduationStep; i * scale <= length; i += graduationStep) {
     const tick = makeTextSprite(`${i}m`, { fontSize: 256, color: labelsColor })
     tick.rotation.z = -Math.PI / 2
-    tick.position.set(0, i - length / 2, 0).add(graduationOffset)
+    tick.position.set(0, i * scale - length / 2, 0).add(graduationOffset)
     group.add(tick)
   }
 
@@ -282,6 +310,19 @@ function createAxes() {
   const zAxis = createAxis(zHeight, 0x00ff00, 'Z', 'green', 10, new THREE.Vector3(-5, 0, -5))
   zAxis.position.set(-sceneSize.x / 2, zHeight / 2, -sceneSize.y / 2)
   scene.add(zAxis)
+
+  const undergroundZAxis = createAxis(
+    3,
+    0x00ff00,
+    'Z-',
+    'green',
+    0.5,
+    new THREE.Vector3(-5, 0, 5),
+    5
+  )
+  undergroundZAxis.rotation.x = Math.PI
+  undergroundZAxis.position.set(-sceneSize.x / 2, -7.5, -sceneSize.y / 2)
+  scene.add(undergroundZAxis)
 }
 
 function onResize() {
