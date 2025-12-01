@@ -88,7 +88,6 @@ function toggleFullCategoryInModel(
 }
 
 function categoryName(categorySlug: string | undefined): string {
-  console.log(variableAttributes.value?.categories)
   if (!variableAttributes.value || !categorySlug) return 'Uncategorized'
   return variableAttributes.value.categories[categorySlug]?.name || 'Uncategorized'
 }
