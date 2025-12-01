@@ -40,8 +40,6 @@ function getSubItems(where: 'plane' | 'timeSeries'): MenuItem[] {
     const plane = (route.params.plane as string) ?? 'horizontal_ground'
     const time = (route.params.time as string) ?? 'time_12'
 
-    console.log({ plane, time, scenarios, variables })
-
     return [
       {
         title: 'Explorer',

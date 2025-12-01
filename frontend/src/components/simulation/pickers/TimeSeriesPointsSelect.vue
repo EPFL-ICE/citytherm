@@ -20,7 +20,6 @@ watchEffect(() => {
 const filteredTimeSeriesPointsList = computed(() => {
   if (!timeSeriesPointsList.value) return []
 
-  console.log(props.aboveOrBelowGround)
   if (props.aboveOrBelowGround === 'above-only') {
     return timeSeriesPointsList.value.filter((v) => v.c[2] > 0)
   } else if (props.aboveOrBelowGround === 'below-only') {
