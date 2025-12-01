@@ -85,8 +85,11 @@ function categorySubVariables(categorySlug: string | undefined): string {
                 <div class="text-subtitle-1 font-weight-medium">
                   {{ categoryName(category.categorySlug) }}
                 </div>
-                <div class="text-caption font-weight-light" style="line-height: 1.1;">
-                  <div v-for="v in variableAttributes?.categories[category.categorySlug ?? '']?.variables ?? []">
+                <div class="text-caption font-weight-light" style="line-height: 1.1">
+                  <div
+                    v-for="v in variableAttributes?.categories[category.categorySlug ?? '']
+                      ?.variables ?? []"
+                  >
                     {{ variableAttributes?.variables[v]?.long_name }}
                   </div>
                 </div>
