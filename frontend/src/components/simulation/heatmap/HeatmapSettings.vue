@@ -119,7 +119,9 @@ const expectedValueRange = computed<ExpectedValueRange>(() => {
   flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
-  gap: 2rem;
+  gap: 0 2rem;
+
+  margin-bottom: 0.5rem;
 
   border-bottom: 1px solid lightgrey;
 }

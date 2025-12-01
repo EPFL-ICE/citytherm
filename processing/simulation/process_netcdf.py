@@ -27,7 +27,7 @@ variable_categories = {
         ]
     },
     "sw_radiation_horizontal": {
-        "name": "SW Radiation Horizontal",
+        "name": "SW Radiation",
         "variables": [
             "QSWDirHor",
             "QSWDiffHor",
@@ -42,6 +42,36 @@ variable_categories = {
             "QLWSumAllFluxes",
         ]
     },
+    "comfort": {
+        "name": "Comfort",
+        "variables": [
+            "UTCI",
+            "PET",
+        ]
+    },
+    "atmospheric": {
+        "name": "Atmospheric Data",
+        "variables": [
+            "T",
+            "RelHum",
+            "SpecHum",
+            "WindSpd",
+            "TMRT",
+        ]
+    },
+    "facade": {
+        "name": "Facade Data",
+        "variables": [
+            "$Fac_WallTempNode1Outside",
+            "$Fac_WallSystemLWEmitted",
+            "$Fac_WallSystemSWReceived",
+            "$Fac_WallSystemSWDirAbsorbed",
+            "$Fac_WallSystemLWIncoming",
+            "$Fac_WallSystemSWReflected",
+            "$Fac_WallSystemSHTransCoeffOutside",
+            "$Fac_WallSystemLWEnergyBalance",
+        ]
+    }
 }
 
 underground_level_variables = [
@@ -629,27 +659,29 @@ def hardcoded_overrides(variable_name: str, attrs: dict):
     elif variable_name == "QSWReflRecHor":
         attrs["long_name"] = "Reflected Received SW Radiation Horizontal"
     elif variable_name == "QLWEmit":
-        attrs["long_name"] = "LW Radiation Emitted"
+        attrs["long_name"] = "Outgoing LW Radiation"
     elif variable_name == "QLWBudget":
         attrs["long_name"] = "LW Radiation Budget"
     elif variable_name == "QLWSumAllFluxes":
-        attrs["long_name"] = "LW Radiation Sum All Fluxes"
+        attrs["long_name"] = "Incoming LW Radiation"
+    elif variable_name == "SoilHeatFlux":
+        attrs["long_name"] = "Ground Heat Flux"
     elif variable_name == "$Fac_WallTempNode1Outside":
         attrs["long_name"] = "Wall Temperature"
     elif variable_name == "$Fac_WallSystemLWEmitted":
-        attrs["long_name"] = "Emitted LW Radiation (Facade)"
+        attrs["long_name"] = "Outgoing LW Radiation (Facade)"
     elif variable_name == "$Fac_WallSystemSWReceived":
         attrs["long_name"] = "Received SW Radiation (Facade)"
     elif variable_name == "$Fac_WallSystemSWDirAbsorbed":
-        attrs["long_name"] = "SW Radiation Absorbed for the Specified Facade Direction Type"
+        attrs["long_name"] = "Absorbed SW Radiation (Façade)"
     elif variable_name == "$Fac_WallSystemLWIncoming":
         attrs["long_name"] = "Incoming LW Radiation (Facade)"
     elif variable_name == "$Fac_WallSystemSWReflected":
         attrs["long_name"] = "Reflected SW Radiation (Facade)"
     elif variable_name == "$Fac_WallSystemSHTransCoeffOutside":
-        attrs["long_name"] = "Sensible Heat Transmission Coefficient (Outside)"
+        attrs["long_name"] = "Convective Heat Transfer Coefficient"
     elif variable_name == "$Fac_WallSystemLWEnergyBalance":
-        attrs["long_name"] = "LW Energy Balance (Facade)"
+        attrs["long_name"] = "LW Radiation Budget (Façade)"
 
     return attrs
 
@@ -726,6 +758,10 @@ def get_plane_slicers_for_scenario(scenario: str):
     ]
 
 def get_underground_plane_slicers_for_scenario(scenario: str):
+    mid_building_x_per_scenario = {
+        "S1_2_Wide_Canyon": 73.0,
+    }
+
     return [
         {
             "slug": "horizontal_underground",
@@ -734,6 +770,18 @@ def get_underground_plane_slicers_for_scenario(scenario: str):
         {
             "slug": "horizontal_underground_deep",
             "slicer": lambda df: slice_xy_plane_at_z(df, 1.250),
+        },
+        {
+            "slug": "vertical_mid_canyon_underground",
+            "slicer": lambda df: slice_yz_plane_at_x(df, 99.0),
+            "index_column": "y",
+            "columns": "z",
+        },
+        {
+            "slug": "vertical_mid_canyon_underground_deep",
+            "slicer": lambda df: slice_yz_plane_at_x(df, mid_building_x_per_scenario.get(scenario, 79.0)),
+            "index_column": "y",
+            "columns": "z",
         },
     ]
 

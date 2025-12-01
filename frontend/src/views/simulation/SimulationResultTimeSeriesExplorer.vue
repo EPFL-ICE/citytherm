@@ -105,7 +105,7 @@ const singleExplorerUrl = computed(() => {
 </script>
 
 <template>
-  <two-panes-layout title="Time Series Data Explorer" :disable-left-pane-padding="true">
+  <two-panes-layout title="Time Series Explorer" :disable-left-pane-padding="true">
     <template #subtitle>
       <v-btn
         :to="planeExplorerUrl!"
@@ -144,6 +144,7 @@ const singleExplorerUrl = computed(() => {
           <div>
             <simulation-variable-list
               :model-value="selectedVariables"
+              :omit-categories="['sw_radiation']"
               :available-at="pointHeight"
               :rename-wall-and-facade-to-roof="(pointHeight ?? 0) >= 16"
               @update:model-value="goToUpdatedParams({ variables: $event })"

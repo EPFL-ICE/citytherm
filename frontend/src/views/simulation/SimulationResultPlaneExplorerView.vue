@@ -255,7 +255,7 @@ watchEffect(() => {
                 }"
               >
                 <h3
-                  class="px-4 py-2 d-flex align-center justify-space-between"
+                  class="px-4 pb-2 d-flex align-center justify-space-between"
                   style="max-width: 55vh"
                 >
                   <div class="d-flex align-center">

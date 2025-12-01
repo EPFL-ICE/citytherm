@@ -182,10 +182,10 @@ function createGround() {
     disposeObject3D(ground)
   }
 
-  const geometry = new THREE.BoxGeometry(sceneSize.x, 30, sceneSize.y, 1, 1, 1)
+  const geometry = new THREE.BoxGeometry(sceneSize.x, 10, sceneSize.y, 1, 1, 1)
 
   const mesh = new THREE.Mesh(geometry, createGroundMaterial())
-  mesh.position.y = -15.1
+  mesh.position.y = -5.1
   scene.add(mesh)
 
   ground = mesh
@@ -277,9 +277,11 @@ function createAxis(
   label: string,
   labelsColor: string,
   graduationStep = 20,
-  graduationOffset: THREE.Vector3 = new THREE.Vector3(0, 0, -5)
+  graduationOffset: THREE.Vector3 = new THREE.Vector3(0, 0, -5),
+  scale = 1
 ) {
   const group = new THREE.Group()
+  length *= scale
 
   const arrowX = createArrow(length, 1, color)
   group.add(arrowX)
@@ -288,10 +290,10 @@ function createAxis(
   xLabel.position.set(0, length / 2 + 5, 0)
   group.add(xLabel)
 
-  for (let i = graduationStep; i <= length; i += graduationStep) {
+  for (let i = graduationStep; i * scale <= length; i += graduationStep) {
     const tick = makeTextSprite(`${i}m`, { fontSize: 256, color: labelsColor })
     tick.rotation.z = -Math.PI / 2
-    tick.position.set(0, i - length / 2, 0).add(graduationOffset)
+    tick.position.set(0, i * scale - length / 2, 0).add(graduationOffset)
     group.add(tick)
   }
 
@@ -313,6 +315,19 @@ function createAxes() {
   const zAxis = createAxis(zHeight, 0x00ff00, 'Z', 'green', 10, new THREE.Vector3(-5, 0, -5))
   zAxis.position.set(-sceneSize.x / 2, zHeight / 2, -sceneSize.y / 2)
   scene.add(zAxis)
+
+  const undergroundZAxis = createAxis(
+    3,
+    0x00ff00,
+    'Z-',
+    'green',
+    0.5,
+    new THREE.Vector3(-5, 0, 5),
+    5
+  )
+  undergroundZAxis.rotation.x = Math.PI
+  undergroundZAxis.position.set(-sceneSize.x / 2, -7.5, -sceneSize.y / 2)
+  scene.add(undergroundZAxis)
 }
 
 function onResize() {

@@ -40,7 +40,8 @@ async function fetchSimulationResultTimeSeriesForScenarioVariableAndPoint(
   pointSlug: string
 ): Promise<TimeSeriesData> {
   const response = await fetch(
-    `${cdnUrl}/simulation/scenarios/${scenarioSlug}/${variableSlug}/timeSeries/${pointSlug}.json`
+    `${cdnUrl}/simulation/scenarios/${scenarioSlug}/${variableSlug}/timeSeries/${pointSlug}.json`,
+    { cache: 'no-store' }
   )
   if (!response.ok) {
     throw new Error(`Failed to fetch simulation result: ${response.statusText}`)

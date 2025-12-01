@@ -189,8 +189,9 @@ export interface TimeSeriesDepthExplorerParams {
 }
 
 export function makePathToTimeSeriesDepthExplorer(params: TimeSeriesDepthExplorerParams) {
-  const vars = new Set(params.variables.map((v) => variableForPointOrFallback(params.point, v)))
-  return `/simulation/timeSeries/depth/${params.scenario}/${params.point}?vars=${encodeURIComponent(
+  const p = pointGuardForDepth(params.point)
+  const vars = new Set(params.variables.map((v) => variableForPointOrFallback(p, v)))
+  return `/simulation/timeSeries/depth/${params.scenario}/${p}?vars=${encodeURIComponent(
     Array.from(vars).join(',')
   )}`
 }
@@ -203,6 +204,10 @@ export function makePathToTimeSeriesDepthExplorerMerge(
     ...oldParams,
     ...newParams
   })
+}
+
+export function pointGuardForDepth(point: string): string {
+  return point.includes('underground') ? point : 'urban_canyon_windward_underground'
 }
 
 export function variableForPointOrFallback(point: string, variableSlug?: string): string {

@@ -68,13 +68,13 @@ const chartOptions = computed<EChartsOption>(() => {
       nameLocation: 'middle',
       nameGap: 30,
       min: 15,
-      max: 35
+      max: 40
     },
     yAxis: {
       type: 'value',
       name: 'Depth (m)',
-      inverse: true,
-      max: 2
+      inverse: true
+      // max: 2
     },
     legend: {
       data: props.series.map((series) => series.name),

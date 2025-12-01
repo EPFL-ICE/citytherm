@@ -100,9 +100,9 @@ function areTrueCoordsDifferent(): boolean {
   width: 100%;
   min-width: 300px;
   max-width: 100%;
-  height: 600px;
-  min-height: 500px;
-  max-height: 50vh;
+  height: 90vh;
+  min-height: 700px;
+  max-height: 100vh;
 }
 
 .comparison-container {

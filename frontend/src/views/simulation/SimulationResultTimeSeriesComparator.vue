@@ -74,7 +74,7 @@ function selectedScenarios() {
 </script>
 
 <template>
-  <two-panes-layout title="Time Series Data Comparator" :disable-left-pane-padding="true">
+  <two-panes-layout title="Time Series Comparator" :disable-left-pane-padding="true">
     <template #subtitle>
       <v-btn :to="explorerUrl" :prepend-icon="mdiChevronLeft" color="primary" density="comfortable">
         Back to Explorer

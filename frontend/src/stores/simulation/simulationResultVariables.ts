@@ -36,7 +36,9 @@ export type SluggedVariableAttributes = {
 }
 
 async function fetchVariablesAttributes(): Promise<VariableAttributes> {
-  const response = await fetch(`${cdnUrl}/simulation/variablesAttributes.json`)
+  const response = await fetch(`${cdnUrl}/simulation/variablesAttributes.json`, {
+    cache: 'no-store'
+  })
   if (!response.ok) {
     throw new Error(`Failed to fetch variable attributes: ${response.statusText}`)
   }

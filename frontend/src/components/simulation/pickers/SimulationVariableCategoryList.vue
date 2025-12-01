@@ -41,14 +41,22 @@ const groups = computed<SimulationVariableGroup[]>(() => {
         : undefined,
     renameWallAndFacadeToRoof: props.renameWallAndFacadeToRoof,
     omitGroups: props.omitGroups
-  }).filter((g) => g.categories.some((c) => !!c.categorySlug))
+  })
 })
 
 const openedGroups = ref<number[]>([0])
 
 function categoryName(categorySlug: string | undefined): string {
+  console.log(variableAttributes.value?.categories)
   if (!variableAttributes.value || !categorySlug) return 'Uncategorized'
   return variableAttributes.value.categories[categorySlug]?.name || 'Uncategorized'
+}
+
+function categorySubVariables(categorySlug: string | undefined): string {
+  if (!variableAttributes.value || !categorySlug) return ''
+
+  const category = variableAttributes.value.categories[categorySlug]
+  return category.variables.map((v) => variableAttributes.value?.variables[v].long_name).join(', ')
 }
 </script>
 
@@ -72,10 +80,16 @@ function categoryName(categorySlug: string | undefined): string {
               :value="category.categorySlug"
               density="comfortable"
               :hide-details="true"
+              class="box-top"
             >
               <template #label>
-                <div class="text-subtitle-1 font-weight-medium ml-1">
-                  {{ categoryName(category.categorySlug) }}
+                <div class="ml-1">
+                  <div class="text-subtitle-1 font-weight-medium">
+                    {{ categoryName(category.categorySlug) }}
+                  </div>
+                  <div class="text-caption font-weight-light">
+                    {{ categorySubVariables(category.categorySlug) }}
+                  </div>
                 </div>
               </template>
             </v-checkbox>

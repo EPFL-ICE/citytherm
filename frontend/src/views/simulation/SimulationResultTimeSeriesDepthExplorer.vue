@@ -94,7 +94,7 @@ const singleExplorerUrl = makePathToTimeSeriesSingleExplorer({
 </script>
 
 <template>
-  <two-panes-layout title="Time Series Data Explorer" :disable-left-pane-padding="true">
+  <two-panes-layout title="Time Series Depth" :disable-left-pane-padding="true">
     <template #subtitle>
       <v-btn
         :to="planeExplorerUrl!"

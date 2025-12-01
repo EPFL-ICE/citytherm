@@ -103,7 +103,7 @@ function goToUpdatedParams(params: Partial<PlaneSingleExplorerPageParams>) {
 </script>
 
 <template>
-  <two-panes-layout title="Plane Data Single Explorer" :disable-left-pane-padding="true">
+  <two-panes-layout title="Plane Data Single" :disable-left-pane-padding="true">
     <template #subtitle>
       <v-btn :to="pickerUrl" :prepend-icon="mdiChevronLeft" color="primary" density="comfortable">
         Back to Scenarios
@@ -188,6 +188,7 @@ function goToUpdatedParams(params: Partial<PlaneSingleExplorerPageParams>) {
               :variable-slug="variable"
               :hide-individual-min-max="false"
               :force-flip="true"
+              class="mb-2"
             >
               <template #right-toolbar>
                 <v-btn
@@ -200,8 +201,9 @@ function goToUpdatedParams(params: Partial<PlaneSingleExplorerPageParams>) {
                     })
                   "
                   color="primary"
+                  class="my-2"
                 >
-                  Compare this variable across scenarios
+                  Compare variable across scenarios
                 </v-btn>
               </template>
               <template

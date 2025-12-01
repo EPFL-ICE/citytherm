@@ -13,6 +13,7 @@ export interface CategorizedSimulationVariableSubgroup {
 export interface GroupSimulationOptions {
   availableAt?: number[]
   omitGroups?: string[]
+  omitCategories?: string[]
   renameWallAndFacadeToRoof?: boolean
 }
 
@@ -25,15 +26,11 @@ export function groupSimulationVariablesByAvailableAt(
   variables: SluggedSimulationResultVariable[],
   options: GroupSimulationOptions
 ): SimulationVariableGroup[] {
-  console.log('==========================')
-  console.log(variables)
-  console.log(options)
   const grouped = new Map<string, SluggedSimulationResultVariable[]>()
   const groupsToOmit = options.omitGroups ?? []
   const filtered = options.availableAt
     ? variables.filter((variable) => hasOverlap(variable.available_at, options.availableAt))
     : variables
-  console.log(filtered)
   for (const variable of filtered) {
     const key = variable.group ?? 'parameters'
     if (!groupsToOmit.includes(key)) {
@@ -44,18 +41,20 @@ export function groupSimulationVariablesByAvailableAt(
     }
   }
 
-  console.log(grouped)
+  const categoriesToOmit = options.omitCategories ?? []
 
   return Array.from(grouped.entries()).map(([groupSlug, vars]) => ({
     groupName: groupSlugToDisplayName(groupSlug),
-    categories: divideGroupIntoCategories(vars)
+    categories: divideGroupIntoCategories(vars).filter(
+      (category) => !categoriesToOmit.includes(category.categorySlug ?? '')
+    )
   }))
 }
 
 function groupSlugToDisplayName(slug: string): string {
   const dict = {
     parameters: 'Parameters',
-    surface_level: 'Surface Level',
+    surface_level: 'Ground Data',
     building_data: 'Building Data',
     underground_level: 'Underground Level',
     thermal_comfort_indices: 'Thermal Comfort Indices'

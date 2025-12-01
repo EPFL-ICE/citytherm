@@ -82,7 +82,7 @@ export function getSimulationPlanePresetsForParameters(
       description: `A horizontal plane below ground level.`,
       plane: {
         rotation: { x: -Math.PI / 2 },
-        position: { x: 0, y: -0.2, z: 0 },
+        position: { x: 0, y: -0.2 * 5, z: 0 },
         size: { width: 205, height: 205 }
       }
     },
@@ -92,7 +92,7 @@ export function getSimulationPlanePresetsForParameters(
       description: `A horizontal plane deep below ground level.`,
       plane: {
         rotation: { x: -Math.PI / 2 },
-        position: { x: 0, y: -1, z: 0 },
+        position: { x: 0, y: -1 * 5, z: 0 },
         size: { width: 205, height: 205 }
       }
     },

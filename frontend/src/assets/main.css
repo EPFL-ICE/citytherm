@@ -17,3 +17,7 @@ html {
 .v-expansion-panel-text__wrapper {
   padding-left: 16px !important;
 }
+
+.box-top .v-checkbox-btn {
+  align-items: flex-start !important;
+}
