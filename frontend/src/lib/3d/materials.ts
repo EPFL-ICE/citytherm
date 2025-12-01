@@ -103,13 +103,41 @@ export function createSoilMaterial(): THREE.ShaderMaterial {
       }
     `,
     fragmentShader: `
-    varying vec3 vColor;
-    void main() {
-      gl_FragColor = vec4(vColor, 1.0);
-    }
-  `,
+      varying vec3 vColor;
+      void main() {
+        gl_FragColor = vec4(vColor, 1.0);
+      }
+    `,
     vertexColors: true,
-    side: THREE.DoubleSide
+    side: THREE.DoubleSide,
+    transparent: true,
+    depthWrite: true,
+    uniforms: {
+      uMinOpacity: { value: 0.7 }
+    }
+  })
+}
+
+export function createGroundMaterial(): THREE.ShaderMaterial {
+  // Custom shader material that picks color based on face normal
+  return new THREE.ShaderMaterial({
+    vertexShader: `
+      uniform float uOpacity;
+      void main() {
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }
+    `,
+    fragmentShader: `
+      uniform float uOpacity;
+      void main() {
+        gl_FragColor = vec4(0.6, 0.6, 0.6, uOpacity);
+      }
+    `,
+    transparent: true,
+    depthWrite: false,
+    uniforms: {
+      uOpacity: { value: 0.5 }
+    }
   })
 }
 
@@ -129,7 +157,7 @@ export function simulationSoilTypeCodeToColor(code: number): THREE.Color {
 export function createOscillatingPlaneMaterial(
   color = 0xdddd22,
   minOpacity = 0.4,
-  maxOpacity = 0.5,
+  maxOpacity = 0.6,
   speed = 3.0
 ) {
   const vertexShader = `

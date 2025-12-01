@@ -9,6 +9,7 @@ import TwoPanesLayout from '@/components/ui/TwoPanesLayout.vue'
 import { computed, onMounted, ref } from 'vue'
 import {
   getSimulationPresetsForScenarioSlug,
+  variableForPlaneOrFallback,
   type SimulationPlane,
   type SimulationPlanePreset,
   type SimulationPlanePresetsMap
@@ -70,7 +71,7 @@ const planeExplorerUrl = computed(() => {
     scenarios: scenariosSlug.value,
     plane: planeSlug.value,
     time: 'time_12',
-    variable: 'T'
+    variable: variableForPlaneOrFallback(planeSlug.value, 'T')
   })
 })
 
@@ -84,7 +85,7 @@ function getTooltipContent(scenario: ScenarioDescription): string {
     <template #left-pane>
       <tool-set>
         <template #default>
-          <v-expansion-panels multiple v-model="openedGroups">
+          <v-expansion-panels multiple v-model="openedGroups" flat>
             <v-list
               :selected="scenariosSlug"
               @update:selected="

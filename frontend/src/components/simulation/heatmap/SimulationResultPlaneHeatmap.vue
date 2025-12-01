@@ -115,6 +115,7 @@ const minMaxOverriddenValues = computed(() => {
 const graphAxes = computed<GraphAxes>(() => getGraphAxesForPlane(props.planeSlug))
 
 const graphAspectRatio = computed(() => {
+  if (graphAxes.value.y.valuesOverride && graphAxes.value.y.valuesOverride.length < 50) return 3
   return (
     (50 + graphAxes.value.x.max * graphAxes.value.x.cellSize) /
     (graphAxes.value.y.max * graphAxes.value.y.cellSize)

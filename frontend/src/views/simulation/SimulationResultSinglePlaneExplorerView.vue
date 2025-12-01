@@ -9,6 +9,7 @@ import { computed, onMounted, ref, watchEffect } from 'vue'
 import ToolSet from '@/components/ui/ToolSet.vue'
 import SimulationVariableList from '@/components/simulation/pickers/SimulationVariableList.vue'
 import SimulationResultPlaneHeatmap from '@/components/simulation/heatmap/SimulationResultPlaneHeatmap.vue'
+import { getPlaneAvailableHeightLevels } from '@/lib/simulation/simulationResultPlanesUtils'
 import { useRoute, useRouter } from 'vue-router'
 import {
   getSimulationPlaneAvailableTimeSlots,
@@ -102,7 +103,7 @@ function goToUpdatedParams(params: Partial<PlaneSingleExplorerPageParams>) {
 </script>
 
 <template>
-  <two-panes-layout title="Plane Data Single Explorer" :disable-left-pane-padding="true">
+  <two-panes-layout title="Plane Data Single" :disable-left-pane-padding="true">
     <template #subtitle>
       <v-btn :to="pickerUrl" :prepend-icon="mdiChevronLeft" color="primary" density="comfortable">
         Back to Scenarios
@@ -147,6 +148,8 @@ function goToUpdatedParams(params: Partial<PlaneSingleExplorerPageParams>) {
           <simulation-variable-list
             :model-value="selectedVariables"
             :rename-wall-and-facade-to-roof="planeSlug === 'horizontal_building_canopy'"
+            :available-at="getPlaneAvailableHeightLevels(planeSlug)"
+            :omit-groups="['surface_level', 'building_data']"
             @update:model-value="goToUpdatedParams({ variables: $event })"
           />
         </template>
@@ -185,6 +188,7 @@ function goToUpdatedParams(params: Partial<PlaneSingleExplorerPageParams>) {
               :variable-slug="variable"
               :hide-individual-min-max="false"
               :force-flip="true"
+              class="mb-2"
             >
               <template #right-toolbar>
                 <v-btn
@@ -197,8 +201,9 @@ function goToUpdatedParams(params: Partial<PlaneSingleExplorerPageParams>) {
                     })
                   "
                   color="primary"
+                  class="my-2"
                 >
-                  Compare this variable across scenarios
+                  Compare variable across scenarios
                 </v-btn>
               </template>
               <template

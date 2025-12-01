@@ -11,7 +11,9 @@ import {
 } from './simulationVariablesPickersUtils'
 
 const props = defineProps<{
-  availableAt?: number
+  availableAt?: number | number[]
+  omitGroups?: string[]
+  omitCategories?: string[]
   renameWallAndFacadeToRoof?: boolean
 }>()
 
@@ -45,9 +47,14 @@ const allVariables = computed<SluggedSimulationResultVariable[]>(() => {
 
 const groups = computed<SimulationVariableGroup[]>(() => {
   return groupSimulationVariablesByAvailableAt(allVariables.value, {
-    availableAt: props.availableAt,
+    availableAt: Array.isArray(props.availableAt)
+      ? props.availableAt
+      : props.availableAt !== undefined
+        ? [props.availableAt]
+        : undefined,
     renameWallAndFacadeToRoof: props.renameWallAndFacadeToRoof,
-    putPETandUTCIinCommonGroup: true
+    omitGroups: props.omitGroups,
+    omitCategories: props.omitCategories
   })
 })
 
@@ -98,28 +105,26 @@ function categoryName(categorySlug: string | undefined): string {
       <v-expansion-panel-text>
         <template v-for="category in group.categories" :key="category.categorySlug">
           <div class="mb-4">
-            <div v-if="group.categories.length > 1">
-              <v-checkbox
-                :model-value="
-                  numberOfCheckedInCategoryInModel(category.variables) === category.variables.length
-                "
-                :indeterminate="
-                  numberOfCheckedInCategoryInModel(category.variables) > 0 &&
-                  numberOfCheckedInCategoryInModel(category.variables) < category.variables.length
-                "
-                @update:model-value="
-                  (value) => toggleFullCategoryInModel(category.variables, !!value)
-                "
-                density="compact"
-                :hide-details="true"
-              >
-                <template #label>
-                  <div class="text-subtitle-1 font-weight-medium ml-1">
-                    {{ categoryName(category.categorySlug) }}
-                  </div>
-                </template>
-              </v-checkbox>
-            </div>
+            <v-checkbox
+              :model-value="
+                numberOfCheckedInCategoryInModel(category.variables) === category.variables.length
+              "
+              :indeterminate="
+                numberOfCheckedInCategoryInModel(category.variables) > 0 &&
+                numberOfCheckedInCategoryInModel(category.variables) < category.variables.length
+              "
+              @update:model-value="
+                (value) => toggleFullCategoryInModel(category.variables, !!value)
+              "
+              density="compact"
+              :hide-details="true"
+            >
+              <template #label>
+                <div class="text-subtitle-1 font-weight-medium ml-1">
+                  {{ categoryName(category.categorySlug) }}
+                </div>
+              </template>
+            </v-checkbox>
             <template v-for="variable in category.variables" :key="variable.slug">
               <div class="ml-3">
                 <v-checkbox

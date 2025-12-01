@@ -16,7 +16,8 @@ import {
   type TimeSeriesExplorerParams,
   makePathToTimeSeriesComparator,
   makePathToPlaneSingleExplorer,
-  makePathToTimeSeriesSingleExplorer
+  makePathToTimeSeriesSingleExplorer,
+  makePathToTimeSeriesDepthExplorer
 } from '@/lib/utils/routingUtils'
 import ScenarioMultiSelect from '@/components/simulation/pickers/ScenarioMultiSelect.vue'
 import { useScenariosStore, type TimeSeriesPoint } from '@/stores/simulation/scenarios'
@@ -87,15 +88,24 @@ const planeExplorerUrl = computed(() => {
   })
 })
 
-const singleExplorerUrl = makePathToTimeSeriesSingleExplorer({
-  scenario: selectedScenarios.value[0],
-  point: pointSlug.value,
-  categories: []
+const singleExplorerUrl = computed(() => {
+  if ((pointHeight.value ?? 0) < 0) {
+    return makePathToTimeSeriesDepthExplorer({
+      scenario: selectedScenarios.value[0],
+      point: pointSlug.value,
+      variables: []
+    })
+  }
+  return makePathToTimeSeriesSingleExplorer({
+    scenario: selectedScenarios.value[0],
+    point: pointSlug.value,
+    categories: []
+  })
 })
 </script>
 
 <template>
-  <two-panes-layout title="Time Series Data Explorer" :disable-left-pane-padding="true">
+  <two-panes-layout title="Time Series Explorer" :disable-left-pane-padding="true">
     <template #subtitle>
       <v-btn
         :to="planeExplorerUrl!"
@@ -126,7 +136,7 @@ const singleExplorerUrl = makePathToTimeSeriesSingleExplorer({
               Compare scenarios ({{ selectedScenarios.length }}/2)
             </v-btn>
             <v-btn :to="singleExplorerUrl" color="primary" variant="outlined">
-              Analyze single scenario
+              {{ (pointHeight ?? 0) < 0 ? 'Analyze depth values' : 'Analyze single scenario' }}
             </v-btn>
           </div>
         </template>
@@ -134,6 +144,7 @@ const singleExplorerUrl = makePathToTimeSeriesSingleExplorer({
           <div>
             <simulation-variable-list
               :model-value="selectedVariables"
+              :omit-categories="['sw_radiation']"
               :available-at="pointHeight"
               :rename-wall-and-facade-to-roof="(pointHeight ?? 0) >= 16"
               @update:model-value="goToUpdatedParams({ variables: $event })"

@@ -27,7 +27,7 @@ variable_categories = {
         ]
     },
     "sw_radiation_horizontal": {
-        "name": "SW Radiation Horizontal",
+        "name": "SW Radiation",
         "variables": [
             "QSWDirHor",
             "QSWDiffHor",
@@ -42,7 +42,41 @@ variable_categories = {
             "QLWSumAllFluxes",
         ]
     },
+    "comfort": {
+        "name": "Comfort",
+        "variables": [
+            "UTCI",
+            "PET",
+        ]
+    },
+    "atmospheric": {
+        "name": "Atmospheric Data",
+        "variables": [
+            "T",
+            "RelHum",
+            "SpecHum",
+            "WindSpd",
+            "TMRT",
+        ]
+    },
+    "facade": {
+        "name": "Façade Data",
+        "variables": [
+            "$Fac_WallTempNode1Outside",
+            "$Fac_WallSystemLWEmitted",
+            "$Fac_WallSystemSWReceived",
+            "$Fac_WallSystemSWDirAbsorbed",
+            "$Fac_WallSystemLWIncoming",
+            "$Fac_WallSystemSWReflected",
+            "$Fac_WallSystemSHTransCoeffOutside",
+            "$Fac_WallSystemLWEnergyBalance",
+        ]
+    }
 }
+
+underground_level_variables = [
+    "SoilTemp",
+]
 
 ground_level_variables = [
     "T",
@@ -95,7 +129,7 @@ def process_netcdf(scenario_name: str, input_directory: str, output_directory: s
     export_buildings_and_soil_maps_and_objects(scenario_name, ds, output_directory)
     print("Done processing building heights, soil types, and objects.", end="\n\n")
 
-    var_keys = ground_level_variables + surface_level_variables + building_data_variables
+    var_keys = underground_level_variables + ground_level_variables + surface_level_variables + building_data_variables
 
     print("Exporting variable attributes...")
     export_variable_attributes(var_keys, ds, output_directory)
@@ -108,6 +142,11 @@ def process_netcdf(scenario_name: str, input_directory: str, output_directory: s
     print("Exporting time series points list...") # defined in make_horizontal_time_series_points
     export_time_series_points_list(scenario_name, var_keys, output_directory)
     print("Done exporting time series points list.", end="\n\n")
+
+    print("Exporting depth time series points...")
+    depth_points = get_time_series_points_list(scenario_name, underground_level_variables)
+    export_depth_time_series_points(scenario_name, ds, depth_points, output_directory)
+    print("Done exporting depth time series points.", end="\n\n")
 
     print("Exporting time series points...")
     points = get_time_series_points_list(scenario_name, var_keys)
@@ -583,8 +622,15 @@ def hardcoded_overrides(variable_name: str, attrs: dict):
         attrs["available_at"] = [human_height]
     elif variable_name in surface_level_variables:
         attrs["available_at"] = [0.2]
+        attrs["group"] = "surface_level"
     elif variable_name in building_data_variables:
         attrs["available_at"] = [human_height, 17.0, 31.0]
+        attrs["group"] = "building_data"
+    elif variable_name in underground_level_variables:
+        attrs["available_at"] = [-0.25, -1.250]
+        attrs["group"] = "underground_level"
+    else:
+        attrs["available_at"] = [0.2, human_height, 17.0, 31.0]
 
     if variable_name == "T":
         attrs["long_name"] = "Air Temperature"
@@ -613,27 +659,29 @@ def hardcoded_overrides(variable_name: str, attrs: dict):
     elif variable_name == "QSWReflRecHor":
         attrs["long_name"] = "Reflected Received SW Radiation Horizontal"
     elif variable_name == "QLWEmit":
-        attrs["long_name"] = "LW Radiation Emitted"
+        attrs["long_name"] = "Outgoing LW Radiation"
     elif variable_name == "QLWBudget":
         attrs["long_name"] = "LW Radiation Budget"
     elif variable_name == "QLWSumAllFluxes":
-        attrs["long_name"] = "LW Radiation Sum All Fluxes"
+        attrs["long_name"] = "Incoming LW Radiation"
+    elif variable_name == "SoilHeatFlux":
+        attrs["long_name"] = "Ground Heat Flux"
     elif variable_name == "$Fac_WallTempNode1Outside":
         attrs["long_name"] = "Wall Temperature"
     elif variable_name == "$Fac_WallSystemLWEmitted":
-        attrs["long_name"] = "Emitted LW Radiation (Facade)"
+        attrs["long_name"] = "Outgoing LW Radiation (Façade)"
     elif variable_name == "$Fac_WallSystemSWReceived":
-        attrs["long_name"] = "Received SW Radiation (Facade)"
+        attrs["long_name"] = "Received SW Radiation (Façade)"
     elif variable_name == "$Fac_WallSystemSWDirAbsorbed":
-        attrs["long_name"] = "SW Radiation Absorbed for the Specified Facade Direction Type"
+        attrs["long_name"] = "Absorbed SW Radiation (Façade)"
     elif variable_name == "$Fac_WallSystemLWIncoming":
-        attrs["long_name"] = "Incoming LW Radiation (Facade)"
+        attrs["long_name"] = "Incoming LW Radiation (Façade)"
     elif variable_name == "$Fac_WallSystemSWReflected":
-        attrs["long_name"] = "Reflected SW Radiation (Facade)"
+        attrs["long_name"] = "Reflected SW Radiation (Façade)"
     elif variable_name == "$Fac_WallSystemSHTransCoeffOutside":
-        attrs["long_name"] = "Sensible Heat Transmission Coefficient (Outside)"
+        attrs["long_name"] = "Convective Heat Transfer Coefficient"
     elif variable_name == "$Fac_WallSystemLWEnergyBalance":
-        attrs["long_name"] = "LW Energy Balance (Facade)"
+        attrs["long_name"] = "LW Radiation Budget (Façade)"
 
     return attrs
 
@@ -650,7 +698,7 @@ def save_plane_slices_for_multiple_vars_at_multiple_times(scenario: str, ds, out
 
 def save_plane_slices_for_var_at_time(scenario: str, ds, output_directory: str, variable_slug="T", time_index=0):
     variable_at_time = get_variable_at_time(ds, variable_slug, time_index)
-    slicers = get_plane_slicers_for_scenario(scenario)
+    slicers = get_underground_plane_slicers_for_scenario(scenario) if variable_slug in underground_level_variables else get_plane_slicers_for_scenario(scenario)
 
     for slicer in slicers:
         sliced = slicer["slicer"](variable_at_time)
@@ -664,7 +712,7 @@ def save_plane_slices_for_var_at_time(scenario: str, ds, output_directory: str, 
 def get_variable_at_time(ds, variable_name, time_index=0):
     variable = ds.data_vars[variable_name]
     time_slice = variable.isel(Time=time_index)
-    df = time_slice.to_dataframe().reset_index().drop(columns=["Time"]).rename(columns={"GridsI": "x", "GridsJ": "y", "GridsK": "z", variable_name: "value"})
+    df = time_slice.to_dataframe().reset_index().drop(columns=["Time"]).rename(columns={"GridsI": "x", "GridsJ": "y", "GridsK": "z", "SoilLevels": "z", variable_name: "value"})
     return df
 
 def slice_xy_plane_at_z(df, z_value):
@@ -709,57 +757,59 @@ def get_plane_slicers_for_scenario(scenario: str):
         },
     ]
 
+def get_underground_plane_slicers_for_scenario(scenario: str):
+    mid_building_x_per_scenario = {
+        "S1_2_Wide_Canyon": 73.0,
+    }
+
+    return [
+        {
+            "slug": "horizontal_underground",
+            "slicer": lambda df: slice_xy_plane_at_z(df, 0.250),
+        },
+        {
+            "slug": "horizontal_underground_deep",
+            "slicer": lambda df: slice_xy_plane_at_z(df, 1.250),
+        },
+        {
+            "slug": "vertical_mid_canyon_underground",
+            "slicer": lambda df: slice_yz_plane_at_x(df, 99.0),
+            "index_column": "y",
+            "columns": "z",
+        },
+        {
+            "slug": "vertical_mid_canyon_underground_deep",
+            "slicer": lambda df: slice_yz_plane_at_x(df, mid_building_x_per_scenario.get(scenario, 79.0)),
+            "index_column": "y",
+            "columns": "z",
+        },
+    ]
 
 # Export time series points list
 
-def make_time_series_point(name: str, slug: str, coords: list[float], available_variables: list[str], corresponding_plane: str):
+def make_time_series_point(name: str, slug: str, coords: list[float], available_variables: list[str], depth_variables: list[str], corresponding_plane: str):
     return {
         "n": name,
         "s": slug,
         "c": coords,
         "v": available_variables,
+        "d": depth_variables,
         "p": corresponding_plane
     }
 
 def make_horizontal_time_series_points(variable_names: list[str], scenario_name: str):
-    """height_per_plane = [
-        {
-            "plane": "horizontal_ground",
-            "height": 0.2,
-            "available_variables": list(filter(lambda var: var not in building_data_variables, variable_names))
-        },
-        {
-            "plane": "horizontal_human_height",
-            "height": human_height,
-            "available_variables": list(filter(lambda var: var not in surface_level_variables, variable_names))
-        },
-        {
-            "plane": "horizontal_building_canopy",
-            "height": 31.0 if scenario_name == "S1_1_Tall_Canyon_Scenario" else 17.0,
-            "available_variables": list(filter(lambda var: var not in surface_level_variables, variable_names))
-        }
-    ]
-
-    xy_list = [
-        (118.0, 100.0),
-        (100.0, 118.0),
-        (118.0, 118.0),
-    ]
-
-    return [
-        make_time_series_point([x, y, plane["height"]], plane["available_variables"], plane["plane"])
-        for plane in height_per_plane
-        for (x, y) in xy_list
-    ]"""
-
     building_roof_height = 31.0 if scenario_name == "S1_1_Tall_Canyon_Scenario" else 17.0
 
     return [
-        make_time_series_point("Urban canyon, windward (0.2 m)", "urban_canyon_windward_ground", [118.0, 100.0, 0.2], list(filter(lambda var: var not in building_data_variables, variable_names)), "horizontal_ground"),
-        make_time_series_point("Urban canyon, leeward (0.2 m)", "urban_canyon_leeward_ground", [100.0, 118.0, 0.2], list(filter(lambda var: var not in building_data_variables, variable_names)), "horizontal_ground"),
-        make_time_series_point("Urban canyon, windward (1.4m)", "urban_canyon_windward_human_height", [118.0, 100.0, human_height], list(filter(lambda var: var not in surface_level_variables, variable_names)), "horizontal_human_height"),
-        make_time_series_point("Urban canyon, leeward (1.4m)", "urban_canyon_leeward_human_height", [100.0, 118.0, human_height], list(filter(lambda var: var not in surface_level_variables, variable_names)), "horizontal_human_height"),
-        make_time_series_point(f"Building roof ({building_roof_height} m)", "building_roof", [118.0, 118.0, building_roof_height], list(filter(lambda var: var not in surface_level_variables, variable_names)), "horizontal_building_canopy"),
+        make_time_series_point("Urban canyon, windward (0.2 m)", "urban_canyon_windward_ground", [118.0, 100.0, 0.2], list(filter(lambda var: (var not in building_data_variables and var not in underground_level_variables), variable_names)), [], "horizontal_ground"),
+        make_time_series_point("Urban canyon, leeward (0.2 m)", "urban_canyon_leeward_ground", [100.0, 118.0, 0.2], list(filter(lambda var: (var not in building_data_variables and var not in underground_level_variables), variable_names)), [], "horizontal_ground"),
+        make_time_series_point("Urban canyon, windward (1.4m)", "urban_canyon_windward_human_height", [118.0, 100.0, human_height], list(filter(lambda var: (var not in surface_level_variables and var not in underground_level_variables), variable_names)), [], "horizontal_human_height"),
+        make_time_series_point("Urban canyon, leeward (1.4m)", "urban_canyon_leeward_human_height", [100.0, 118.0, human_height], list(filter(lambda var: (var not in surface_level_variables and var not in underground_level_variables), variable_names)), [], "horizontal_human_height"),
+        make_time_series_point(f"Building roof ({building_roof_height} m)", "building_roof", [118.0, 118.0, building_roof_height], list(filter(lambda var: (var not in surface_level_variables and var not in underground_level_variables), variable_names)), [], "horizontal_building_canopy"),
+        make_time_series_point("Urban canyon, windward (-0.25 m)", "urban_canyon_windward_underground", [118.0, 100.0, -0.25], list(filter(lambda var: (var in underground_level_variables), variable_names)), underground_level_variables, "horizontal_underground"),
+        make_time_series_point("Urban canyon, leeward (-0.25 m)", "urban_canyon_leeward_underground", [100.0, 118.0, -0.25], list(filter(lambda var: (var in underground_level_variables), variable_names)), underground_level_variables, "horizontal_underground"),
+        make_time_series_point("Urban canyon, windward (-1.25 m)", "urban_canyon_windward_underground_deep", [118.0, 100.0, -1.25], list(filter(lambda var: (var in underground_level_variables), variable_names)), underground_level_variables, "horizontal_underground_deep"),
+        make_time_series_point("Urban canyon, leeward (-1.25 m)", "urban_canyon_leeward_underground_deep", [100.0, 118.0, -1.25], list(filter(lambda var: (var in underground_level_variables), variable_names)), underground_level_variables, "horizontal_underground_deep"),
     ]
 
 def get_time_series_points_list(scenario: str, variables: list[str]):
@@ -809,6 +859,9 @@ def get_single_time_series_point_for_var_and_coords_dataframe(ds, variable_name:
     if "GridsK" in variable.dims and len(coords) > 2:
         selection["GridsK"] = coords[2]
         columns_to_drop.append("GridsK")
+    elif "SoilLevels" in variable.dims and len(coords) > 2:
+        selection["SoilLevels"] = abs(coords[2])
+        columns_to_drop.append("SoilLevels")
 
     filtered = variable.where(variable.notnull(), drop=True) if filter_nan else variable
     point_data = filtered.sel(method="nearest", **selection)
@@ -823,6 +876,49 @@ def get_single_time_series_point_for_var_and_coords_dataframe(ds, variable_name:
     df.drop(columns=["Time"], inplace=True)
 
     return df, true_coords
+
+def export_depth_time_series_points(scenario: str, ds, points, output_directory: str):
+    for point in points:
+        coords = point["c"]
+        depth_variables = point["d"]
+        for variable_name in depth_variables:
+            print(f"Exporting depth time series for {variable_name} at {coords}")
+            record = get_depth_time_series_for_var_and_coords_dataframe(ds, variable_name, coords)
+            save_json_for_scenario(record, output_directory, scenario, f"{variable_name}/depthTimeSeries", point["s"])
+
+def get_depth_time_series_for_var_and_coords_dataframe(ds, variable_name: str, coords: list[float], filter_nan: bool = False):
+    x = coords[0] + 1.0 if coords[0] % 2 != 0 else coords[0]
+    y = coords[1] + 1.0 if coords[1] % 2 != 0 else coords[1]
+
+    variable = ds.data_vars[variable_name]
+
+    selection = {"GridsI": x, "GridsJ": y}
+    columns_to_drop = ["GridsI", "GridsJ"]
+
+    filtered = variable.where(variable.notnull(), drop=True) if filter_nan else variable
+    point_data = filtered.sel(method="nearest", **selection)
+    true_coords = {
+        "x": float(point_data["GridsI"].values),
+        "y": float(point_data["GridsJ"].values),
+        "z": float(point_data["GridsK"].values) if "GridsK" in point_data else None,
+    }
+
+    df = point_data.to_dataframe().reset_index().rename(columns={variable_name: "v"}).drop(columns=columns_to_drop)
+    depths = sorted(df["SoilLevels"].unique())
+    result = {
+        "requested_coords": {"x": coords[0], "y": coords[1]},
+        "true_coords": true_coords,
+        "depths_m": [float(d) for d in depths],
+        "data": [
+            {
+                "t": str(time),
+                "v": group["v"].tolist()
+            }
+            for time, group in df.groupby("Time")
+        ]
+    }
+    
+    return result
 
 # Utility functions
 

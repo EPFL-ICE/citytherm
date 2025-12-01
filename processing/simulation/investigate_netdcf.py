@@ -26,6 +26,9 @@ def explore_variable(variable_name):
     print(variable.dims)
     print(variable.shape)
     print(variable.isel(Time=0))
+    my_df = variable.sel(GridsI = 1.0, GridsJ = 1.0).to_dataframe()
+    print(my_df.head(29))
+    return
 
     values = variable.values.flatten()
     unique_values = np.unique(values)
@@ -75,7 +78,7 @@ def explore_variable(variable_name):
     print(df["GridsK"].unique())
 
 
-explore_variable("UTCI")
+explore_variable("SoilTemp")
 
 def prettify_unit(unit: str) -> str:
     unit_mappings = {

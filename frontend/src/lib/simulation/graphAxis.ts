@@ -7,6 +7,7 @@ export interface GraphAxis {
   min: number
   max: number
   valuesOverride?: number[]
+  inversed?: boolean
 }
 
 export interface GraphAxes {
@@ -33,9 +34,33 @@ const verticalPlaneYAxisOverride = [
   0, 0.4, 0.8, 1.2, 1.6, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40,
   42, 44, 46, 48, 50, 52, 54, 56, 58, 60, 62, 64, 66, 68, 70, 72, 74, 76
 ]
+const verticalUndergroundPlaneYAxisOverride = [
+  0.005, 0.015, 0.035, 0.05, 0.07, 0.09, 0.15, 0.25, 0.35, 0.45, 0.75, 1.25, 1.75, 2.25, 2.75, 3.25,
+  3.75, 4.5
+]
 
 export function getGraphAxesForPlane(planeSlug: string): GraphAxes {
   if (planeSlug.startsWith('vertical')) {
+    if (planeSlug.includes('underground')) {
+      return {
+        x: {
+          name: 'Y',
+          unit: 'm',
+          cellSize: 2,
+          min: 0,
+          max: 100
+        },
+        y: {
+          name: 'Z',
+          unit: 'm',
+          cellSize: 2,
+          min: 0,
+          max: 19,
+          valuesOverride: verticalUndergroundPlaneYAxisOverride,
+          inversed: true
+        }
+      }
+    }
     return {
       x: {
         name: 'Y',

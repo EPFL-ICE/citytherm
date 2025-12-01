@@ -11,7 +11,8 @@ import {
 } from './simulationVariablesPickersUtils'
 
 const props = defineProps<{
-  availableAt?: number
+  availableAt?: number | number[]
+  omitGroups?: string[]
   renameWallAndFacadeToRoof?: boolean
 }>()
 
@@ -33,9 +34,13 @@ const allVariables = computed<SluggedSimulationResultVariable[]>(() => {
 
 const groups = computed<SimulationVariableGroup[]>(() => {
   return groupSimulationVariablesByAvailableAt(allVariables.value, {
-    availableAt: props.availableAt,
+    availableAt: Array.isArray(props.availableAt)
+      ? props.availableAt
+      : props.availableAt !== undefined
+        ? [props.availableAt]
+        : undefined,
     renameWallAndFacadeToRoof: props.renameWallAndFacadeToRoof,
-    putPETandUTCIinCommonGroup: true
+    omitGroups: props.omitGroups
   })
 })
 
@@ -44,6 +49,13 @@ const openedGroups = ref<number[]>([0])
 function categoryName(categorySlug: string | undefined): string {
   if (!variableAttributes.value || !categorySlug) return 'Uncategorized'
   return variableAttributes.value.categories[categorySlug]?.name || 'Uncategorized'
+}
+
+function categorySubVariables(categorySlug: string | undefined): string {
+  if (!variableAttributes.value || !categorySlug) return ''
+
+  const category = variableAttributes.value.categories[categorySlug]
+  return category.variables.map((v) => variableAttributes.value?.variables[v].long_name).join(', ')
 }
 </script>
 
@@ -61,20 +73,29 @@ function categoryName(categorySlug: string | undefined): string {
           v-for="category in group.categories.filter((category) => !!category.categorySlug)"
           :key="category.categorySlug"
         >
-          <div v-if="group.categories.length > 1">
-            <v-checkbox
-              v-model="model"
-              :value="category.categorySlug"
-              density="comfortable"
-              :hide-details="true"
-            >
-              <template #label>
-                <div class="text-subtitle-1 font-weight-medium ml-1">
+          <v-checkbox
+            v-model="model"
+            :value="category.categorySlug"
+            density="default"
+            :hide-details="true"
+            class="box-top mb-2"
+          >
+            <template #label>
+              <div class="ml-1 mt-1">
+                <div class="text-subtitle-1 font-weight-medium">
                   {{ categoryName(category.categorySlug) }}
                 </div>
-              </template>
-            </v-checkbox>
-          </div>
+                <div class="text-caption font-weight-light" style="line-height: 1.1">
+                  <div
+                    v-for="v in variableAttributes?.categories[category.categorySlug ?? '']
+                      ?.variables ?? []"
+                  >
+                    {{ variableAttributes?.variables[v]?.long_name }}
+                  </div>
+                </div>
+              </div>
+            </template>
+          </v-checkbox>
         </template>
       </v-expansion-panel-text>
     </v-expansion-panel>
