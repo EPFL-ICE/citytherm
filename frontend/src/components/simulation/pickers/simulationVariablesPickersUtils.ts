@@ -15,6 +15,7 @@ export interface GroupSimulationOptions {
   omitGroups?: string[]
   omitCategories?: string[]
   renameWallAndFacadeToRoof?: boolean
+  putPETandUTCIinCommonGroup?: boolean
 }
 
 function hasOverlap(arr1: number[] | undefined, arr2: number[] | undefined): boolean {
