@@ -62,7 +62,7 @@ function groupSlugToDisplayName(slug: string): string {
   }
   return (
     dict[slug as keyof typeof dict] ||
-    slug.charAt(0).toUpperCase() + slug.slice(1).replaceAll('_', ' ')
+    slug.charAt(0).toUpperCase() + slug.slice(1).replace('_', ' ')
   )
 }
 
