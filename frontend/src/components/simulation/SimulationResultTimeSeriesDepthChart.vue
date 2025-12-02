@@ -120,7 +120,7 @@ const cutAt2m = ref(true)
         }"
         :series="
           timeSeries.data.map((dataPoint) => ({
-            name: new Date(dataPoint.t).toLocaleTimeString().slice(0, 5),
+            name: dataPoint.t.slice(11, 16),
             data: dataPoint.v.map((value, index) => [value, timeSeries!.depths_m[index]])
           }))
         "
