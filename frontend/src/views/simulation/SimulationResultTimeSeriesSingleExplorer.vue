@@ -94,6 +94,7 @@ const explorerUrl = computed(() => {
           <div>
             <simulation-variable-category-list
               ref="categorySelector"
+              :omit-categories="['sw_radiation']"
               :model-value="categories"
               :available-at="pointHeight"
               :rename-wall-and-facade-to-roof="(pointHeight ?? 0) >= 16"

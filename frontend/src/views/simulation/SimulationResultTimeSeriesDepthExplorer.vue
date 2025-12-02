@@ -5,22 +5,15 @@ import { computed, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import SimulationVariableList from '@/components/simulation/pickers/SimulationVariableList.vue'
 import SimulationResultTimeSeriesDepthChart from '@/components/simulation/SimulationResultTimeSeriesDepthChart.vue'
+import SimulationResultTimeSeriesMultiPointChart from '@/components/simulation/SimulationResultTimeSeriesMultiPointChart.vue'
 import ScenarioSelect from '@/components/simulation/pickers/ScenarioSelect.vue'
 import TimeSeriesPointsSelect from '@/components/simulation/pickers/TimeSeriesPointsSelect.vue'
 import ResultGrid from '@/components/ui/ResultGrid.vue'
 import {
-  makePathToPlaneComparator,
   makePathToPlaneExplorer,
-  makePathToTimeSeriesExplorerMerge,
-  makePathToTimeSeriesComparatorMerge,
-  type TimeSeriesExplorerParams,
-  makePathToTimeSeriesComparator,
-  makePathToPlaneSingleExplorer,
-  makePathToTimeSeriesSingleExplorer,
   makePathToTimeSeriesDepthExplorerMerge,
   type TimeSeriesDepthExplorerParams
 } from '@/lib/utils/routingUtils'
-import ScenarioMultiSelect from '@/components/simulation/pickers/ScenarioMultiSelect.vue'
 import { useScenariosStore, type TimeSeriesPoint } from '@/stores/simulation/scenarios'
 import { mdiChevronLeft } from '@mdi/js'
 
@@ -65,17 +58,6 @@ function goToUpdatedParams(params: Partial<TimeSeriesDepthExplorerParams>) {
 }
 
 const gridColumns = computed(() => Math.min(2, selectedVariables.value.length))
-/*
-const comparatorUrl = computed(() => {
-  if (selectedScenarios.value.length !== 2) return null
-  return makePathToTimeSeriesComparator({
-    point: pointSlug.value,
-    variables: selectedVariables.value,
-    scenarioA: selectedScenarios.value[0],
-    scenarioB: selectedScenarios.value[1]
-  })
-})
-*/
 const planeExplorerUrl = computed(() => {
   if (selectedVariables.value.length < 1) return null
   return makePathToPlaneExplorer({
@@ -85,12 +67,8 @@ const planeExplorerUrl = computed(() => {
     variable: selectedVariables.value[0]
   })
 })
-/*
-const singleExplorerUrl = makePathToTimeSeriesSingleExplorer({
-  scenario: selectedScenarios.value[0],
-  point: pointSlug.value,
-  categories: []
-})*/
+
+const chart = ref<'depth' | 'temporal'>('depth')
 </script>
 
 <template>
@@ -110,11 +88,17 @@ const singleExplorerUrl = makePathToTimeSeriesSingleExplorer({
       <tool-set>
         <template #header>
           <div class="pa-4">
+            <v-radio-group label="Chart" v-model="chart">
+              <v-radio label="Depth" value="depth"></v-radio>
+              <v-radio label="Temporal" value="temporal"></v-radio>
+            </v-radio-group>
             <time-series-points-select
               :model-value="pointSlug"
               @update:model-value="goToUpdatedParams({ point: $event ?? undefined })"
               label="Time series point"
               above-or-below-ground="below-only"
+              only-closest-to-surface
+              hide-height
             />
             <scenario-select
               :model-value="scenarioSlug"
@@ -146,9 +130,16 @@ const singleExplorerUrl = makePathToTimeSeriesSingleExplorer({
             :class="{ 'right-border': i % gridColumns < gridColumns - 1 && i < gridColumns - 1 }"
           >
             <simulation-result-time-series-depth-chart
+              v-if="chart === 'depth'"
               :scenario="scenarioSlug"
               :point-slug="pointSlug"
               :variable-slug="variable"
+            />
+            <simulation-result-time-series-multi-point-chart
+              v-else
+              :scenario="scenarioSlug"
+              :variable-slug="variable"
+              :point-slug="pointSlug"
             />
           </div>
         </result-grid>

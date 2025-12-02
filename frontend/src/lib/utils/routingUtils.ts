@@ -167,8 +167,9 @@ export interface TimeSeriesSingleExplorerParams {
 }
 
 export function makePathToTimeSeriesSingleExplorer(params: TimeSeriesSingleExplorerParams) {
-  return `/simulation/timeSeries/single/${params.scenario}/${params.point}?categories=${encodeURIComponent(
-    ensureAllCategoriesAreAvailableForPoint(params.point, params.categories).join(',')
+  const p = pointGuardForDepthAboveGround(params.point)
+  return `/simulation/timeSeries/single/${params.scenario}/${p}?categories=${encodeURIComponent(
+    ensureAllCategoriesAreAvailableForPoint(p, params.categories).join(',')
   )}`
 }
 
@@ -189,7 +190,7 @@ export interface TimeSeriesDepthExplorerParams {
 }
 
 export function makePathToTimeSeriesDepthExplorer(params: TimeSeriesDepthExplorerParams) {
-  const p = pointGuardForDepth(params.point)
+  const p = pointGuardForDepthUnderground(params.point)
   const vars = new Set(params.variables.map((v) => variableForPointOrFallback(p, v)))
   return `/simulation/timeSeries/depth/${params.scenario}/${p}?vars=${encodeURIComponent(
     Array.from(vars).join(',')
@@ -206,7 +207,11 @@ export function makePathToTimeSeriesDepthExplorerMerge(
   })
 }
 
-export function pointGuardForDepth(point: string): string {
+export function pointGuardForDepthAboveGround(point: string): string {
+  return point.includes('underground') ? 'urban_canyon_windward_ground' : point
+}
+
+export function pointGuardForDepthUnderground(point: string): string {
   return point.includes('underground') ? point : 'urban_canyon_windward_underground'
 }
 

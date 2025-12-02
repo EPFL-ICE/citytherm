@@ -6,7 +6,6 @@ import {
 } from '@/stores/simulation/simulationResultVariables'
 import {
   useSimulationResultTimeSeriesStore,
-  type SimulationResultTimeSeriesComparison,
   type SimulationResultTimeSeriesMultiData
 } from '@/stores/simulation/simulationResultTimeSeries'
 import LineChart from '../charts/LineChart.vue'

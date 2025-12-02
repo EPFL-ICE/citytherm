@@ -147,6 +147,7 @@ const codeToColor: { [key: number]: THREE.Color } = {
   2045: new THREE.Color().setRGB(0.6, 0.6, 0.6), // High albedo pavement
   2011: new THREE.Color().setRGB(0.8, 0.7, 0.5), // Sandy loam
   2018: new THREE.Color().setRGB(0.1, 0.5, 0.9), // Water reservoir
+  2020: new THREE.Color().setRGB(0.1, 0.5, 0.9), // Water reservoir also somehow
   3000: new THREE.Color().setRGB(0.05, 0.5, 0.1) // Grass
 } as const
 
