@@ -34,6 +34,11 @@ interface Series {
 const props = defineProps<{
   axisX: {
     name: string
+    overrideMinMax?: [number, number]
+  }
+  axisY?: {
+    name: string
+    overrideMinMax?: [number, number]
   }
   series: Series[]
 }>()
@@ -67,18 +72,19 @@ const chartOptions = computed<EChartsOption>(() => {
       name: props.axisX.name,
       nameLocation: 'middle',
       nameGap: 30,
-      min: 15,
-      max: 40
+      min: props.axisX.overrideMinMax ? props.axisX.overrideMinMax[0] : 15,
+      max: props.axisX.overrideMinMax ? props.axisX.overrideMinMax[1] : 40
     },
     yAxis: {
       type: 'value',
-      name: 'Depth (m)',
+      name: props.axisY ? props.axisY.name : 'Depth (m)',
+      min: props.axisY?.overrideMinMax ? props.axisY.overrideMinMax[0] : undefined,
+      max: props.axisY?.overrideMinMax ? props.axisY.overrideMinMax[1] : undefined,
       inverse: true
-      // max: 2
     },
     legend: {
       data: props.series.map((series) => series.name),
-      selected: Object.fromEntries(props.series.map((series, i) => [series.name, i % 4 === 0])),
+      selected: Object.fromEntries(props.series.map((series, i) => [series.name, i % 4 === 3])),
       top: '0',
       left: 'center',
       orient: 'horizontal'

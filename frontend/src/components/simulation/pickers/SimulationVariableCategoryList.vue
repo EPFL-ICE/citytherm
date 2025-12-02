@@ -13,6 +13,7 @@ import {
 const props = defineProps<{
   availableAt?: number | number[]
   omitGroups?: string[]
+  omitCategories?: string[]
   renameWallAndFacadeToRoof?: boolean
 }>()
 
@@ -40,7 +41,8 @@ const groups = computed<SimulationVariableGroup[]>(() => {
         ? [props.availableAt]
         : undefined,
     renameWallAndFacadeToRoof: props.renameWallAndFacadeToRoof,
-    omitGroups: props.omitGroups
+    omitGroups: props.omitGroups,
+    omitCategories: props.omitCategories
   })
 })
 
