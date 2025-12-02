@@ -32,7 +32,7 @@ async function fetchSimulationResultTimeSeriesDepthForScenarioVariableAndPoint(
   pointSlug: string
 ): Promise<TimeSeriesDepthData> {
   const response = await fetch(
-    `${cdnUrl}/simulation/scenarios/${scenarioSlug}/${variableSlug}/depthTimeSeries/${pointSlug}.json`,
+    `${cdnUrl}/simulation/scenarios/${scenarioSlug}/${variableSlug}/depthSeries/${pointSlug}.json`,
     { cache: 'no-store' }
   )
   if (!response.ok) {

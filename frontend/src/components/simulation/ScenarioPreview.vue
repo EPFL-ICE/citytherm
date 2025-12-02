@@ -312,16 +312,16 @@ function createAxes() {
   scene.add(zAxis)
 
   const undergroundZAxis = createAxis(
-    3,
+    2,
     0x00ff00,
-    'Z-',
+    '-Z',
     'green',
     0.5,
     new THREE.Vector3(-5, 0, 5),
     5
   )
   undergroundZAxis.rotation.x = Math.PI
-  undergroundZAxis.position.set(-sceneSize.x / 2, -7.5, -sceneSize.y / 2)
+  undergroundZAxis.position.set(-sceneSize.x / 2, -5, -sceneSize.y / 2)
   scene.add(undergroundZAxis)
 }
 

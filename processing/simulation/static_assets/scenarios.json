@@ -23,6 +23,10 @@
     "Group5": {
       "groupName": "Water Bodies",
       "scenarios": ["S5_1", "S5_2", "S5_3"]
+    },
+    "Group6": {
+      "groupName": "Combination Scenarios",
+      "scenarios": ["S6_1", "S6_2", "S6_3", "S6_4", "S6_5", "S6_6"]
     }
   },
   "scenarios": {
@@ -169,6 +173,60 @@
       "group": "Group5",
       "primaryAnalysisFocus": "Cooling from evaporation and the effect of water’s high thermal inertia.",
       "relevantLectures": ["L8"]
+    },
+    "S6_1": {
+      "id": "S6.1",
+      "slug": "S6_1",
+      "name": "Holistic Nature Based Solutions",
+      "description": "Combines S1.3 (Staggered) + S2.3 (Green Façades) + S3.3 (Grass) + S4.2 (Trees Betula) + S5.3 (Water Reservoir). Synergistic cooling from multiple nature-based solutions (evapotranspiration, shading) combined with enhanced ventilation from urban form.",
+      "group": "Group6",
+      "primaryAnalysisFocus": "Evaluate synergistic effects of combined vegetative, water, and form-based cooling strategies on air temperature and comfort.",
+      "relevantLectures": ["L6", "L7", "L8", "L9"]
+    },
+    "S6_2": {
+      "id": "S6.2",
+      "slug": "S6_2",
+      "name": "Cool Technologies",
+      "description": "Combines S1.3 (Staggered) + S2.1 (Painted Façades) + S3.1 (High Albedo Pavement) + S5.1 (Mist Nozzles). Synergistic impact of high-albedo surfaces (reducing Q*) and active evaporative cooling (misting), enhanced by improved ventilation.",
+      "group": "Group6",
+      "primaryAnalysisFocus": "Assess interaction between albedo-driven radiation reduction and active cooling through misting for urban heat mitigation.",
+      "relevantLectures": ["L6", "L7", "L8"]
+    },
+    "S6_3": {
+      "id": "S6.3",
+      "slug": "S6_3",
+      "name": "Green & Cool",
+      "description": "Combines S2.1 (Painted Façades) + S3.1 (High Albedo Pavement) + S4.3 (Trees Acer). Baseline S0 form. Interaction of albedo and shading. Examine if cool surfaces and tree shading complement or counteract each other.",
+      "group": "Group6",
+      "primaryAnalysisFocus": "Quantify the combined and competing cooling impacts of reflective surfaces and shading vegetation.",
+      "relevantLectures": ["L6", "L7", "L9"]
+    },
+    "S6_4": {
+      "id": "S6.4",
+      "slug": "S6_4",
+      "name": "Urban Oasis",
+      "description": "Combines S3.3 (Grass Cover) + S4.2 (Trees Betula) + S5.2 (Water Fountains). Baseline S0 form. Impact of localized evaporative cooling. Tests trade-off between significantly lower T_air and potentially high humidity.",
+      "group": "Group6",
+      "primaryAnalysisFocus": "Investigate the microclimatic trade-offs of dense vegetation and water elements on air temperature and humidity.",
+      "relevantLectures": ["L7", "L8", "L9"]
+    },
+    "S6_5": {
+      "id": "S6.5",
+      "slug": "S6_5",
+      "name": "Wide & Green",
+      "description": "Combines S1.2 (Wide Canyon) + S2.3 (Green Façades) + S4.3 (Trees Acer). Evaluates whether extensive greening can offset the solar access and heating associated with a wide canyon.",
+      "group": "Group6",
+      "primaryAnalysisFocus": "Analyze potential for greening measures to mitigate heating in highly exposed canyon geometries.",
+      "relevantLectures": ["L6", "L8", "L9"]
+    },
+    "S6_6": {
+      "id": "S6.6",
+      "slug": "S6_6",
+      "name": "Deep & Green",
+      "description": "Combines S1.1 (Tall Canyon) + S2.3 (Green Façades) + S3.3 (Grass Cover). Assesses whether green surfaces (walls, ground) can compensate for reduced ventilation and heat trapping in deep canyons.",
+      "group": "Group6",
+      "primaryAnalysisFocus": "Evaluate the cooling potential of vegetative surfaces in high-aspect-ratio urban canyons.",
+      "relevantLectures": ["L6", "L8", "L9"]
     }
   }
 }

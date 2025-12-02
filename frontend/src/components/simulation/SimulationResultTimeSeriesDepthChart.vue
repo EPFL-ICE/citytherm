@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, watchEffect } from 'vue'
+import { computed, onMounted, ref, watchEffect } from 'vue'
 import {
   type SimulationResultVariable,
   useSimulationResultVariablesStore
@@ -10,6 +10,7 @@ import {
   useSimulationResultTimeSeriesDepthStore,
   type TimeSeriesDepthData
 } from '@/stores/simulation/simulationResultTimeSeriesDepth'
+import { over } from 'lodash'
 
 const props = defineProps<{
   scenario: string
@@ -59,6 +60,23 @@ function areTrueCoordsDifferent(): boolean {
 
   return diffX > threshold || diffY > threshold
 }
+
+const inferMinMax = ref(false)
+const minMax = computed(() => {
+  if (!inferMinMax.value || !timeSeries.value) {
+    return null
+  }
+  let globalMin = Infinity
+  let globalMax = -Infinity
+  for (const dataPoint of timeSeries.value.data) {
+    for (const v of dataPoint.v) {
+      if (v < globalMin) globalMin = v
+      if (v > globalMax) globalMax = v
+    }
+  }
+  return { min: globalMin, max: globalMax }
+})
+const cutAt2m = ref(true)
 </script>
 
 <template>
@@ -67,11 +85,38 @@ function areTrueCoordsDifferent(): boolean {
     <h4 v-if="timeSeries.true_coords && areTrueCoordsDifferent()">
       True coordinates: (x: {{ timeSeries.true_coords.x }}, y: {{ timeSeries.true_coords.y }})
     </h4>
+    <div class="toolbar">
+      <div class="switches">
+        <v-switch
+          v-model="inferMinMax"
+          label="Infer min/max from data"
+          class="ml-4"
+          density="comfortable"
+          :hide-details="true"
+        />
+        <v-switch
+          v-model="cutAt2m"
+          label="Cut at 2m depth"
+          class="ml-4"
+          density="comfortable"
+          :hide-details="true"
+        />
+      </div>
+
+      <div class="switches">
+        <slot name="right-toolbar" />
+      </div>
+    </div>
 
     <div class="heatmap-container">
       <depth-chart
         :axis-x="{
-          name: 'Temperature (°C)'
+          name: 'Temperature (°C)',
+          overrideMinMax: minMax ? [minMax.min, minMax.max] : undefined
+        }"
+        :axis-y="{
+          name: 'Depth (m)',
+          overrideMinMax: cutAt2m ? [0, 2] : undefined
         }"
         :series="
           timeSeries.data.map((dataPoint) => ({
@@ -98,7 +143,21 @@ function areTrueCoordsDifferent(): boolean {
   max-height: 100vh;
 }
 
-.comparison-container {
-  height: 300px;
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0 2rem;
+
+  margin-bottom: 0.5rem;
+
+  border-bottom: 1px solid lightgrey;
+}
+.switches {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
 }
 </style>

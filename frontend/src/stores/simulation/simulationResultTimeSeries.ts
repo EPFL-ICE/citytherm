@@ -34,6 +34,18 @@ export type SimulationResultTimeSeriesMultiVariableData = {
   variables: Record<string, TimeSeriesDataPoint[]> // key is slug
 }
 
+export type TimeSeriesDepthDataPoint = {
+  d: number
+  v: number[]
+}
+
+export type SimulationResultTimeSeriesMultiPointData = {
+  requested_coords?: { x: number; y: number; z?: number }
+  true_coords?: { x: number; y: number; z: number | null }
+  times: string[]
+  data: TimeSeriesDepthDataPoint[]
+}
+
 async function fetchSimulationResultTimeSeriesForScenarioVariableAndPoint(
   scenarioSlug: string,
   variableSlug: string,
@@ -41,6 +53,21 @@ async function fetchSimulationResultTimeSeriesForScenarioVariableAndPoint(
 ): Promise<TimeSeriesData> {
   const response = await fetch(
     `${cdnUrl}/simulation/scenarios/${scenarioSlug}/${variableSlug}/timeSeries/${pointSlug}.json`,
+    { cache: 'no-store' }
+  )
+  if (!response.ok) {
+    throw new Error(`Failed to fetch simulation result: ${response.statusText}`)
+  }
+  return response.json()
+}
+
+async function fetchSimulationResultDepthTemporalVariationsForScenarioVariableAndPoint(
+  scenarioSlug: string,
+  variableSlug: string,
+  pointSlug: string
+): Promise<SimulationResultTimeSeriesMultiPointData> {
+  const response = await fetch(
+    `${cdnUrl}/simulation/scenarios/${scenarioSlug}/${variableSlug}/depthTemporalVariations/${pointSlug}.json`,
     { cache: 'no-store' }
   )
   if (!response.ok) {
@@ -106,11 +133,30 @@ function makeSlugForMultiVariableScenario(
   return makeCompositeKey([scenario, variables.join('-'), pointSlug])
 }
 
+function makeSlugForMultiPointScenario(
+  scenario: string,
+  variable: string,
+  pointSlugs: string[]
+): string {
+  return makeCompositeKey([scenario, variable, pointSlugs.join('-')])
+}
+
 // key is in the form `${scenarioSlug};${variableSlug};${pointSlug}`
 async function fetchSimulationResultTimeSeries(key: string): Promise<TimeSeriesData> {
   const [scenarioASlug, variableSlug, pointSlug] = parseCompositeKey(key)
   return fetchSimulationResultTimeSeriesForScenarioVariableAndPoint(
     scenarioASlug!,
+    variableSlug!,
+    pointSlug!
+  )
+}
+
+async function fetchSimulationResultTemporalVariations(
+  key: string
+): Promise<SimulationResultTimeSeriesMultiPointData> {
+  const [scenarioSlug, variableSlug, pointSlug] = parseCompositeKey(key)
+  return fetchSimulationResultDepthTemporalVariationsForScenarioVariableAndPoint(
+    scenarioSlug!,
     variableSlug!,
     pointSlug!
   )
@@ -204,6 +250,16 @@ export const useSimulationResultTimeSeriesStore = defineStore('simulationResultT
     }
   )
 
+  const simulationResultTimeSeriesMultiPointCache = new KeyedCache<
+    SimulationResultTimeSeriesMultiPointData,
+    Error
+  >(
+    // key is in the form `${scenario};${variableSlug};${pointSlugs}`
+    async (key: string) => {
+      return fetchSimulationResultTemporalVariations(key)
+    }
+  )
+
   async function getSimulationResultTimeSeries(
     scenarioASlug: string,
     scenarioBSlug: string | null,
@@ -235,9 +291,18 @@ export const useSimulationResultTimeSeriesStore = defineStore('simulationResultT
     )
   }
 
+  async function getSimulationResultMultiPointTimeSeries(
+    scenario: string,
+    variable: string,
+    pointSlug: string
+  ): Promise<SimulationResultTimeSeriesMultiPointData> {
+    return simulationResultTimeSeriesMultiPointCache.get(`${scenario};${variable};${pointSlug}`)
+  }
+
   return {
     getSimulationResultTimeSeries,
     getSimulationResultMultiTimeSeries,
-    getSimulationResultMultiVariableTimeSeries
+    getSimulationResultMultiVariableTimeSeries,
+    getSimulationResultMultiPointTimeSeries
   }
 })
