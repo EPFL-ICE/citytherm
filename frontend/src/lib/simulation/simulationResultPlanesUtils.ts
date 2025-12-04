@@ -114,7 +114,7 @@ export function getSimulationPlanePresetsForParameters(
         position: { x: midBuildingX, y: 35, z: 0 },
         size: { height: 70 }
       }
-    },
+    }
   }
 }
 
