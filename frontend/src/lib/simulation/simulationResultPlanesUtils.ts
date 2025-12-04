@@ -38,6 +38,26 @@ export function getSimulationPlanePresetsForParameters(
   midBuildingX: number
 ): SimulationPlanePresetsMap {
   return {
+    horizontal_underground: {
+      slug: 'horizontal_underground',
+      name: `Horizontal - Underground (-0.2m)`,
+      description: `A horizontal plane below ground level.`,
+      plane: {
+        rotation: { x: -Math.PI / 2 },
+        position: { x: 0, y: -0.2 * 5, z: 0 },
+        size: { width: 205, height: 205 }
+      }
+    },
+    horizontal_underground_deep: {
+      slug: 'horizontal_underground_deep',
+      name: `Horizontal - Underground Deep (-1m)`,
+      description: `A horizontal plane deep below ground level.`,
+      plane: {
+        rotation: { x: -Math.PI / 2 },
+        position: { x: 0, y: -1 * 5, z: 0 },
+        size: { width: 205, height: 205 }
+      }
+    },
     horizontal_ground: {
       slug: 'horizontal_ground',
       name: 'Horizontal - Ground',
@@ -59,42 +79,6 @@ export function getSimulationPlanePresetsForParameters(
         position: { x: 0, y: buildingCanopyHeight + 1, z: 0 }
       }
     },
-    vertical_mid_canyon: {
-      slug: 'vertical_mid_canyon',
-      name: 'Vertical - Mid Street Canyon',
-      description: 'A vertical plane cutting through the middle of a street canyon.',
-      plane: { rotation: { y: Math.PI / 2 }, position: { x: 0, y: 35, z: 0 }, size: { height: 70 } }
-    },
-    vertical_mid_building: {
-      slug: 'vertical_mid_building',
-      name: 'Vertical - Mid Building',
-      description: `A vertical plane cutting through the middle of a building.`,
-      plane: {
-        rotation: { y: Math.PI / 2 },
-        position: { x: midBuildingX, y: 35, z: 0 },
-        size: { height: 70 }
-      }
-    },
-    horizontal_underground: {
-      slug: 'horizontal_underground',
-      name: `Horizontal - Underground (-0.2m)`,
-      description: `A horizontal plane below ground level.`,
-      plane: {
-        rotation: { x: -Math.PI / 2 },
-        position: { x: 0, y: -0.2 * 5, z: 0 },
-        size: { width: 205, height: 205 }
-      }
-    },
-    horizontal_underground_deep: {
-      slug: 'horizontal_underground_deep',
-      name: `Horizontal - Underground Deep (-1m)`,
-      description: `A horizontal plane deep below ground level.`,
-      plane: {
-        rotation: { x: -Math.PI / 2 },
-        position: { x: 0, y: -1 * 5, z: 0 },
-        size: { width: 205, height: 205 }
-      }
-    },
     vertical_mid_canyon_underground: {
       slug: 'vertical_mid_canyon_underground',
       name: `Vertical - Mid Street Canyon Underground`,
@@ -114,7 +98,23 @@ export function getSimulationPlanePresetsForParameters(
         position: { x: midBuildingX, y: -5, z: 0 },
         size: { width: 205, height: 10 }
       }
-    }
+    },
+    vertical_mid_canyon: {
+      slug: 'vertical_mid_canyon',
+      name: 'Vertical - Mid Street Canyon',
+      description: 'A vertical plane cutting through the middle of a street canyon.',
+      plane: { rotation: { y: Math.PI / 2 }, position: { x: 0, y: 35, z: 0 }, size: { height: 70 } }
+    },
+    vertical_mid_building: {
+      slug: 'vertical_mid_building',
+      name: 'Vertical - Mid Building',
+      description: `A vertical plane cutting through the middle of a building.`,
+      plane: {
+        rotation: { y: Math.PI / 2 },
+        position: { x: midBuildingX, y: 35, z: 0 },
+        size: { height: 70 }
+      }
+    },
   }
 }
 
