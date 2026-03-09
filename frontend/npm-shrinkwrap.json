@@ -22,6 +22,7 @@
         "pinia": "^2.0.32",
         "pmtiles": "^3.0.5",
         "three": "^0.180.0",
+        "unwrapped": "^0.1.24",
         "vue": "^3.4.27",
         "vue-echarts": "^8.0.1",
         "vue-router": "^4.1.6",
@@ -12185,6 +12186,20 @@
       "integrity": "sha512-VLghIWNM6ELQzo7zwmcg0NmTVyWKYjvIeM83yjp0wRDTmUnrM678fQbcKBo6n2CJEF0szoG//ytg+TKla89ALQ==",
       "license": "MIT",
       "peer": true
+    },
+    "node_modules/unwrapped": {
+      "version": "0.1.25",
+      "resolved": "https://registry.npmjs.org/unwrapped/-/unwrapped-0.1.25.tgz",
+      "integrity": "sha512-FKG4VbMFYE+kSUHqqLjyb7oD4ULQPmpYsFY8FTYOT5/VWKPm6FodGYYcqpoG+KnJlw0rqUMQ+t0aj/e3uEwaAw==",
+      "license": "LGPL-3.0-or-later",
+      "peerDependencies": {
+        "vue": "^3.0.0"
+      },
+      "peerDependenciesMeta": {
+        "vue": {
+          "optional": true
+        }
+      }
     },
     "node_modules/upath": {
       "version": "2.0.1",

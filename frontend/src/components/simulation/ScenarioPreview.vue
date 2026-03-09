@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { defineProps, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useScenariosStore, type ScenarioMap } from '@/stores/simulation/scenarios'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import {
   createGroundMaterial,
-  createOscillatingPlaneMaterial,
+  createOscillatingMaterial,
   createSoilMaterial
 } from '@/lib/3d/materials'
 import {
@@ -18,7 +18,8 @@ import type { SimulationPlane } from '@/lib/simulation/simulationResultPlanesUti
 
 const props = defineProps<{
   scenarioId: string
-  plane: SimulationPlane | null
+  plane?: SimulationPlane | null
+  point?: { x: number; y: number; z: number } | null
 }>()
 
 const scenarioStore = useScenariosStore()
@@ -32,18 +33,23 @@ let camera: THREE.PerspectiveCamera
 let renderer: THREE.WebGLRenderer
 let controls: OrbitControls
 let scenario: ScenarioMap | null = null
+let axes: THREE.Group | null = null
 let buildings: THREE.InstancedMesh | null = null
 let soil: THREE.Mesh | null = null
 let ground: THREE.Mesh | null = null
 let plane: THREE.Mesh | null = null
+let point: THREE.Mesh | null = null
 let objects: THREE.Group | null = null
 
 const ready = ref(false)
 let loading = ref(true)
+let resizeObserver: ResizeObserver | null = null
 
 let updateCallbacks: Array<() => void> = []
 
-onMounted(() => {
+onMounted(async () => {
+  await nextTick() // need this to ensure the container is rendered and has correct dimensions before initializing the camera
+
   scene = new THREE.Scene()
   scene.background = new THREE.Color(0xffffff)
   scene.scale.z = -1 // Invert Z axis to have a right-handed coordinate system (Positive Z goes into the scene rather than out of it)
@@ -86,7 +92,10 @@ onMounted(() => {
   animate()
 
   // 💡 Handle resize
-  window.addEventListener('resize', onResize)
+  if (container.value) {
+    resizeObserver = new ResizeObserver(onResize)
+    resizeObserver.observe(container.value)
+  }
 
   ready.value = true
 })
@@ -113,7 +122,10 @@ watch(
 
 watch(
   () => [props.plane, ready.value],
-  (newPlane, oldPlane) => {
+  (newValue, oldValue) => {
+    const newPlane = newValue[0]
+    const oldPlane = oldValue?.[0] ?? null
+
     if (!ready.value) return
     if (newPlane === oldPlane) return
 
@@ -121,6 +133,24 @@ watch(
     if (ground?.material) {
       ;(ground.material as THREE.ShaderMaterial).uniforms.uOpacity.value =
         (props.plane?.position.y ?? 0) < 0 ? 0.5 : 1.0
+    }
+  },
+  { immediate: true }
+)
+
+watch(
+  () => [props.point, ready.value],
+  (newValue, oldValue) => {
+    const newPoint = newValue[0]
+    const oldPoint = oldValue?.[0] ?? null
+
+    if (!ready.value) return
+    if (newPoint === oldPoint) return
+
+    createPoint()
+    if (ground?.material) {
+      ;(ground.material as THREE.ShaderMaterial).uniforms.uOpacity.value =
+        (props.point?.y ?? 0) < 0 ? 0.5 : 1.0
     }
   },
   { immediate: true }
@@ -137,7 +167,7 @@ function createPlane() {
     props.plane.size?.width ?? 200,
     props.plane.size?.height ?? 200
   )
-  const material = createOscillatingPlaneMaterial()
+  const material = createOscillatingMaterial()
   const mesh = new THREE.Mesh(geometry, material)
 
   if (props.plane.rotation.x !== undefined) mesh.rotateX(props.plane.rotation.x)
@@ -152,6 +182,27 @@ function createPlane() {
   mesh.renderOrder = 1
 
   plane = mesh
+}
+
+function createPoint() {
+  if (!props.point) return
+  if (point) {
+    scene.remove(point)
+    disposeObject3D(point)
+  }
+
+  const geometry = new THREE.BoxGeometry(1, 1, 1)
+  const material = createOscillatingMaterial(0xff69b4, 0.8, 1)
+  const mesh = new THREE.Mesh(geometry, material)
+  scene.add(mesh)
+  console.log(props.point)
+
+  mesh.position.set(props.point.x - sceneSize.x / 2, props.point.z, props.point.y - sceneSize.y / 2) // Note: z is mapped to y because of the inverted coordinate system
+  mesh.scale.set(2, 2, 2)
+
+  mesh.renderOrder = 1
+
+  point = mesh
 }
 
 function createSoil() {
@@ -296,20 +347,22 @@ function createAxis(
 }
 
 function createAxes() {
+  axes = new THREE.Group()
+
   const xAxis = createAxis(sceneSize.x, 0xff0000, 'X', 'red')
   xAxis.rotation.z = -Math.PI / 2
   xAxis.position.set(0, 0, -sceneSize.y / 2)
-  scene.add(xAxis)
+  axes.add(xAxis)
 
   const yAxis = createAxis(sceneSize.y, 0x0000ff, 'Y', 'blue', 20, new THREE.Vector3(-5, 0, 0))
   yAxis.rotation.x = Math.PI / 2
   yAxis.position.set(-sceneSize.x / 2, 0, 0)
-  scene.add(yAxis)
+  axes.add(yAxis)
 
   const zHeight = 70
   const zAxis = createAxis(zHeight, 0x00ff00, 'Z', 'green', 10, new THREE.Vector3(-5, 0, -5))
   zAxis.position.set(-sceneSize.x / 2, zHeight / 2, -sceneSize.y / 2)
-  scene.add(zAxis)
+  axes.add(zAxis)
 
   const undergroundZAxis = createAxis(
     2,
@@ -322,24 +375,51 @@ function createAxes() {
   )
   undergroundZAxis.rotation.x = Math.PI
   undergroundZAxis.position.set(-sceneSize.x / 2, -5, -sceneSize.y / 2)
-  scene.add(undergroundZAxis)
+  axes.add(undergroundZAxis)
+
+  scene.add(axes)
 }
 
 function onResize() {
-  if (!container.value) return
+  if (!container.value || !renderer || !camera) return
 
   const width = container.value.clientWidth
   const height = container.value.clientHeight
+  if (width === 0 || height === 0) return
+
   camera.aspect = width / height
   camera.updateProjectionMatrix()
   renderer.setSize(width, height)
 }
 
 onBeforeUnmount(() => {
-  window.removeEventListener('resize', onResize)
-  renderer.dispose()
+  resizeObserver?.disconnect()
+  resizeObserver = null
+
   buildings?.geometry.dispose()
   soil?.geometry.dispose()
+
+  // Dispose scene objects
+  if (axes) {
+    axes.traverse((obj) => {
+      if (obj instanceof THREE.Sprite) {
+        const mat = obj.material as THREE.SpriteMaterial
+        mat.map?.dispose()
+        mat.dispose()
+      } else if (obj instanceof THREE.Mesh) {
+        obj.geometry?.dispose()
+        if (Array.isArray(obj.material)) {
+          obj.material.forEach((m) => m.dispose())
+        } else {
+          obj.material?.dispose()
+        }
+      }
+    })
+    scene.remove(axes)
+  }
+
+  renderer.dispose()
+  renderer.forceContextLoss()
 })
 </script>
 

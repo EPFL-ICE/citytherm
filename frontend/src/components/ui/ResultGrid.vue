@@ -39,5 +39,6 @@ const gridStyle = computed(() => ({
 .map-grid {
   display: grid;
   grid-auto-rows: 1fr;
+  height: 100%;
 }
 </style>

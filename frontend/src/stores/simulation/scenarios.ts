@@ -1,6 +1,8 @@
 import { cdnUrl } from '@/config/layerTypes'
 import { KeyedCache } from '@/lib/utils/cache'
 import { defineStore } from 'pinia'
+import { AsyncResult } from 'unwrapped/core'
+import { makeAsyncResultLoader, useAsyncResultRef } from 'unwrapped/vue'
 
 export interface BuildingPart {
   x: number
@@ -130,6 +132,7 @@ async function fetchScenarioTimeSeriesPoints(scenario: string): Promise<TimeSeri
 }
 
 export const useScenariosStore = defineStore('scenarios', () => {
+  const scenarios = useAsyncResultRef(AsyncResult.fromValuePromise(fetchScenarioDescriptions()))
   const scenarioDescriptionsCache = new KeyedCache<ScenarioCollection, Error>(
     fetchScenarioDescriptions
   )
@@ -183,6 +186,7 @@ export const useScenariosStore = defineStore('scenarios', () => {
   }
 
   return {
+    scenarios,
     getScenarioDescriptions,
     getScenarioMap,
     getScenarioDescriptionBySlug,
@@ -192,3 +196,6 @@ export const useScenariosStore = defineStore('scenarios', () => {
     getFullTimeSeriesPointFromSlugOrNull
   }
 })
+
+export const ScenarioCollectionLoader = makeAsyncResultLoader<ScenarioCollection>({})
+export const ScenarioDescriptionsLoader = makeAsyncResultLoader<ScenarioDescription[]>({})

@@ -1,13 +1,14 @@
+import ChartDesignerView from '@/views/designer/ChartDesignerView.vue'
+import SimulationResultTimeSeriesComparator from '@/views/simulation/SimulationResultTimeSeriesComparator.vue'
+import SimulationResultTimeSeriesDepthExplorer from '@/views/simulation/SimulationResultTimeSeriesDepthExplorer.vue'
+import SimulationResultTimeSeriesExplorer from '@/views/simulation/SimulationResultTimeSeriesExplorer.vue'
+import SimulationResultTimeSeriesSingleExplorer from '@/views/simulation/SimulationResultTimeSeriesSingleExplorer.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 import ComparisonView from '../views/ComparisonView.vue'
-import SimulationScenarioPickerView from '../views/simulation/SimulationScenarioPickerView.vue'
+import SimulationResultPlaneComparatorView from '../views/simulation/SimulationResultPlaneComparatorView.vue'
 import SimulationResultPlaneExplorerView from '../views/simulation/SimulationResultPlaneExplorerView.vue'
 import SimulationResultSinglePlaneExplorerView from '../views/simulation/SimulationResultSinglePlaneExplorerView.vue'
-import SimulationResultPlaneComparatorView from '../views/simulation/SimulationResultPlaneComparatorView.vue'
-import SimulationResultTimeSeriesExplorer from '@/views/simulation/SimulationResultTimeSeriesExplorer.vue'
-import SimulationResultTimeSeriesComparator from '@/views/simulation/SimulationResultTimeSeriesComparator.vue'
-import SimulationResultTimeSeriesSingleExplorer from '@/views/simulation/SimulationResultTimeSeriesSingleExplorer.vue'
-import SimulationResultTimeSeriesDepthExplorer from '@/views/simulation/SimulationResultTimeSeriesDepthExplorer.vue'
+import SimulationScenarioPickerView from '../views/simulation/SimulationScenarioPickerView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -56,6 +57,11 @@ const router = createRouter({
       path: '/simulation/timeSeries/depth/:scenario/:point',
       name: 'simulation result time series depth explorer',
       component: SimulationResultTimeSeriesDepthExplorer
+    },
+    {
+      path: '/designer',
+      name: 'Simulation chart designer',
+      component: ChartDesignerView
     }
   ]
 })
