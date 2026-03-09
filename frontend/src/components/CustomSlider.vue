@@ -13,7 +13,7 @@
 import noUiSlider, { PipsMode, type API } from 'nouislider'
 import 'nouislider/dist/nouislider.css'
 
-import { defineModel, onUnmounted, onMounted, ref } from 'vue'
+import { onUnmounted, onMounted, ref } from 'vue'
 
 const timecodes = [
   '2022-06-01_00:00:00',
