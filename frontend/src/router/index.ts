@@ -8,6 +8,7 @@ import SimulationResultTimeSeriesExplorer from '@/views/simulation/SimulationRes
 import SimulationResultTimeSeriesComparator from '@/views/simulation/SimulationResultTimeSeriesComparator.vue'
 import SimulationResultTimeSeriesSingleExplorer from '@/views/simulation/SimulationResultTimeSeriesSingleExplorer.vue'
 import SimulationResultTimeSeriesDepthExplorer from '@/views/simulation/SimulationResultTimeSeriesDepthExplorer.vue'
+import ChartDesignerView from '@/views/designer/ChartDesignerView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -56,6 +57,11 @@ const router = createRouter({
       path: '/simulation/timeSeries/depth/:scenario/:point',
       name: 'simulation result time series depth explorer',
       component: SimulationResultTimeSeriesDepthExplorer
+    },
+    {
+      path: '/designer',
+      name: 'Simulation chart designer',
+      component: ChartDesignerView
     }
   ]
 })

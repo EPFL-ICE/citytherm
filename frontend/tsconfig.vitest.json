@@ -3,6 +3,7 @@
   "exclude": [],
   "compilerOptions": {
     "composite": true,
+    "moduleResolution": "bundler",
     "lib": [],
     "types": ["node", "jsdom"]
   }

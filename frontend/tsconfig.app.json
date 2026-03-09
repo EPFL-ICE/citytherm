@@ -4,12 +4,12 @@
   "exclude": ["src/**/__tests__/*"],
   "compilerOptions": {
     "composite": true,
+    "moduleResolution": "bundler",
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
     },
     "preserveValueImports": false,
-    "importsNotUsedAsValues": "remove",
     "verbatimModuleSyntax": true,
     "lib": ["DOM", "ESNext"]
   }

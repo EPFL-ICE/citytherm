@@ -1,15 +1,11 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watchEffect } from 'vue'
 import {
-  type SimulationResultVariable,
-  type SluggedSimulationResultVariable,
   type SluggedVariableAttributes,
   useSimulationResultVariablesStore
 } from '@/stores/simulation/simulationResultVariables'
 import {
   useSimulationResultTimeSeriesStore,
-  type SimulationResultTimeSeriesComparison,
-  type SimulationResultTimeSeriesMultiData,
   type SimulationResultTimeSeriesMultiVariableData
 } from '@/stores/simulation/simulationResultTimeSeries'
 import LineChart from '../charts/LineChart.vue'
