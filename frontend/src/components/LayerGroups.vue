@@ -159,9 +159,7 @@ const globalInfo = `The aggregated data at a 250 m × 250 m grid size, visualize
 
 .visibility-toggle {
   opacity: 0.6;
-  transition:
-    opacity 0.2s ease,
-    transform 0.2s ease;
+  transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
 .visibility-toggle:hover {

@@ -3,10 +3,7 @@ import ScenarioPreview from '@/components/simulation/ScenarioPreview.vue'
 import TwoPanesLayoutSimple from '@/components/ui/TwoPanesLayoutSimple.vue'
 import ResultGrid from '@/components/ui/ResultGrid.vue'
 import ToolSet from '@/components/ui/ToolSet.vue'
-import {
-  useScenariosStore,
-  type TimeSeriesPoint
-} from '@/stores/simulation/scenarios'
+import { useScenariosStore, type TimeSeriesPoint } from '@/stores/simulation/scenarios'
 import { computed, ref, watchEffect } from 'vue'
 import type { GraphLocationRealm } from './graphKindPickerUtils'
 
@@ -27,11 +24,9 @@ const selectedPoint = computed<TimeSeriesPoint | null>(() => {
 })
 
 watchEffect(() => {
-  scenarioStore
-    .getAvailableTimeSeriesPointsForScenario(props.scenarioSlugs[0])
-    .then((tspl) => {
-      timeSeriesPointsList.value = tspl
-    })
+  scenarioStore.getAvailableTimeSeriesPointsForScenario(props.scenarioSlugs[0]).then((tspl) => {
+    timeSeriesPointsList.value = tspl
+  })
 })
 
 const filteredPoints = computed<TimeSeriesPoint[]>(() => {
@@ -53,8 +48,8 @@ const filteredPoints = computed<TimeSeriesPoint[]>(() => {
       groupedByXY[key].push(point)
     }
 
-    results = Object.values(groupedByXY).map((pts) =>
-      pts.sort((a, b) => Math.abs(a.c[2]) - Math.abs(b.c[2]))[0]
+    results = Object.values(groupedByXY).map(
+      (pts) => pts.sort((a, b) => Math.abs(a.c[2]) - Math.abs(b.c[2]))[0]
     )
   }
 
@@ -62,14 +57,14 @@ const filteredPoints = computed<TimeSeriesPoint[]>(() => {
 })
 
 function pointTitle(point: TimeSeriesPoint): string {
-  return props.hideHeight
-    ? point.n.slice(0, point.n.lastIndexOf('(')).trim()
-    : point.n
+  return props.hideHeight ? point.n.slice(0, point.n.lastIndexOf('(')).trim() : point.n
 }
 
 function pointSubtitle(point: TimeSeriesPoint): string {
   const xFlipped = 198 - point.c[0]
-  return `(x: ${xFlipped} ; y: ${point.c[1]}${props.hideHeight ? '' : ` ; z: ${point.c[2].toFixed(1)}`})`
+  return `(x: ${xFlipped} ; y: ${point.c[1]}${
+    props.hideHeight ? '' : ` ; z: ${point.c[2].toFixed(1)}`
+  })`
 }
 
 function handleSelectionUpdate(value: string[]) {
@@ -79,10 +74,7 @@ function handleSelectionUpdate(value: string[]) {
 </script>
 
 <template>
-  <two-panes-layout-simple
-    title="Pick a point"
-    :disable-left-pane-padding="true"
-  >
+  <two-panes-layout-simple title="Pick a point" :disable-left-pane-padding="true">
     <template #left-pane>
       <tool-set>
         <v-list
@@ -91,10 +83,7 @@ function handleSelectionUpdate(value: string[]) {
           @update:selected="handleSelectionUpdate"
           class="pt-0 w-100"
         >
-          <v-skeleton-loader
-            v-if="!timeSeriesPointsList"
-            type="list-item-two-line@6"
-          />
+          <v-skeleton-loader v-if="!timeSeriesPointsList" type="list-item-two-line@6" />
           <v-list-item
             v-else
             v-for="point in filteredPoints"
@@ -109,14 +98,16 @@ function handleSelectionUpdate(value: string[]) {
 
     <template #default>
       <template v-if="scenarioSlugs.length > 0">
-        <result-grid
-          :numColumns="Math.min(2, scenarioSlugs.length)"
-        >
+        <result-grid :numColumns="Math.min(2, scenarioSlugs.length)">
           <scenario-preview
             v-for="slug in scenarioSlugs"
             :key="slug"
             :scenarioId="slug"
-            :point="selectedPoint ? { x: selectedPoint.c[0], y: selectedPoint.c[1], z: selectedPoint.c[2] } : null"
+            :point="
+              selectedPoint
+                ? { x: selectedPoint.c[0], y: selectedPoint.c[1], z: selectedPoint.c[2] }
+                : null
+            "
           />
         </result-grid>
       </template>

@@ -50,8 +50,8 @@ const groups = computed<SimulationVariableGroup[]>(() => {
     availableAt: Array.isArray(props.availableAt)
       ? props.availableAt
       : props.availableAt !== undefined
-        ? [props.availableAt]
-        : undefined,
+      ? [props.availableAt]
+      : undefined,
     renameWallAndFacadeToRoof: props.renameWallAndFacadeToRoof,
     omitGroups: props.omitGroups,
     omitCategories: props.omitCategories

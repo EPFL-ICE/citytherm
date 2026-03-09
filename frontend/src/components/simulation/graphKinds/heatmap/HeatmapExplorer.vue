@@ -1,13 +1,8 @@
 <script setup lang="ts">
-import {
-  useScenariosStore,
-  ScenarioCollectionLoader
-} from '@/stores/simulation/scenarios'
+import { useScenariosStore, ScenarioCollectionLoader } from '@/stores/simulation/scenarios'
 import { computed, ref, watchEffect } from 'vue'
 import SimulationResultPlaneHeatmap from '@/components/simulation/heatmap/SimulationResultPlaneHeatmap.vue'
-import {
-  type SimulationPlanePreset,
-} from '@/lib/simulation/simulationResultPlanesUtils'
+import { type SimulationPlanePreset } from '@/lib/simulation/simulationResultPlanesUtils'
 import ResultGrid from '@/components/ui/ResultGrid.vue'
 import HeatmapSettings from '@/components/simulation/heatmap/HeatmapSettings.vue'
 import { useSimulationResultPlaneStore } from '@/stores/simulation/simulationResultPlane'
@@ -62,14 +57,12 @@ watchEffect(() => {
               v-for="(scenario, i) in props.scenarios"
               :key="scenario"
               :class="{
-                'right-border': i % gridColumns < gridColumns - 1,
+                'right-border': i % gridColumns < gridColumns - 1
               }"
             >
-              <h3
-                class="px-4 pb-2"
-                style="max-width: 55vh"
-              >
-                {{ allScenarios.scenarios[scenario]?.id }} - {{ allScenarios.scenarios[scenario]?.name }}
+              <h3 class="px-4 pb-2" style="max-width: 55vh">
+                {{ allScenarios.scenarios[scenario]?.id }} -
+                {{ allScenarios.scenarios[scenario]?.name }}
               </h3>
 
               <simulation-result-plane-heatmap

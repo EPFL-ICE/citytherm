@@ -37,9 +37,9 @@ export function makePathToPlaneExplorer(params: PlaneExplorerPageParams) {
     scenarios.unshift('S0')
   }
   const v = variableForPlaneOrFallback(params.plane as SimulationPlanePreset, params.variable)
-  return `/simulation/plane/explorer/${params.plane}/${params.time}/${v}?scenarios=${encodeURIComponent(
-    scenarios.join(',')
-  )}`
+  return `/simulation/plane/explorer/${params.plane}/${
+    params.time
+  }/${v}?scenarios=${encodeURIComponent(scenarios.join(','))}`
 }
 
 export function makePathToPlaneExplorerMerge(
@@ -65,9 +65,9 @@ export function makePathToPlaneSingleExplorer(params: PlaneSingleExplorerPagePar
       variableForPlaneOrFallback(params.plane as SimulationPlanePreset, v)
     )
   )
-  return `/simulation/plane/single/${params.plane}/${params.time}/${params.scenario}?vars=${encodeURIComponent(
-    Array.from(vars).join(',')
-  )}`
+  return `/simulation/plane/single/${params.plane}/${params.time}/${
+    params.scenario
+  }?vars=${encodeURIComponent(Array.from(vars).join(','))}`
 }
 
 export function makePathToPlaneSingleExplorerMerge(
@@ -94,9 +94,9 @@ export function makePathToPlaneComparator(params: PlaneComparatorPageParams) {
       variableForPlaneOrFallback(params.plane as SimulationPlanePreset, v)
     )
   )
-  return `/simulation/plane/comparator/${params.scenarioA}/${params.scenarioB ?? '_'}/${params.plane}/${
-    params.time
-  }?vars=${encodeURIComponent(Array.from(vars).join(','))}`
+  return `/simulation/plane/comparator/${params.scenarioA}/${params.scenarioB ?? '_'}/${
+    params.plane
+  }/${params.time}?vars=${encodeURIComponent(Array.from(vars).join(','))}`
 }
 
 export function makePathToPlaneComparatorMerge(
@@ -121,9 +121,9 @@ export function makePathToTimeSeriesExplorer(params: TimeSeriesExplorerParams) {
   if (!scenarios.includes('S0')) {
     scenarios.unshift('S0')
   }
-  return `/simulation/timeSeries/explorer/${
-    params.point
-  }?vars=${encodeURIComponent(Array.from(vars).join(','))}&scenarios=${encodeURIComponent(scenarios.join(','))}`
+  return `/simulation/timeSeries/explorer/${params.point}?vars=${encodeURIComponent(
+    Array.from(vars).join(',')
+  )}&scenarios=${encodeURIComponent(scenarios.join(','))}`
 }
 
 export function makePathToTimeSeriesExplorerMerge(

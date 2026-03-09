@@ -31,9 +31,7 @@ const gridColumns = computed(() => Math.min(3, props.variables.length))
         :hide-special-points="true"
         class="mb-2"
       >
-        <template
-          #default="{ expectedValueRange, inferMinMax, mode, showSpecialPoints, flipX }"
-        >
+        <template #default="{ expectedValueRange, inferMinMax, mode, showSpecialPoints, flipX }">
           <simulation-result-plane-heatmap
             :plane-slug="props.planeSlug"
             :variable-slug="variable"

@@ -58,9 +58,7 @@ function handleSelectionUpdate(value: SimulationPlanePreset[]) {
 
     <template #default>
       <template v-if="scenarioSlugs.length > 0">
-        <result-grid
-          :numColumns="Math.min(2, scenarioSlugs.length)"
-        >
+        <result-grid :numColumns="Math.min(2, scenarioSlugs.length)">
           <scenario-preview
             v-for="slug in scenarioSlugs"
             :key="slug"

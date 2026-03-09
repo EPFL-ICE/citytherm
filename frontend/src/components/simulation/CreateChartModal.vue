@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import ChartDesignerStepper from './ChartDesignerStepper.vue';
-import { mdiClose, mdiPlus } from '@mdi/js';
-import type { GraphKindDescription } from './pickers/graphKindPickerUtils';
-import type { SimulationPlanePreset } from '@/lib/simulation/simulationResultPlanesUtils';
-import { ref, watch } from 'vue';
+import ChartDesignerStepper from './ChartDesignerStepper.vue'
+import { mdiClose, mdiPlus } from '@mdi/js'
+import type { GraphKindDescription } from './pickers/graphKindPickerUtils'
+import type { SimulationPlanePreset } from '@/lib/simulation/simulationResultPlanesUtils'
+import { ref, watch } from 'vue'
 
 const open = defineModel({ default: false })
 
@@ -13,11 +13,19 @@ const plane = ref<SimulationPlanePreset | null>(null)
 const point = ref<string | null>(null)
 
 const emit = defineEmits<{
-  (e: 'create', payload: { graphKind: GraphKindDescription; scenarios: string[]; plane: SimulationPlanePreset | null; point: string | null }): void
+  (
+    e: 'create',
+    payload: {
+      graphKind: GraphKindDescription
+      scenarios: string[]
+      plane: SimulationPlanePreset | null
+      point: string | null
+    }
+  ): void
 }>()
 
 function handleCreate() {
-  if (!selectedGraphKind.value) return;
+  if (!selectedGraphKind.value) return
 
   emit('create', {
     graphKind: selectedGraphKind.value,
@@ -26,7 +34,7 @@ function handleCreate() {
     point: point.value
   })
 
-  open.value = false;
+  open.value = false
 }
 
 watch(open, (newVal, oldVal) => {
@@ -40,12 +48,7 @@ watch(open, (newVal, oldVal) => {
 </script>
 
 <template>
-  <v-dialog
-    v-model="open"
-    transition="dialog-bottom-transition"
-    fullscreen
-    scrollable
-  >
+  <v-dialog v-model="open" transition="dialog-bottom-transition" fullscreen scrollable>
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
         v-bind="activatorProps"
@@ -59,7 +62,7 @@ watch(open, (newVal, oldVal) => {
     </template>
 
     <v-card>
-      <v-card-text class="pa-0" style="height: 90vh;">
+      <v-card-text class="pa-0" style="height: 90vh">
         <chart-designer-stepper
           v-model:graphKind="selectedGraphKind"
           v-model:scenarios="scenarios"
@@ -68,11 +71,7 @@ watch(open, (newVal, oldVal) => {
           @create="handleCreate"
         >
           <template #header-left>
-            <v-btn
-              :icon="mdiClose"
-              @click="open = false"
-              class="ml-4"
-            ></v-btn>
+            <v-btn :icon="mdiClose" @click="open = false" class="ml-4"></v-btn>
             <div class="text-h6 pa-4 title">Create a new graph</div>
           </template>
         </chart-designer-stepper>
@@ -82,9 +81,7 @@ watch(open, (newVal, oldVal) => {
 </template>
 
 <style scoped>
-
 .title {
   min-width: 15rem;
 }
-
 </style>

@@ -3,7 +3,6 @@ const props = defineProps<{
   title: string
   disableLeftPanePadding?: boolean
 }>()
-
 </script>
 
 <template>

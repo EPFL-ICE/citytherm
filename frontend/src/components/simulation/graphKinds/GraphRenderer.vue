@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import HeatmapExplorer from './heatmap/HeatmapExplorer.vue'
-import HeatmapVariablesExplorer from './heatmap/HeatmapVariablesExplorer.vue';
-import HeatmapComparator from './heatmap/HeatmapComparator.vue';
-import TimeSeriesExplorer from './timeSeries/TimeSeriesExplorer.vue';
-import TimeSeriesCategoryExplorer from './timeSeries/TimeSeriesCategoryExplorer.vue';
-import TimeSeriesComparator from './timeSeries/TimeSeriesComparator.vue';
-import DepthExplorer from './timeSeries/DepthExplorer.vue';
-import type { GraphDesign } from '@/stores/simulation/graphs';
+import HeatmapVariablesExplorer from './heatmap/HeatmapVariablesExplorer.vue'
+import HeatmapComparator from './heatmap/HeatmapComparator.vue'
+import TimeSeriesExplorer from './timeSeries/TimeSeriesExplorer.vue'
+import TimeSeriesCategoryExplorer from './timeSeries/TimeSeriesCategoryExplorer.vue'
+import TimeSeriesComparator from './timeSeries/TimeSeriesComparator.vue'
+import DepthExplorer from './timeSeries/DepthExplorer.vue'
+import type { GraphDesign } from '@/stores/simulation/graphs'
 
 const props = defineProps<{
   graph: GraphDesign
@@ -36,7 +36,10 @@ const props = defineProps<{
       :variables="props.graph.variables"
     />
     <heatmap-comparator
-      v-if="props.graph.graphKindSlug === 'heatmap-compare-scenarios' && props.graph.scenarios.length > 1"
+      v-if="
+        props.graph.graphKindSlug === 'heatmap-compare-scenarios' &&
+        props.graph.scenarios.length > 1
+      "
       :scenario-a-slug="props.graph.scenarios[0]"
       :scenario-b-slug="props.graph.scenarios[1]"
       :plane-slug="props.graph.plane"
@@ -46,26 +49,36 @@ const props = defineProps<{
   </template>
   <template v-else-if="props.graph.point !== null">
     <time-series-explorer
-      v-if="props.graph.graphKindSlug === 'temporal-explore-data' && props.graph.scenarios.length > 0"
+      v-if="
+        props.graph.graphKindSlug === 'temporal-explore-data' && props.graph.scenarios.length > 0
+      "
       :scenarios="props.graph.scenarios"
       :point-slug="props.graph.point"
       :variables="props.graph.variables"
     />
     <time-series-category-explorer
-      v-if="props.graph.graphKindSlug === 'temporal-explore-categories' && props.graph.scenarios.length > 0"
+      v-if="
+        props.graph.graphKindSlug === 'temporal-explore-categories' &&
+        props.graph.scenarios.length > 0
+      "
       :scenario-slug="props.graph.scenarios[0]"
       :point-slug="props.graph.point"
       :categories="props.graph.variables"
     />
     <time-series-comparator
-      v-if="props.graph.graphKindSlug === 'temporal-compare-scenarios' && props.graph.scenarios.length > 1"
+      v-if="
+        props.graph.graphKindSlug === 'temporal-compare-scenarios' &&
+        props.graph.scenarios.length > 1
+      "
       :scenario-a-slug="props.graph.scenarios[0]"
       :scenario-b-slug="props.graph.scenarios[1]"
       :point-slug="props.graph.point"
       :variables="props.graph.variables"
     />
     <depth-explorer
-      v-if="props.graph.graphKindSlug === 'temporal-explore-depth' && props.graph.scenarios.length > 0"
+      v-if="
+        props.graph.graphKindSlug === 'temporal-explore-depth' && props.graph.scenarios.length > 0
+      "
       :scenario-slug="props.graph.scenarios[0]"
       :point-slug="props.graph.point"
       :variables="props.graph.variables"

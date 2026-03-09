@@ -58,7 +58,7 @@ onMounted(async () => {
   camera = new THREE.PerspectiveCamera(60, aspect, 0.1, 1000)
   camera.position.set(-80, 120, 180)
   camera.lookAt(0, 0, 0)
-  
+
   renderer = new THREE.WebGLRenderer({ antialias: true })
   renderer.setSize(container.value!.clientWidth, container.value!.clientHeight)
   container.value!.appendChild(renderer.domElement)
@@ -395,10 +395,10 @@ function onResize() {
 onBeforeUnmount(() => {
   resizeObserver?.disconnect()
   resizeObserver = null
-    
+
   buildings?.geometry.dispose()
   soil?.geometry.dispose()
-  
+
   // Dispose scene objects
   if (axes) {
     axes.traverse((obj) => {

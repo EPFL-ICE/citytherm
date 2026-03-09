@@ -51,18 +51,12 @@ function getTooltipContent(scenario: ScenarioDescription): string {
           class="pt-0 w-100"
         >
           <v-list-group
-            v-for="(group, index) in Object.values(
-              scenariosCollection?.groups || {}
-            )"
+            v-for="(group, index) in Object.values(scenariosCollection?.groups || {})"
             :key="index"
             :value="index"
           >
             <template #activator="{ props: groupProps }">
-              <v-list-item
-                v-bind="groupProps"
-                :title="group.groupName"
-                class="group-name"
-              />
+              <v-list-item v-bind="groupProps" :title="group.groupName" class="group-name" />
             </template>
 
             <v-list-item
@@ -84,9 +78,7 @@ function getTooltipContent(scenario: ScenarioDescription): string {
 
     <template #default>
       <template v-if="selectedSlugs.length > 0">
-        <result-grid
-          :numColumns="Math.min(2, selectedSlugs.length)"
-        >
+        <result-grid :numColumns="Math.min(2, selectedSlugs.length)">
           <scenario-preview
             v-for="slug in selectedSlugs"
             :key="slug"

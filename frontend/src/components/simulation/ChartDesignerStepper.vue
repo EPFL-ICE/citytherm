@@ -7,13 +7,21 @@ import { computed, ref } from 'vue'
 import type { SimulationPlanePreset } from '@/lib/simulation/simulationResultPlanesUtils'
 import type { GraphKindDescription } from './pickers/graphKindPickerUtils'
 
-const selectedGraphKind = defineModel<GraphKindDescription | null>("graphKind", { default: null })
-const scenarios = defineModel<string[]>("scenarios", { default: () => [] })
-const plane = defineModel<SimulationPlanePreset | null>("plane", { default: null })
-const point = defineModel<string | null>("point", { default: null })
+const selectedGraphKind = defineModel<GraphKindDescription | null>('graphKind', { default: null })
+const scenarios = defineModel<string[]>('scenarios', { default: () => [] })
+const plane = defineModel<SimulationPlanePreset | null>('plane', { default: null })
+const point = defineModel<string | null>('point', { default: null })
 
 const emit = defineEmits<{
-  (e: 'create', payload: { graphKind: GraphKindDescription; scenarios: string[]; plane: SimulationPlanePreset | null; point: string | null }): void
+  (
+    e: 'create',
+    payload: {
+      graphKind: GraphKindDescription
+      scenarios: string[]
+      plane: SimulationPlanePreset | null
+      point: string | null
+    }
+  ): void
 }>()
 
 const multipleScenarios = computed(() => selectedGraphKind.value?.multipleScenarios ?? false)
@@ -28,11 +36,11 @@ const planePointPickerStepName = computed(() => {
   return selectedGraphKind.value.locator === 'plane' ? 'Pick plane' : 'Pick point'
 })
 
-const currentStep = ref(1);
+const currentStep = ref(1)
 const disabled = computed(() => {
   if (currentStep.value === 1) {
     if (!selectedGraphKind.value) return true
-    return 'prev';
+    return 'prev'
   }
   if (currentStep.value === 2) {
     if (scenarios.value.length === 0) return 'next'
@@ -40,7 +48,7 @@ const disabled = computed(() => {
   if (currentStep.value === 3) {
     if (plane.value === null && point.value === null) return 'next'
   }
-  return false;
+  return false
 })
 
 const nextText = computed(() => {
@@ -60,14 +68,10 @@ function handleNext(next: () => void) {
     next()
   }
 }
-
 </script>
 
 <template>
-  <v-stepper
-    v-model="currentStep"
-    flat
-  >
+  <v-stepper v-model="currentStep" flat>
     <template v-slot:default="{ next, prev }">
       <v-stepper-header class="header">
         <slot name="header-left"></slot>
@@ -89,10 +93,7 @@ function handleNext(next: () => void) {
 
         <v-divider></v-divider>
 
-        <v-stepper-item
-          :title="planePointPickerStepName"
-          :value="3"
-        />
+        <v-stepper-item :title="planePointPickerStepName" :value="3" />
 
         <v-stepper-actions
           class="py-0"

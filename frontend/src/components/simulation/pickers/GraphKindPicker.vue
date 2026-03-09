@@ -1,5 +1,9 @@
 <script setup lang="ts">
-import { type GraphKindDescription, graphKindGroups, graphKindsDescriptions } from './graphKindPickerUtils';
+import {
+  type GraphKindDescription,
+  graphKindGroups,
+  graphKindsDescriptions
+} from './graphKindPickerUtils'
 
 const selectedGraphKind = defineModel<GraphKindDescription | null>({ default: null })
 </script>
@@ -18,12 +22,7 @@ const selectedGraphKind = defineModel<GraphKindDescription | null>({ default: nu
         v-slot="{ selectedClass, toggle }"
         :value="graphKindsDescriptions[kind]"
       >
-        <v-card
-          :class="['pa-4', selectedClass]"
-          dark
-          flat
-          @click="toggle"
-        >
+        <v-card :class="['pa-4', selectedClass]" dark flat @click="toggle">
           <div class="d-flex align-center">
             <v-icon :icon="graphKindsDescriptions[kind].icon" class="me-4" size="large" />
             <div>

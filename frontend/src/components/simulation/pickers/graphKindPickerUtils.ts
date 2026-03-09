@@ -1,4 +1,14 @@
-import { mdiChartTimelineVariant, mdiMapClock, mdiFormatListGroup, mdiChartMultiple, mdiDatabaseSearch, mdiCompass, mdiTuneVariant, mdiCompareHorizontal, mdiChartPpf } from '@mdi/js'
+import {
+  mdiChartMultiple,
+  mdiChartPpf,
+  mdiChartTimelineVariant,
+  mdiCompareHorizontal,
+  mdiCompass,
+  mdiDatabaseSearch,
+  mdiFormatListGroup,
+  mdiMapClock,
+  mdiTuneVariant
+} from '@mdi/js'
 
 export interface GraphKindDescription {
   name: string
@@ -8,7 +18,7 @@ export interface GraphKindDescription {
   slug: GraphKind
   multipleScenarios: boolean
   multipleVariables: boolean
-  locator: "plane" | "point"
+  locator: 'plane' | 'point'
   locationRealm: GraphLocationRealm
 }
 
@@ -20,7 +30,7 @@ export interface GraphKindGroup {
   kinds: GraphKind[]
 }
 
-export type GraphLocationRealm = "both" | "below-ground" | "above-ground"
+export type GraphLocationRealm = 'both' | 'below-ground' | 'above-ground'
 
 export type GraphKind = keyof typeof graphKindsDescriptions
 
@@ -34,7 +44,7 @@ export const graphKindsDescriptions = {
     multipleScenarios: true,
     multipleVariables: false,
     locator: 'plane',
-    locationRealm: "both"
+    locationRealm: 'both'
   },
   'heatmap-variables': {
     name: 'Explore variables',
@@ -45,7 +55,7 @@ export const graphKindsDescriptions = {
     multipleScenarios: false,
     multipleVariables: true,
     locator: 'plane',
-    locationRealm: "both"
+    locationRealm: 'both'
   },
   'heatmap-compare-scenarios': {
     name: 'Compare 2 scenarios',
@@ -56,7 +66,7 @@ export const graphKindsDescriptions = {
     multipleScenarios: true,
     multipleVariables: true,
     locator: 'plane',
-    locationRealm: "both"
+    locationRealm: 'both'
   },
   'temporal-explore-data': {
     name: 'Explore data',
@@ -67,7 +77,7 @@ export const graphKindsDescriptions = {
     multipleScenarios: true,
     multipleVariables: true,
     locator: 'point',
-    locationRealm: "both"
+    locationRealm: 'both'
   },
   'temporal-compare-scenarios': {
     name: 'Compare 2 scenarios',
@@ -78,7 +88,7 @@ export const graphKindsDescriptions = {
     multipleScenarios: true,
     multipleVariables: true,
     locator: 'point',
-    locationRealm: "above-ground"
+    locationRealm: 'above-ground'
   },
   'temporal-explore-categories': {
     name: 'Plot groups of variables',
@@ -89,7 +99,7 @@ export const graphKindsDescriptions = {
     multipleScenarios: false,
     multipleVariables: true,
     locator: 'point',
-    locationRealm: "above-ground"
+    locationRealm: 'above-ground'
   },
   'temporal-explore-depth': {
     name: 'Depth plot',
@@ -100,7 +110,7 @@ export const graphKindsDescriptions = {
     multipleScenarios: false,
     multipleVariables: false,
     locator: 'point',
-    locationRealm: "below-ground"
+    locationRealm: 'below-ground'
   }
 } as const
 
@@ -109,11 +119,7 @@ export const graphKindGroups: GraphKindGroup[] = [
     name: 'Heatmap (2D plane)',
     description: '',
     icon: mdiMapClock,
-    kinds: [
-      'heatmap-scenarios',
-      'heatmap-variables',
-      'heatmap-compare-scenarios'
-    ]
+    kinds: ['heatmap-scenarios', 'heatmap-variables', 'heatmap-compare-scenarios']
   },
   {
     name: 'Temporal (1D time series on one point)',

@@ -1,11 +1,14 @@
 <script setup lang="ts">
-import SimulationVariableRadioList from '../pickers/SimulationVariableRadioList.vue';
-import SimulationVariableList from '../pickers/SimulationVariableList.vue';
-import SimulationVariableCategoryList from '../pickers/SimulationVariableCategoryList.vue';
-import type { GraphDesign } from '@/stores/simulation/graphs';
-import { computed, ref, watch } from 'vue';
-import { getPlaneAvailableHeightLevels, getSimulationPlaneAvailableTimeSlots } from '@/lib/simulation/simulationResultPlanesUtils';
-import { useScenariosStore, type TimeSeriesPoint } from '@/stores/simulation/scenarios';
+import SimulationVariableRadioList from '../pickers/SimulationVariableRadioList.vue'
+import SimulationVariableList from '../pickers/SimulationVariableList.vue'
+import SimulationVariableCategoryList from '../pickers/SimulationVariableCategoryList.vue'
+import type { GraphDesign } from '@/stores/simulation/graphs'
+import { computed, ref, watch } from 'vue'
+import {
+  getPlaneAvailableHeightLevels,
+  getSimulationPlaneAvailableTimeSlots
+} from '@/lib/simulation/simulationResultPlanesUtils'
+import { useScenariosStore, type TimeSeriesPoint } from '@/stores/simulation/scenarios'
 
 const props = defineProps<{
   graph: GraphDesign
@@ -13,17 +16,16 @@ const props = defineProps<{
 
 const scenarioStore = useScenariosStore()
 
-const varsKind = computed<"single" | "multiple" | "categories">(() => {
+const varsKind = computed<'single' | 'multiple' | 'categories'>(() => {
   if (props.graph.graphKindSlug === 'heatmap-scenarios') {
-    return "single"
+    return 'single'
   }
   if (props.graph.graphKindSlug === 'temporal-explore-categories') {
-    return "categories"
+    return 'categories'
   }
 
-  return "multiple"
+  return 'multiple'
 })
-
 
 const point = ref<TimeSeriesPoint | null>(null)
 watch(
@@ -61,14 +63,10 @@ const shouldDisplayTime = computed(() => {
   return props.graph.plane !== null
 })
 const availableTimeSlots = computed(() => getSimulationPlaneAvailableTimeSlots())
-
 </script>
 
 <template>
-  <div
-    v-if="shouldDisplayTime"
-    class="pa-4"
-  >
+  <div v-if="shouldDisplayTime" class="pa-4">
     <div class="text-subtitle-1 font-weight-medium">Time</div>
     <v-select
       v-model="props.graph.time"
@@ -92,7 +90,7 @@ const availableTimeSlots = computed(() => getSimulationPlaneAvailableTimeSlots()
     <!-- variables store categories for now -->
     <simulation-variable-category-list
       v-else-if="varsKind === 'categories' && props.graph.point !== null"
-      v-model="props.graph.variables" 
+      v-model="props.graph.variables"
       :omit-categories="['sw_radiation']"
       :available-at="pointHeight"
       :rename-wall-and-facade-to-roof="(pointHeight ?? 0) >= 16"
