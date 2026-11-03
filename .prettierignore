@@ -18,6 +18,7 @@ npm-shrinkwrap.json
 # Git files
 .git/
 .gitignore
+.dockerignore
 *.nvmrc
 *.node-version
 *.env
