@@ -15,7 +15,7 @@ const props = defineProps<{
   multiple?: boolean
 }>()
 
-const selectedSlugs = defineModel<string[]>({ default: [] })
+const selectedSlugs = defineModel<string[]>({ default: () => [] })
 
 const scenarioStore = useScenariosStore()
 const scenariosCollection = ref<ScenarioCollection | null>(null)
