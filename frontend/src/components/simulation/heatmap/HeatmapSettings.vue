@@ -16,6 +16,7 @@ const props = defineProps<{
   scenarioBSlug?: string | null
   variableSlug: string
   hideIndividualMinMax?: boolean
+  hideSpecialPoints?: boolean
   forceMode?: DisplayMode
   forceFlip?: boolean
 }>()
@@ -25,7 +26,7 @@ const scenarioStore = useScenariosStore()
 
 const variableAttributes = ref<SimulationResultVariable | null>(null)
 
-const showSpecialPoints = ref(true)
+const showSpecialPoints = ref(props.hideSpecialPoints ? false : true)
 const inferMinMax = ref(true)
 const flipX = ref(true)
 
@@ -55,6 +56,10 @@ const expectedValueRange = computed<ExpectedValueRange>(() => {
 
   return getExpectedValueRangeForVariable(variableAttributes.value, getMode() === 'difference')
 })
+
+const hasToolbar = computed(() => {
+  return props.hideIndividualMinMax || props.hideSpecialPoints || !props.forceFlip
+})
 </script>
 
 <template>
@@ -71,7 +76,7 @@ const expectedValueRange = computed<ExpectedValueRange>(() => {
       <v-btn value="scenarioB">Scenario B ({{ scenarioBSlug }})</v-btn>
       <v-btn value="difference">Signed difference (A - B)</v-btn>
     </v-btn-toggle>
-    <div class="toolbar">
+    <div class="toolbar" v-if="hasToolbar">
       <div class="switches">
         <v-switch
           v-if="!hideIndividualMinMax"
@@ -82,6 +87,7 @@ const expectedValueRange = computed<ExpectedValueRange>(() => {
           :hide-details="true"
         />
         <v-switch
+          v-if="!hideSpecialPoints"
           v-model="showSpecialPoints"
           label="Highlight available time series points"
           class="ml-4"

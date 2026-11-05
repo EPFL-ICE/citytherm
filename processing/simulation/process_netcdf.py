@@ -88,6 +88,20 @@ variable_categories = {
             "$Fac_WallSystemSHTransCoeffOutside",
         ]
     },
+    "ground_parameter": {
+        "name": "Ground Parameter",
+        "variables": [
+            "SoilTemp",
+        ]
+    },
+    "parameters": {
+        "name": "Parameters",
+        "variables": [
+            "TSurf",
+            "QSurf",
+            "UVSurf",
+        ]
+    },
 }
 
 underground_level_variables = [
@@ -131,6 +145,9 @@ building_data_variables = [
     "$Fac_WallSystemSHTransCoeffOutside",
     "$Fac_WallSystemLWEnergyBalance",
 ]
+
+x_coords_name = "GridsJ" # "GridsI"
+y_coords_name = "GridsI" # "GridsJ"
 
 def process_netcdf(scenario_name: str, input_directory: str, output_directory: str):
     print(f"========= Processing scenario: {scenario_name} =========")
@@ -212,7 +229,7 @@ def hardcoded_top_color(scenario_name: str):
 
 def building_height_dict(building_heights):
     first_time_slice = building_heights.isel(Time=0)
-    dataframe = first_time_slice.to_dataframe().reset_index().drop(columns=["Time"]).rename(columns={"GridsI": "x", "GridsJ": "y", "BuildingHeight": "h"})
+    dataframe = first_time_slice.to_dataframe().reset_index().drop(columns=["Time"]).rename(columns={x_coords_name: "x", y_coords_name: "y", "BuildingHeight": "h"})
     dataframe_cleaned = dataframe[dataframe["h"].notna()]
 
     for col in ["x", "y", "h"]:
@@ -234,7 +251,7 @@ def building_height_dict(building_heights):
 
 def soiltype_dict(soil_profile_type):
     first_time_slice = soil_profile_type.isel(Time=0)
-    dataframe = first_time_slice.to_dataframe().reset_index().drop(columns=["Time"]).rename(columns={"GridsI": "x", "GridsJ": "y", "SoilProfileType": "t"})
+    dataframe = first_time_slice.to_dataframe().reset_index().drop(columns=["Time"]).rename(columns={x_coords_name: "x", y_coords_name: "y", "SoilProfileType": "t"})
     for col in ["x", "y", "t"]:
         dataframe[col] = dataframe[col].apply(lambda v: int(v) if float(v).is_integer() else v)
 
@@ -271,7 +288,7 @@ def objects_dict_scenarios(scenario_name: str, objects):
 
 def objects_dict(objects):
     first_time_slice = objects.isel(Time=0).sel(GridsK=0.2) # Only objects on the ground (on the 2m*2m square centered at height 1m so, so touching the ground)
-    dataframe = first_time_slice.to_dataframe().reset_index().drop(columns=["Time","GridsK"]).rename(columns={"GridsI": "x", "GridsJ": "y", "Objects": "o"})
+    dataframe = first_time_slice.to_dataframe().reset_index().drop(columns=["Time","GridsK"]).rename(columns={x_coords_name: "x", y_coords_name: "y", "Objects": "o"})
     print(dataframe)
     dataframe_cleaned = dataframe[dataframe["o"].notna() & (dataframe["o"] > 1)] # 0 is no object and 1 is building, already taken into account in building heights
     print(dataframe_cleaned)
@@ -372,66 +389,66 @@ def objects_dict_trees_staggered(type: int = -2):
     return {
         "defaultObject": type,
         "objects": [ # hardcoded list provided by Jaafar, values seem to be the index of the 2x2 square, so multiplied by 2 here
-            { "x": 30 * 2, "y": 63 * 2 },
-            { "x": 30 * 2, "y": 60 * 2 },
-            { "x": 30 * 2, "y": 57 * 2 },
-            { "x": 35 * 2, "y": 62 * 2 },
-            { "x": 35 * 2, "y": 58 * 2 },
-            { "x": 48 * 2, "y": 63 * 2 },
-            { "x": 48 * 2, "y": 60 * 2 },
-            { "x": 48 * 2, "y": 57 * 2 },
-            { "x": 53 * 2, "y": 62 * 2 },
-            { "x": 53 * 2, "y": 58 * 2 },
-            { "x": 66 * 2, "y": 63 * 2 },
-            { "x": 66 * 2, "y": 60 * 2 },
-            { "x": 66 * 2, "y": 57 * 2 },
-            { "x": 71 * 2, "y": 62 * 2 },
-            { "x": 71 * 2, "y": 58 * 2 },
-            { "x": 39 * 2, "y": 81 * 2 },
-            { "x": 39 * 2, "y": 78 * 2 },
-            { "x": 39 * 2, "y": 75 * 2 },
-            { "x": 44 * 2, "y": 80 * 2 },
-            { "x": 44 * 2, "y": 76 * 2 },
-            { "x": 57 * 2, "y": 81 * 2 },
-            { "x": 57 * 2, "y": 78 * 2 },
-            { "x": 57 * 2, "y": 75 * 2 },
-            { "x": 62 * 2, "y": 80 * 2 },
-            { "x": 62 * 2, "y": 76 * 2 },
-            { "x": 75 * 2, "y": 81 * 2 },
-            { "x": 75 * 2, "y": 78 * 2 },
-            { "x": 75 * 2, "y": 75 * 2 },
-            { "x": 80 * 2, "y": 80 * 2 },
-            { "x": 80 * 2, "y": 76 * 2 },
-            { "x": 39 * 2, "y": 45 * 2 },
-            { "x": 39 * 2, "y": 42 * 2 },
-            { "x": 39 * 2, "y": 39 * 2 },
-            { "x": 44 * 2, "y": 44 * 2 },
-            { "x": 44 * 2, "y": 40 * 2 },
-            { "x": 57 * 2, "y": 45 * 2 },
-            { "x": 57 * 2, "y": 42 * 2 },
-            { "x": 57 * 2, "y": 39 * 2 },
-            { "x": 62 * 2, "y": 44 * 2 },
-            { "x": 62 * 2, "y": 40 * 2 },
-            { "x": 75 * 2, "y": 45 * 2 },
-            { "x": 75 * 2, "y": 42 * 2 },
-            { "x": 75 * 2, "y": 39 * 2 },
-            { "x": 80 * 2, "y": 44 * 2 },
-            { "x": 80 * 2, "y": 40 * 2 },
-            { "x": 30 * 2, "y": 27 * 2 },
-            { "x": 30 * 2, "y": 24 * 2 },
-            { "x": 30 * 2, "y": 21 * 2 },
-            { "x": 35 * 2, "y": 26 * 2 },
-            { "x": 35 * 2, "y": 22 * 2 },
-            { "x": 48 * 2, "y": 27 * 2 },
-            { "x": 48 * 2, "y": 24 * 2 },
-            { "x": 48 * 2, "y": 21 * 2 },
-            { "x": 53 * 2, "y": 26 * 2 },
-            { "x": 53 * 2, "y": 22 * 2 },
-            { "x": 66 * 2, "y": 27 * 2 },
-            { "x": 66 * 2, "y": 24 * 2 },
-            { "x": 66 * 2, "y": 21 * 2 },
-            { "x": 71 * 2, "y": 26 * 2 },
-            { "x": 71 * 2, "y": 22 * 2 }
+            { "x": (30 - 0.5) * 2, "y": 63 * 2 },
+            { "x": (30 - 0.5) * 2, "y": 60 * 2 },
+            { "x": (30 - 0.5) * 2, "y": 57 * 2 },
+            { "x": (35 - 0.5) * 2, "y": 62 * 2 },
+            { "x": (35 - 0.5) * 2, "y": 58 * 2 },
+            { "x": (48 - 0.5) * 2, "y": 63 * 2 },
+            { "x": (48 - 0.5) * 2, "y": 60 * 2 },
+            { "x": (48 - 0.5) * 2, "y": 57 * 2 },
+            { "x": (53 - 0.5) * 2, "y": 62 * 2 },
+            { "x": (53 - 0.5) * 2, "y": 58 * 2 },
+            { "x": (66 - 0.5) * 2, "y": 63 * 2 },
+            { "x": (66 - 0.5) * 2, "y": 60 * 2 },
+            { "x": (66 - 0.5) * 2, "y": 57 * 2 },
+            { "x": (71 - 0.5) * 2, "y": 62 * 2 },
+            { "x": (71 - 0.5) * 2, "y": 58 * 2 },
+            { "x": (39 - 0.5) * 2, "y": 81 * 2 },
+            { "x": (39 - 0.5) * 2, "y": 78 * 2 },
+            { "x": (39 - 0.5) * 2, "y": 75 * 2 },
+            { "x": (44 - 0.5) * 2, "y": 80 * 2 },
+            { "x": (44 - 0.5) * 2, "y": 76 * 2 },
+            { "x": (57 - 0.5) * 2, "y": 81 * 2 },
+            { "x": (57 - 0.5) * 2, "y": 78 * 2 },
+            { "x": (57 - 0.5) * 2, "y": 75 * 2 },
+            { "x": (62 - 0.5) * 2, "y": 80 * 2 },
+            { "x": (62 - 0.5) * 2, "y": 76 * 2 },
+            { "x": (75 - 0.5) * 2, "y": 81 * 2 },
+            { "x": (75 - 0.5) * 2, "y": 78 * 2 },
+            { "x": (75 - 0.5) * 2, "y": 75 * 2 },
+            { "x": (80 - 0.5) * 2, "y": 80 * 2 },
+            { "x": (80 - 0.5) * 2, "y": 76 * 2 },
+            { "x": (39 - 0.5) * 2, "y": 45 * 2 },
+            { "x": (39 - 0.5) * 2, "y": 42 * 2 },
+            { "x": (39 - 0.5) * 2, "y": 39 * 2 },
+            { "x": (44 - 0.5) * 2, "y": 44 * 2 },
+            { "x": (44 - 0.5) * 2, "y": 40 * 2 },
+            { "x": (57 - 0.5) * 2, "y": 45 * 2 },
+            { "x": (57 - 0.5) * 2, "y": 42 * 2 },
+            { "x": (57 - 0.5) * 2, "y": 39 * 2 },
+            { "x": (62 - 0.5) * 2, "y": 44 * 2 },
+            { "x": (62 - 0.5) * 2, "y": 40 * 2 },
+            { "x": (75 - 0.5) * 2, "y": 45 * 2 },
+            { "x": (75 - 0.5) * 2, "y": 42 * 2 },
+            { "x": (75 - 0.5) * 2, "y": 39 * 2 },
+            { "x": (80 - 0.5) * 2, "y": 44 * 2 },
+            { "x": (80 - 0.5) * 2, "y": 40 * 2 },
+            { "x": (30 - 0.5) * 2, "y": 27 * 2 },
+            { "x": (30 - 0.5) * 2, "y": 24 * 2 },
+            { "x": (30 - 0.5) * 2, "y": 21 * 2 },
+            { "x": (35 - 0.5) * 2, "y": 26 * 2 },
+            { "x": (35 - 0.5) * 2, "y": 22 * 2 },
+            { "x": (48 - 0.5) * 2, "y": 27 * 2 },
+            { "x": (48 - 0.5) * 2, "y": 24 * 2 },
+            { "x": (48 - 0.5) * 2, "y": 21 * 2 },
+            { "x": (53 - 0.5) * 2, "y": 26 * 2 },
+            { "x": (53 - 0.5) * 2, "y": 22 * 2 },
+            { "x": (66 - 0.5) * 2, "y": 27 * 2 },
+            { "x": (66 - 0.5) * 2, "y": 24 * 2 },
+            { "x": (66 - 0.5) * 2, "y": 21 * 2 },
+            { "x": (71 - 0.5) * 2, "y": 26 * 2 },
+            { "x": (71 - 0.5) * 2, "y": 22 * 2 }
         ]
     }
 
@@ -864,7 +881,7 @@ def save_plane_slices_for_var_at_time(scenario: str, ds, output_directory: str, 
 
     for slicer in slicers:
         sliced = slicer["slicer"](variable_at_time)
-        array_2d = slice_to_array_of_arrays(df=sliced, index_column=slicer.get("index_column", "y"), columns=slicer.get("columns", "x"), value_column="value")
+        array_2d = slice_to_array_of_arrays(df=sliced, index_column=slicer.get("index_column", "x"), columns=slicer.get("columns", "y"), value_column="value")
         dict = {
             "data": to_json_compatible(array_2d),
         }
@@ -874,7 +891,7 @@ def save_plane_slices_for_var_at_time(scenario: str, ds, output_directory: str, 
 def get_variable_at_time(ds, variable_name, time_index=0):
     variable = ds.data_vars[variable_name]
     time_slice = variable.isel(Time=time_index)
-    df = time_slice.to_dataframe().reset_index().drop(columns=["Time"]).rename(columns={"GridsI": "x", "GridsJ": "y", "GridsK": "z", "SoilLevels": "z", variable_name: "value"})
+    df = time_slice.to_dataframe().reset_index().drop(columns=["Time"]).rename(columns={x_coords_name: "x", y_coords_name: "y", "GridsK": "z", "SoilLevels": "z", variable_name: "value"})
     return df
 
 def slice_xy_plane_at_z(df, z_value):
@@ -1016,8 +1033,8 @@ def get_single_time_series_point_for_var_and_coords_dataframe(ds, variable_name:
 
     variable = ds.data_vars[variable_name]
 
-    selection = {"GridsI": x, "GridsJ": y}
-    columns_to_drop = ["GridsI", "GridsJ"]
+    selection = {x_coords_name: x, y_coords_name: y}
+    columns_to_drop = [x_coords_name, y_coords_name]
     if "GridsK" in variable.dims and len(coords) > 2:
         selection["GridsK"] = coords[2]
         columns_to_drop.append("GridsK")
@@ -1028,8 +1045,8 @@ def get_single_time_series_point_for_var_and_coords_dataframe(ds, variable_name:
     filtered = variable.where(variable.notnull(), drop=True) if filter_nan else variable
     point_data = filtered.sel(method="nearest", **selection)
     true_coords = {
-        "x": float(point_data["GridsI"].values),
-        "y": float(point_data["GridsJ"].values),
+        "x": float(point_data[x_coords_name].values),
+        "y": float(point_data[y_coords_name].values),
         "z": float(point_data["GridsK"].values) if "GridsK" in point_data else None,
     }
 
@@ -1054,14 +1071,14 @@ def get_depth_series_for_var_coords_and_time_dataframe(ds, variable_name: str, c
 
     variable = ds.data_vars[variable_name]
 
-    selection = {"GridsI": x, "GridsJ": y}
-    columns_to_drop = ["GridsI", "GridsJ"]
+    selection = {x_coords_name: x, y_coords_name: y}
+    columns_to_drop = [x_coords_name, y_coords_name]
 
     filtered = variable.where(variable.notnull(), drop=True) if filter_nan else variable
     point_data = filtered.sel(method="nearest", **selection)
     true_coords = {
-        "x": float(point_data["GridsI"].values),
-        "y": float(point_data["GridsJ"].values),
+        "x": float(point_data[x_coords_name].values),
+        "y": float(point_data[y_coords_name].values),
         "z": float(point_data["GridsK"].values) if "GridsK" in point_data else None,
     }
 
@@ -1098,14 +1115,14 @@ def get_depth_temporal_variations_for_var_and_coords_dataframe(ds, variable_name
 
     variable = ds.data_vars[variable_name]
 
-    selection = {"GridsI": x, "GridsJ": y}
-    columns_to_drop = ["GridsI", "GridsJ"]
+    selection = {x_coords_name: x, y_coords_name: y}
+    columns_to_drop = [x_coords_name, y_coords_name]
 
     filtered = variable.where(variable.notnull(), drop=True) if filter_nan else variable
     point_data = filtered.sel(method="nearest", **selection)
     true_coords = {
-        "x": float(point_data["GridsI"].values),
-        "y": float(point_data["GridsJ"].values),
+        "x": float(point_data[x_coords_name].values),
+        "y": float(point_data[y_coords_name].values),
         "z": float(point_data["GridsK"].values) if "GridsK" in point_data else None,
     }
 

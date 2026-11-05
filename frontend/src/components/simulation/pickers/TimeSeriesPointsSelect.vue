@@ -56,7 +56,9 @@ function pointItemProps(item: TimeSeriesPoint) {
   const xFlipped = 198 - item.c[0]
   return {
     title: props.hideHeight ? item.n.slice(0, item.n.lastIndexOf('(')).trim() : item.n,
-    subtitle: `(x: ${xFlipped} ; y: ${item.c[1]}${props.hideHeight ? '' : ` ; z: ${item.c[2].toFixed(1)}`})`,
+    subtitle: `(x: ${xFlipped} ; y: ${item.c[1]}${
+      props.hideHeight ? '' : ` ; z: ${item.c[2].toFixed(1)}`
+    })`,
     value: item.s
   }
 }
